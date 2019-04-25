@@ -11,9 +11,7 @@ import (
 	"go-heroku-server/config"
 )
 
-var tokenEncodeString = []byte("Wow, much safe")
-
-func addUser(username, password, firstname, lastname string, adress types.Address) {
+func addUser(userToAdd types.User) {
 	db, err := config.CreateDatabase()
 
 	if err != nil {
@@ -22,12 +20,10 @@ func addUser(username, password, firstname, lastname string, adress types.Addres
 
 	defer db.Close()
 
-	user := types.User{Username: username, Password: password, LastName: lastname, FirstName: firstname, Address: adress}
+	db.NewRecord(userToAdd)
+	db.Create(&userToAdd)
 
-	db.NewRecord(user)
-	db.Create(&user)
-
-	log.Println("Inserted username: " + username + ".")
+	log.Println("Inserted username: " + userToAdd.Username + ".")
 }
 
 func GetUserList(w http.ResponseWriter, r *http.Request) {
@@ -56,8 +52,7 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-
+func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	var user types.User
@@ -67,10 +62,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	addUser(user.Username, user.Password, user.FirstName, user.LastName, user.Address)
+	if verifyNoUserExists(user.Username) {
+		addUser(user)
+		w.WriteHeader(200)
+	} else {
+		w.WriteHeader(400)
+
+	}
 }
 
-func EditName(w http.ResponseWriter, r *http.Request) {
+func EditUser(w http.ResponseWriter, r *http.Request) {
 
 	db, err := config.CreateDatabase()
 
@@ -97,10 +98,10 @@ func EditName(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 
-		var name types.User
+		var newUser types.User
 		decoder := json.NewDecoder(r.Body)
 		err = decoder.Decode(&name)
-		addUser(name.Username, name.Password, name.FirstName, name.LastName, name.Address)
+		addUser(newUser)
 
 	}
 }
@@ -179,5 +180,22 @@ func GetUserDetail(w http.ResponseWriter, r *http.Request) {
 	payload, _ := json.Marshal(requestedUser)
 
 	w.Write([]byte(payload))
+
+}
+
+//Function verifies user can be registered to database
+func verifyNoUserExists(username string) (userExists bool) {
+
+	var requestedUser types.User
+
+	db, err := config.CreateDatabase()
+
+	if err != nil {
+		panic(err)
+	}
+
+	userExists = db.Where("username = ?", username).Find(&requestedUser).RecordNotFound()
+
+	return userExists
 
 }
