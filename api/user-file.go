@@ -65,6 +65,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	newFile.FileType = http.DetectContentType(fileBytes)
 	newFile.CreateDate = time.Now()
 	newFile.UserID, _ = utils.GetIdFromToken(token.Token)
+	//newFile.UserID, _ = utils.GetIdFromToken(fileData)
 
 	processFile(newFile)
 }
@@ -126,29 +127,36 @@ func GetFileList(w http.ResponseWriter, r *http.Request) {
 	var files []File
 	receivedToken := (r.Header.Get("Authorization"))
 
-	userId, _ := utils.GetIdFromToken(receivedToken)
+	if receivedToken != "null" {
+		userId, _ := utils.GetIdFromToken(receivedToken)
 
-	db, err := config.CreateDatabase()
+		db, err := config.CreateDatabase()
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
+
+		defer db.Close()
+
+		db.Where("user_id = ?", userId).Find(&files)
+
+		for index, file := range files {
+
+			fileName := file.FileName
+			fileName = fileName[:strings.IndexByte(fileName, '.')]
+
+			files[index].FileName = fileName
+
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+
+		json.NewEncoder(w).Encode(files)
+		log.Println("Retrieved list of file IDs and names")
+	} else {
+		w.WriteHeader(400)
 	}
-
-	defer db.Close()
-
-	db.Where("user_id = ?", userId).Find(&files)
-
-	for index, file := range files {
-
-		fileName := file.FileName
-		fileName = fileName[:strings.IndexByte(fileName, '.')]
-
-		files[index].FileName = fileName
-
-	}
-
-	json.NewEncoder(w).Encode(files)
-	log.Println("Retrieved list of file IDs and names")
 
 }
 

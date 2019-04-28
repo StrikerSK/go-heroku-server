@@ -130,20 +130,21 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	user, userExists := getUserFromDB(loginCredentials.Username)
 
+	log.Print("User is logging \"" + user.Username + "\"")
+
 	if !userExists {
 
 		if loginCredentials.Password == user.Password {
 
 			serverToken = utils.CreateToken(user)
-
 			w.Header().Set("Content-Type", "application/json")
-
 			payload, _ := json.Marshal(serverToken)
-
+			log.Print("User \"" + user.Username + "\" logged succesfully!")
 			w.Write([]byte(payload))
 
 		} else {
 
+			log.Print("User \"" + user.Username + "\" not logged succesfully!")
 			http.Error(w, "Unvalid password", 401)
 
 		}
