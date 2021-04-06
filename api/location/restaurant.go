@@ -19,47 +19,25 @@ type RestaurantLocation struct {
 }
 
 func GetRestaurantLocations(w http.ResponseWriter, r *http.Request) {
-
 	var locations []RestaurantLocation
-
-	db, err := config.CreateDatabase()
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
-
-	db.Find(&locations)
-
+	config.DBConnection.Find(&locations)
 	json.NewEncoder(w).Encode(locations)
 	log.Println("Retrieved list of restaurant locations")
-
 }
 
-func GetReastaurantByName(w http.ResponseWriter, r *http.Request) {
+func GetRestaurantByName(w http.ResponseWriter, r *http.Request) {
 
 	var restName types.TemporaryName
 	var restaurant RestaurantLocation
 
-	db, err := config.CreateDatabase()
-
-	if err != nil {
-		panic(err)
-	}
-
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&restName)
-
+	err := decoder.Decode(&restName)
 	if err != nil {
 		panic(err)
 	}
-
-	defer db.Close()
-
-	db.Where("name = ?", restName.Name).First(&restaurant)
-
-	json.NewEncoder(w).Encode(restaurant)
+	defer config.DBConnection.Close()
+	config.DBConnection.Where("name = ?", restName.Name).First(&restaurant)
+	_ = json.NewEncoder(w).Encode(restaurant)
 	log.Println("Retrieved restaurant location")
 
 }

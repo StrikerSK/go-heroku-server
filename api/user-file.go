@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/user"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"go-heroku-server/api/types"
 	"go-heroku-server/api/utils"
 	"go-heroku-server/config"
 )
@@ -55,7 +55,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	fileData := r.FormValue("file")
 
 	//Spracovanie JSONu na jednotlive polozky (Pozor! Je dolezite mat vytvorenu struct formu!!!)
-	var token types.Token
+	var token user.Token
 	json.Unmarshal([]byte(fileData), &token)
 	//fmt.Printf("hello: %s, testing: %s", metadata.Hello, metadata.Testing)
 
@@ -83,38 +83,21 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename="+gotFile.FileName)
 	w.Header().Set("Content-Type", gotFile.FileType)
 
-	w.Write(gotFile.FileData)
+	_, _ = w.Write(gotFile.FileData)
 }
 
 func processFile(file File) {
 
-	db, err := config.CreateDatabase()
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
-
-	db.NewRecord(file)
-	db.Create(&file)
-
+	config.DBConnection.NewRecord(file)
+	config.DBConnection.Create(&file)
 	log.Println("Inserted file: " + file.FileName + ".")
 
 }
 
 func getFileFromDb(fileId int64) File {
-
-	db, err := config.CreateDatabase()
-	if err != nil {
-		panic(err)
-	}
-
 	var fileFile File
-
-	db.Where("id = ?", fileId).Find(&fileFile)
-
+	config.DBConnection.Where("id = ?", fileId).Find(&fileFile)
 	return fileFile
-
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
@@ -125,28 +108,16 @@ func renderError(w http.ResponseWriter, message string, statusCode int) {
 func GetFileList(w http.ResponseWriter, r *http.Request) {
 
 	var files []File
-	receivedToken := (r.Header.Get("Authorization"))
+	receivedToken := r.Header.Get("Authorization")
 
 	if receivedToken != "null" {
 		userId, _ := utils.GetIdFromToken(receivedToken)
-
-		db, err := config.CreateDatabase()
-
-		if err != nil {
-			panic(err)
-		}
-
-		defer db.Close()
-
-		db.Where("user_id = ?", userId).Find(&files)
-
+		config.DBConnection.Where("user_id = ?", userId).Find(&files)
 		for index, file := range files {
-
 			fileName := file.FileName
 			fileName = fileName[:strings.IndexByte(fileName, '.')]
 
 			files[index].FileName = fileName
-
 		}
 
 		w.Header().Set("Content-Type", "application/json")

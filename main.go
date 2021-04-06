@@ -13,6 +13,7 @@ import (
 	"go-heroku-server/api"
 	"go-heroku-server/api/location"
 	"go-heroku-server/api/types"
+	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 )
 
@@ -32,16 +33,12 @@ func main() {
 	if port == "" {
 		log.Fatal("$PORT must be set")
 		//port = "5000"
-
 	}
 
-	db, err := config.CreateDatabase()
+	config.InitializeRedis()
+	config.InitializeDatabase()
 
-	if err != nil {
-		panic(err)
-	}
-
-	db.AutoMigrate(&types.User{}, &types.Address{}, &api.UserNumber{}, &api.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
+	config.DBConnection.AutoMigrate(&user.User{}, &types.Address{}, &user.UserNumber{}, &user.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
 
 	myRouter := mux.NewRouter()
 
@@ -52,9 +49,9 @@ func main() {
 	myRouter.HandleFunc("/userDetail", api.GetUserDetail).Methods("GET")
 	myRouter.HandleFunc("/addUser", api.RegisterNewUser).Methods("POST")
 	myRouter.HandleFunc("/editUser", api.EditUser).Methods("PUT")
-	myRouter.HandleFunc("/getAllStudents", api.GetAllStudents).Methods("GET")
-	myRouter.HandleFunc("/getStudentTodos/{id}", api.GetStudentTodos).Methods("GET")
-	myRouter.HandleFunc("/addStudentTodo/{id}", api.AddStudentTodo).Methods("POST")
+	myRouter.HandleFunc("/getAllStudents", user.GetAllStudents).Methods("GET")
+	myRouter.HandleFunc("/getStudentTodos/{id}", user.GetStudentTodos).Methods("GET")
+	myRouter.HandleFunc("/addStudentTodo/{id}", user.AddStudentTodo).Methods("POST")
 	myRouter.HandleFunc("/uploadFile", api.UploadFile).Methods("POST")
 	myRouter.HandleFunc("/downloadFile/{id}", api.ServeFile).Methods("GET")
 	myRouter.HandleFunc("/fileList", api.GetFileList).Methods("GET")
@@ -62,7 +59,7 @@ func main() {
 	myRouter.HandleFunc("/getLocationImage/{id}", api.GetLocationImage).Methods("GET")
 	myRouter.HandleFunc("/saveLocation", api.AddLocation).Methods("POST")
 	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods("GET")
-	myRouter.HandleFunc("/getRestaurantByName", location.GetReastaurantByName).Methods("POST")
+	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods("POST")
 	myRouter.HandleFunc("/login", api.LoginUser).Methods("POST")
 
 	fmt.Println("Listening")

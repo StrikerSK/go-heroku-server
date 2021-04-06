@@ -31,17 +31,7 @@ type LocationImage struct {
 func GetLocations(w http.ResponseWriter, r *http.Request) {
 
 	var locations []Location
-
-	db, err := config.CreateDatabase()
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
-
-	db.Find(&locations)
-
+	config.DBConnection.Find(&locations)
 	json.NewEncoder(w).Encode(locations)
 	log.Println("Retrieved list of location")
 
@@ -63,47 +53,28 @@ func GetLocationImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func getImageFromDb(fileId int64) LocationImage {
-
-	db, err := config.CreateDatabase()
-	if err != nil {
-		panic(err)
-	}
-
 	var image LocationImage
-
-	db.Where("id = ?", fileId).Find(&image)
-
+	config.DBConnection.Where("id = ?", fileId).Find(&image)
 	return image
-
 }
 
 func AddLocation(w http.ResponseWriter, r *http.Request) {
-
 	decoder := json.NewDecoder(r.Body)
-
 	var location Location
 	err := decoder.Decode(&location)
-
 	if err != nil {
 		panic(err)
 	}
-
 	saveLocation(location.Name, location.Description, location.Type, location.Latitude, location.Longitude)
 }
 
 func saveLocation(name, description, serviceType string, latitude, longitude float64) {
-	db, err := config.CreateDatabase()
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
+	defer config.DBConnection.Close()
 
 	location := Location{Name: name, Description: description, Type: serviceType, Longitude: longitude, Latitude: latitude, ImageId: 1}
 
-	db.NewRecord(location)
-	db.Create(&location)
+	config.DBConnection.NewRecord(location)
+	config.DBConnection.Create(&location)
 
 	log.Println("Inserted location with name: " + location.Name + ".")
 }

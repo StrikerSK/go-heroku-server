@@ -9,15 +9,21 @@ import (
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "hank03"
-	password = "Database4hank"
-	dbname   = "GolangDB"
+	user     = "postgres"
+	password = "Password"
+	dbname   = "golangdb"
 )
 
-func CreateDatabase() (*gorm.DB, error) {
+var DBConnection *gorm.DB
+
+func InitializeDatabase() {
 	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	//db, err := gorm.Open("postgres", psqlInfo)
 	db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-	return db, err
+	DBConnection = db
 }

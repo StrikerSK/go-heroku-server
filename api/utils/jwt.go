@@ -3,9 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"go-heroku-server/api/user"
 	"strconv"
-
-	"go-heroku-server/api/types"
 )
 
 var tokenEncodeString = []byte("Wow, much safe")
@@ -16,14 +15,14 @@ func DecodeToken(receivedToken string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(tokenEncodeString), nil
+		return tokenEncodeString, nil
 	})
 }
 
 //Function for creating token from verified user from LoginUser function
-func CreateToken(verifiedUser types.User) (userToken types.Token) {
+func CreateToken(verifiedUser user.User) (userToken user.Token) {
 
-	var serverToken types.Token
+	var serverToken user.Token
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       fmt.Sprint(verifiedUser.ID),
