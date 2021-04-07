@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"go-heroku-server/api/utils"
 	"go-heroku-server/config"
 )
 
@@ -64,7 +63,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	newFile.FileSize = getFileSize(fileHeader.Size)
 	newFile.FileType = http.DetectContentType(fileBytes)
 	newFile.CreateDate = time.Now()
-	newFile.UserID, _ = utils.GetIdFromToken(token.Token)
+	newFile.UserID, _ = user.GetIdFromToken(token.Token)
 	//newFile.UserID, _ = utils.GetIdFromToken(fileData)
 
 	processFile(newFile)
@@ -101,8 +100,8 @@ func getFileFromDb(fileId int64) File {
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte(message))
+	w.WriteHeader(statusCode)
+	_, _ = w.Write([]byte(message))
 }
 
 func GetFileList(w http.ResponseWriter, r *http.Request) {
@@ -111,7 +110,7 @@ func GetFileList(w http.ResponseWriter, r *http.Request) {
 	receivedToken := r.Header.Get("Authorization")
 
 	if receivedToken != "null" {
-		userId, _ := utils.GetIdFromToken(receivedToken)
+		userId, _ := user.GetIdFromToken(receivedToken)
 		config.DBConnection.Where("user_id = ?", userId).Find(&files)
 		for index, file := range files {
 			fileName := file.FileName
@@ -123,7 +122,7 @@ func GetFileList(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 
-		json.NewEncoder(w).Encode(files)
+		_ = json.NewEncoder(w).Encode(files)
 		log.Println("Retrieved list of file IDs and names")
 	} else {
 		w.WriteHeader(400)

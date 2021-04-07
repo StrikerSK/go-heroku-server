@@ -1,9 +1,8 @@
-package utils
+package user
 
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"go-heroku-server/api/user"
 	"strconv"
 )
 
@@ -20,9 +19,9 @@ func DecodeToken(receivedToken string) (*jwt.Token, error) {
 }
 
 //Function for creating token from verified user from LoginUser function
-func CreateToken(verifiedUser user.User) (userToken user.Token) {
+func CreateToken(verifiedUser User) (userToken Token) {
 
-	var serverToken user.Token
+	var serverToken Token
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       fmt.Sprint(verifiedUser.ID),
@@ -66,6 +65,9 @@ func CreateToken(verifiedUser user.User) (userToken user.Token) {
 func GetIdFromToken(receivedToken string) (userId uint, err error) {
 
 	token, err := DecodeToken(receivedToken)
+	if err != nil {
+		panic(err)
+	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 

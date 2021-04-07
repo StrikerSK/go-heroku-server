@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 
@@ -31,12 +30,12 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Fatal("$PORT must be set")
-		//port = "5000"
+		//log.Fatal("$PORT must be set")
+		port = "5000"
 	}
 
-	config.InitializeRedis()
 	config.InitializeDatabase()
+	config.InitializeRedis()
 
 	config.DBConnection.AutoMigrate(&user.User{}, &types.Address{}, &user.UserNumber{}, &user.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
 
@@ -45,10 +44,9 @@ func main() {
 	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	myRouter.HandleFunc("/", hello)
-	myRouter.HandleFunc("/getUsers", api.GetUserList).Methods("GET")
-	myRouter.HandleFunc("/userDetail", api.GetUserDetail).Methods("GET")
-	myRouter.HandleFunc("/addUser", api.RegisterNewUser).Methods("POST")
-	myRouter.HandleFunc("/editUser", api.EditUser).Methods("PUT")
+
+	user.UserEnrichRouter(myRouter)
+
 	myRouter.HandleFunc("/getAllStudents", user.GetAllStudents).Methods("GET")
 	myRouter.HandleFunc("/getStudentTodos/{id}", user.GetStudentTodos).Methods("GET")
 	myRouter.HandleFunc("/addStudentTodo/{id}", user.AddStudentTodo).Methods("POST")
@@ -60,7 +58,6 @@ func main() {
 	myRouter.HandleFunc("/saveLocation", api.AddLocation).Methods("POST")
 	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods("GET")
 	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods("POST")
-	myRouter.HandleFunc("/login", api.LoginUser).Methods("POST")
 
 	fmt.Println("Listening")
 
