@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"go-heroku-server/config"
 	"net/http"
@@ -40,7 +39,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		// If there is an error in setting the cache, return an internal server error
-		panic(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -54,33 +52,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func ValidateRequest(w http.ResponseWriter, r *http.Request) {
-	// We can obtain the session token from the requests cookies, which come with every request
-	c, err := r.Cookie(tokenName)
-	if err != nil {
-		if err == http.ErrNoCookie {
-			// If the cookie is not set, return an unauthorized status
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		// For any other type of error, return a bad request status
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+func receiveCookie(r *http.Request) interface{} {
+	c, _ := r.Cookie(tokenName)
 	sessionToken := c.Value
 
 	// We then get the name of the user from our cache, where we set the session token
-	response, err := config.Cache.Do("GET", sessionToken)
-	if err != nil {
-		// If there is an error fetching from cache, return an internal server error status
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if response == nil {
-		// If the session token is not present in cache, return an unauthorized error
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	// Finally, return the welcome message to the user
-	w.Write([]byte(fmt.Sprintf("Welcome %s!", response)))
+	response, _ := config.Cache.Do("GET", sessionToken)
+	return response
 }

@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Adjust codebase">
-      <change afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/user/userCookies.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-    </list>
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Apply user middleware" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -193,6 +185,7 @@
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -201,6 +194,8 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/todo" />
+      <recent name="$PROJECT_DIR$/api" />
       <recent name="$PROJECT_DIR$/api/user" />
       <recent name="$PROJECT_DIR$/api/userAuthentication" />
       <recent name="$PROJECT_DIR$/config" />
@@ -297,7 +292,9 @@
     <MESSAGE value="Initialize code cleanup" />
     <MESSAGE value="M" />
     <MESSAGE value="Adjust codebase" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adjust codebase" />
+    <MESSAGE value="Add middleware" />
+    <MESSAGE value="Apply user middleware" />
+    <option name="LAST_COMMIT_MESSAGE" value="Apply user middleware" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -314,6 +311,26 @@
           <url>file://$PROJECT_DIR$/api/user-file.go</url>
           <line>65</line>
           <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
+          <line>129</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
+          <line>137</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
+          <line>143</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
+          <line>148</line>
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

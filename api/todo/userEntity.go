@@ -1,4 +1,4 @@
-package user
+package todo
 
 import (
 	"encoding/json"

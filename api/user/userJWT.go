@@ -1,9 +1,13 @@
 package user
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"strconv"
+	"log"
+	"net/http"
+	"time"
 )
 
 var tokenEncodeString = []byte("Wow, much safe")
@@ -18,67 +22,108 @@ func DecodeToken(receivedToken string) (*jwt.Token, error) {
 	})
 }
 
-//Function for creating token from verified user from LoginUser function
-func CreateToken(verifiedUser User) (userToken Token) {
+//Function verifies user if it exists and has valid login credentials
+func LoginUser(w http.ResponseWriter, r *http.Request) {
 
+	var loginCredentials Credentials
 	var serverToken Token
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":       fmt.Sprint(verifiedUser.ID),
-		"username": verifiedUser.Username,
-	})
+	err := json.NewDecoder(r.Body).Decode(&loginCredentials)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	user, userExists := getUserFromDB(loginCredentials.Username)
+	if !userExists {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if loginCredentials.Password == user.Password {
+
+		serverToken = createToken(user)
+		w.Header().Set("Content-Type", "application/json")
+		payload, _ := json.Marshal(serverToken)
+		log.Printf("User %s logged successfully!", user.Username)
+		_, _ = w.Write(payload)
+
+	} else {
+
+		log.Printf("User %s not logged successfully!", user.Username)
+		http.Error(w, "Invalid password", http.StatusUnauthorized)
+
+	}
+}
+
+type CustomClaims struct {
+	Id       uint
+	Username string
+	jwt.StandardClaims
+}
+
+//Function for creating token from verified user from LoginUser function
+func createToken(verifiedUser User) (userToken Token) {
+	customClaims := CustomClaims{
+		Id:       verifiedUser.ID,
+		Username: verifiedUser.Username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Second * 15).Unix(),
+		},
+	}
+
+	var serverToken Token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, _ := token.SignedString(tokenEncodeString)
 	serverToken.Token = tokenString
 
 	return serverToken
-
 }
-
-//func VerifyToken(w http.ResponseWriter, r *http.Request) {
-//
-//	var loginCredentials UserCredentials;
-//	json.NewDecoder(r.Body).Decode(&loginCredentials)
-//
-//	receivedToken := (r.Header.Get("Authorization"))
-//	fmt.Println("Received token: " + receivedToken)
-//
-//	token, err := DecodeToken(receivedToken)
-//
-//	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-//
-//		userId := claims["id"].(string)
-//		newUserId, _ := strconv.ParseUint(userId, 10, 32)
-//
-//		//userAddress := GetUserAddress(uint(newUserId))
-//
-//		json.NewEncoder(w).Encode(userAddress)
-//
-//	} else {
-//
-//		fmt.Println(err)
-//	}
-//}
 
 //Method extracts user id from token
 func GetIdFromToken(receivedToken string) (userId uint, err error) {
 
 	token, err := DecodeToken(receivedToken)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-
-		userId := claims["id"].(string)
-		newUserId, _ := strconv.ParseUint(userId, 10, 32)
-
-		return uint(newUserId), nil
+	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+		log.Printf("Received id %d", claims.Id)
+		return claims.Id, nil
 
 	} else {
 
 		return 0, err
 
 	}
+}
+
+func ParseToken(signedToken string) (claims *CustomClaims, err error) {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&CustomClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return tokenEncodeString, nil
+		},
+	)
+
+	if err != nil {
+		return
+	}
+
+	claims, ok := token.Claims.(*CustomClaims)
+	if !ok {
+		err = errors.New("Couldn't parse claims")
+		return
+	}
+
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		err = errors.New("JWT is expired")
+		return
+	}
+
+	return
 }

@@ -30,7 +30,9 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&newUser)
 
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	if userExists(newUser.Username) {
@@ -70,52 +72,28 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 
 func getUserFromDB(username string) (user User, userExist bool) {
 	userExist = config.DBConnection.Where("username = ?", username).First(&user).RecordNotFound()
-	return user, userExist
-}
-
-//Function verifies user if it exists and has valid login credentials
-func LoginUser(w http.ResponseWriter, r *http.Request) {
-
-	var loginCredentials Credentials
-	var serverToken Token
-
-	_ = json.NewDecoder(r.Body).Decode(&loginCredentials)
-
-	user, userExists := getUserFromDB(loginCredentials.Username)
-
-	log.Printf("User is logging %s", user.Username)
-
-	if !userExists {
-
-		if loginCredentials.Password == user.Password {
-
-			serverToken = CreateToken(user)
-			w.Header().Set("Content-Type", "application/json")
-			payload, _ := json.Marshal(serverToken)
-			log.Printf("User %s logged successfully!", user.Username)
-			_, _ = w.Write(payload)
-
-		} else {
-
-			log.Printf("User %s not logged successfully!", user.Username)
-			http.Error(w, "Invalid password", http.StatusUnauthorized)
-
-		}
-
-	} else {
-
-		http.Error(w, "User "+loginCredentials.Username+" not found!", http.StatusNotFound)
-
-	}
-
+	return user, !userExist
 }
 
 //Function verifies user if it exists and has valid login credentials
 func GetUserDetail(w http.ResponseWriter, r *http.Request) {
+	userId := receiveCookie(r)
+	getUser(userId, w)
+}
+
+func GetUserDetailFromJWT(w http.ResponseWriter, r *http.Request) {
+	claims, err := ParseToken(r.Header.Get("Authorization"))
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	getUser(claims.Id, w)
+}
+
+func getUser(id interface{}, w http.ResponseWriter) {
 	var requestedUser User
-	receivedToken := r.Header.Get("Authorization")
-	userId, _ := GetIdFromToken(receivedToken)
-	config.DBConnection.Where("id = ?", userId).Find(&requestedUser).Find(&requestedUser.Address)
+	config.DBConnection.Where("id = ?", id).Find(&requestedUser).Find(&requestedUser.Address)
 	w.Header().Set("Content-Type", "application/json")
 	payload, _ := json.Marshal(requestedUser)
 	_, _ = w.Write(payload)

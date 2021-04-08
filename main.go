@@ -5,6 +5,7 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"go-heroku-server/api/todo"
 	"html/template"
 	"net/http"
 	"os"
@@ -37,9 +38,9 @@ func main() {
 	config.InitializeDatabase()
 	config.InitializeRedis()
 
-	config.DBConnection.AutoMigrate(&user.User{}, &types.Address{}, &user.UserNumber{}, &user.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
+	config.DBConnection.AutoMigrate(&user.User{}, &types.Address{}, &todo.UserNumber{}, &todo.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
 
-	myRouter := mux.NewRouter()
+	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
@@ -47,9 +48,9 @@ func main() {
 
 	user.UserEnrichRouter(myRouter)
 
-	myRouter.HandleFunc("/getAllStudents", user.GetAllStudents).Methods("GET")
-	myRouter.HandleFunc("/getStudentTodos/{id}", user.GetStudentTodos).Methods("GET")
-	myRouter.HandleFunc("/addStudentTodo/{id}", user.AddStudentTodo).Methods("POST")
+	myRouter.HandleFunc("/getAllStudents", todo.GetAllStudents).Methods("GET")
+	myRouter.HandleFunc("/getStudentTodos/{id}", todo.GetStudentTodos).Methods("GET")
+	myRouter.HandleFunc("/addStudentTodo/{id}", todo.AddStudentTodo).Methods("POST")
 	myRouter.HandleFunc("/uploadFile", api.UploadFile).Methods("POST")
 	myRouter.HandleFunc("/downloadFile/{id}", api.ServeFile).Methods("GET")
 	myRouter.HandleFunc("/fileList", api.GetFileList).Methods("GET")
