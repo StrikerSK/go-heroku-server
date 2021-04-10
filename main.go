@@ -27,6 +27,15 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func init() {
+	config.InitializeDatabase()
+	config.InitializeRedis()
+
+	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
+	user.InitAdminUser()
+	user.InitCommonUser()
+}
+
 //Go application entrypoint
 func main() {
 	port := os.Getenv("PORT")
@@ -36,13 +45,7 @@ func main() {
 		port = "5000"
 	}
 
-	config.InitializeDatabase()
-	config.InitializeRedis()
-
-	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &todo.UserNumber{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
-
 	myRouter := mux.NewRouter().StrictSlash(true)
-
 	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	myRouter.HandleFunc("/", hello)
 

@@ -6,9 +6,3 @@ type Todo struct {
 	Description string `json:"description"`
 	Done        bool   `json:"done"`
 }
-
-type UserNumber struct {
-	Id     uint   `json:"id"`
-	Number uint   `json:"userNumber"`
-	Todos  []Todo `json:"todos" gorm:"foreignkey:StudentId"`
-}

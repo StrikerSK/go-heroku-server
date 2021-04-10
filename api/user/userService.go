@@ -9,7 +9,7 @@ import (
 	"go-heroku-server/config"
 )
 
-func GetUserList(w http.ResponseWriter, r *http.Request) {
+func getUserList(w http.ResponseWriter, r *http.Request) {
 
 	var users []User
 	config.DBConnection.Find(&users)
@@ -23,27 +23,26 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func registerNewUser(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
+func registerUser(w http.ResponseWriter, r *http.Request) {
+	userBody := r.Context().Value(userBodyContextKey).(User)
 
-	var newUser User
-	err := decoder.Decode(&newUser)
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+	if err := addUser(userBody); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	} else {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
+}
 
-	if _, err = getUserFromDB(newUser.Username); err != nil {
-		//encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
-		//newUser.Password = string(encryptedPassword)
-		createUser(newUser)
-		w.WriteHeader(http.StatusOK)
+func addUser(userBody User) (err error) {
+	if _, err = getUserByUsername(userBody.Username); err != nil {
+		userBody.decryptPassword()
+		userBody.setRole()
+		createUser(userBody)
 		log.Print("User has been created")
 		return
 	} else {
-		w.WriteHeader(http.StatusBadRequest)
 		log.Print("User exists in database")
 		return
 	}
@@ -54,25 +53,23 @@ func editUser(w http.ResponseWriter, r *http.Request) {
 	var updatedUser User
 	err := json.NewDecoder(r.Body).Decode(&updatedUser)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		log.Print("Decoding issues for user")
+		return
 	}
 
-	if params := r.FormValue("id"); params != "" {
+	userID := r.Context().Value(UserIdContextKey).(uint)
+	persistedUser, err := getUserByID(userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-		var persistedUser User
-
-		config.DBConnection.First(&persistedUser, params)
-		config.DBConnection.Model(&persistedUser).Update(User{Username: updatedUser.Username, FirstName: updatedUser.FirstName, LastName: updatedUser.LastName})
-
-		log.Println("User changed")
-
-	} else {
-
-		var newUser User
-		decoder := json.NewDecoder(r.Body)
-		err = decoder.Decode(&updatedUser)
-		createUser(newUser)
-
+	persistedUser.ID = userID
+	if err = updateUser(persistedUser); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Print("Something went wrong during user update")
+		return
 	}
 }
 
@@ -87,4 +84,32 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	payload, _ := json.Marshal(requestedUser)
 	_, _ = w.Write(payload)
+}
+
+func InitAdminUser() {
+	user := User{
+		Username:  "admin",
+		Password:  "admin",
+		FirstName: "admin",
+		LastName:  "admin",
+		Role:      AdminRole,
+	}
+
+	user.decryptPassword()
+
+	_ = addUser(user)
+}
+
+func InitCommonUser() {
+	user := User{
+		Username:  "tester",
+		Password:  "tester",
+		FirstName: "tester",
+		LastName:  "tester",
+		Role:      UserRole,
+	}
+
+	user.decryptPassword()
+
+	_ = addUser(user)
 }

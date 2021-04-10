@@ -25,16 +25,15 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/Users/kristianhanus/Downloads/r-15-13-expense-summary/public/images/favicon.png"
+									"src": "data/LittleJoda.jpeg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:5000/file/upload",
+							"raw": "{{HOST_URL}}/file/upload",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"upload"
@@ -55,11 +54,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/files",
+							"raw": "{{HOST_URL}}/files",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"files"
 							]
@@ -79,11 +77,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/file/999",
+							"raw": "{{HOST_URL}}/file/999",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"999"
@@ -104,11 +101,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/file/999",
+							"raw": "{{HOST_URL}}/file/999",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"999"
@@ -129,11 +125,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/file/4",
+							"raw": "{{HOST_URL}}/file/4",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"4"
@@ -154,11 +149,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/file/999",
+							"raw": "{{HOST_URL}}/file/999",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"999"
@@ -170,7 +164,7 @@
 			]
 		},
 		{
-			"name": "Files Copy",
+			"name": "Todos",
 			"item": [
 				{
 					"name": "Create Todo",
@@ -193,11 +187,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/todo/add",
+							"raw": "{{HOST_URL}}/todo/add",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"add"
@@ -218,11 +211,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/todos",
+							"raw": "{{HOST_URL}}/todos",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todos"
 							]
@@ -251,11 +243,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/todo/1/done",
+							"raw": "{{HOST_URL}}/todo/1/done",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"1",
@@ -286,11 +277,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5000/todo/1",
+							"raw": "{{HOST_URL}}/todo/1",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"1"
@@ -311,11 +301,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/todo/1",
+							"raw": "{{HOST_URL}}/todo/1",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"1"
@@ -336,11 +325,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/todo/999",
+							"raw": "{{HOST_URL}}/todo/999",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"999"
@@ -361,11 +349,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/todo/6",
+							"raw": "{{HOST_URL}}/todo/6",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"todo",
 								"6"
@@ -386,11 +373,10 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:5000/file/999",
+							"raw": "{{HOST_URL}}/file/999",
 							"host": [
-								"localhost"
+								"{{HOST_URL}}"
 							],
-							"port": "5000",
 							"path": [
 								"file",
 								"999"
@@ -408,7 +394,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"Tester1\",\n\t\"password\": \"123\",\n\t\"firstName\": \"Karel\",\n\t\"lastName\": \"Tester\",\n\t\"address\": {\n        \"street\": \"Tested\",\n\t    \"city\": \"Developed\",\n\t    \"zip\": \"90000\"\n    }\n}",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\",\n\t\"firstName\": \"admin\",\n\t\"lastName\": \"admin\",\n\t\"address\": {\n        \"street\": \"Tested\",\n\t    \"city\": \"Developed\",\n\t    \"zip\": \"90000\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -416,11 +402,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/register",
+					"raw": "{{HOST_URL}}/user/register",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"user",
 						"register"
@@ -436,7 +421,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"tester\",\n\t\"password\": \"123\"\n}",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -444,11 +429,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/login",
+					"raw": "{{HOST_URL}}/user/login",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"user",
 						"login"
@@ -463,11 +447,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:5000/user",
+					"raw": "{{HOST_URL}}/user",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"user"
 					]
@@ -493,7 +476,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"tester\",\n\t\"password\": \"123\"\n}",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -501,11 +484,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/jwt/login",
+					"raw": "{{HOST_URL}}/jwt/login",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"jwt",
 						"login"
@@ -526,11 +508,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:5000/jwt",
+					"raw": "{{HOST_URL}}/jwt",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"jwt"
 					]
@@ -556,11 +537,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/welcome",
+					"raw": "{{HOST_URL}}/user/welcome",
 					"host": [
-						"localhost"
+						"{{HOST_URL}}"
 					],
-					"port": "5000",
 					"path": [
 						"user",
 						"welcome"

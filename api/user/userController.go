@@ -2,13 +2,18 @@ package user
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"os/user"
 )
 
-const UserIdContextKey = "user_id"
+const (
+	UserIdContextKey   = "user_id"
+	userBodyContextKey = "user_body"
+)
 
 func EnrichRouterWithUser(router *mux.Router) {
 
@@ -16,20 +21,20 @@ func EnrichRouterWithUser(router *mux.Router) {
 
 	userSubroute := router.PathPrefix("/user").Subrouter()
 	userSubroute.HandleFunc("/login", login).Methods("POST")
-	userSubroute.HandleFunc("/register", registerNewUser).Methods("POST")
+	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(registerUser))).Methods("POST")
 
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(editUser))).Methods("PUT")
+	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
 	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(getUser))).Methods("GET")
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
 	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
-	jwtSubroute.HandleFunc("/register", registerNewUser).Methods("POST")
+	jwtSubroute.HandleFunc("/register", registerUser).Methods("POST")
 
-	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(editUser))).Methods("PUT")
+	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
 	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
-	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(GetUserList))).Methods("GET")
+	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(getUserList))).Methods("GET")
 }
 
 func verifyCookieSession(next http.Handler) http.Handler {
@@ -79,7 +84,22 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "user_id", userClaim.Id)
+		ctx := context.WithValue(r.Context(), UserIdContextKey, userClaim.Id)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func resolveUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var user User
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Print(err.Error())
+			return
+		}
+		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
