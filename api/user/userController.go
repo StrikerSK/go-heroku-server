@@ -23,8 +23,8 @@ func UserEnrichRouter(router *mux.Router) {
 	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
 	jwtSubroute.HandleFunc("/register", registerNewUser).Methods("POST")
 
-	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(editUser))).Methods("PUT")
-	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
+	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(editUser))).Methods("PUT")
+	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
 	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(GetUserList))).Methods("GET")
@@ -65,7 +65,7 @@ func verifyCookieSession(next http.Handler) http.Handler {
 	})
 }
 
-func verifyJwtToken(next http.Handler) http.Handler {
+func VerifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {

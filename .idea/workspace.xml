@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Apply context and return responses">
-      <change beforePath="$PROJECT_DIR$/api/user/userCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userCookies.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userJWT.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userJWT.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="File processing with user">
+      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,11 +197,11 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/files" />
       <recent name="$PROJECT_DIR$/api/todo" />
       <recent name="$PROJECT_DIR$/api" />
       <recent name="$PROJECT_DIR$/api/user" />
       <recent name="$PROJECT_DIR$/api/userAuthentication" />
-      <recent name="$PROJECT_DIR$/config" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
@@ -301,31 +298,13 @@
     <MESSAGE value="Add middleware" />
     <MESSAGE value="Apply user middleware" />
     <MESSAGE value="Apply context and return responses" />
-    <option name="LAST_COMMIT_MESSAGE" value="Apply context and return responses" />
+    <MESSAGE value="File processing with user" />
+    <option name="LAST_COMMIT_MESSAGE" value="File processing with user" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user-file.go</url>
-          <line>53</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user-file.go</url>
-          <line>65</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user-file.go</url>
-          <line>111</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="GoApplicationRunConfiguration">
         <watch expression="fileBytes" />
