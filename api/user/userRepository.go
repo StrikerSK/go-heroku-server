@@ -8,7 +8,7 @@ func createUser(newUser User) {
 }
 
 //Function retrieves user and flag if exists can be registered to database
-func getUserFromDB(username string) (user User, userExist bool) {
-	userExist = config.DBConnection.Where("username = ?", username).First(&user).RecordNotFound()
-	return user, !userExist
+func getUserFromDB(username string) (user User, err error) {
+	err = config.DBConnection.Where("username = ?", username).First(&user).Error
+	return
 }

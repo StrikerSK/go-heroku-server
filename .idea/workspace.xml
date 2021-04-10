@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add todos">
-      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userJWT.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userJWT.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -313,7 +314,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/api/todo/todoService.go</url>
-          <line>79</line>
+          <line>72</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
       </breakpoints>

@@ -35,15 +35,16 @@ func registerNewUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, userExists := getUserFromDB(newUser.Username)
-	if userExists {
+	if _, err = getUserFromDB(newUser.Username); err != nil {
 		//encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 		//newUser.Password = string(encryptedPassword)
 		createUser(newUser)
 		w.WriteHeader(http.StatusOK)
+		log.Print("User has been created")
 		return
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
+		log.Print("User exists in database")
 		return
 	}
 }

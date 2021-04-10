@@ -28,15 +28,15 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	var serverToken Token
 
-	err := json.NewDecoder(r.Body).Decode(&credentials)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	persistedUser, userExists := getUserFromDB(credentials.Username)
-	if !userExists {
+	persistedUser, err := getUserFromDB(credentials.Username)
+	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		log.Print(err.Error())
 		return
 	}
 
