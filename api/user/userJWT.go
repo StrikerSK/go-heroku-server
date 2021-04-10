@@ -25,32 +25,32 @@ func DecodeToken(receivedToken string) (*jwt.Token, error) {
 //Function verifies user if it exists and has valid login credentials
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 
-	var loginCredentials Credentials
+	var credentials Credentials
 	var serverToken Token
 
-	err := json.NewDecoder(r.Body).Decode(&loginCredentials)
+	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	user, userExists := getUserFromDB(loginCredentials.Username)
+	persistedUser, userExists := getUserFromDB(credentials.Username)
 	if !userExists {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	if loginCredentials.Password == user.Password {
+	if credentials.Password == persistedUser.Password {
 
-		serverToken = createToken(user)
+		serverToken = createToken(persistedUser)
 		w.Header().Set("Content-Type", "application/json")
 		payload, _ := json.Marshal(serverToken)
-		log.Printf("User %s logged successfully!", user.Username)
+		log.Printf("User %s logged successfully!", persistedUser.Username)
 		_, _ = w.Write(payload)
 
 	} else {
 
-		log.Printf("User %s not logged successfully!", user.Username)
+		log.Printf("User %s not logged successfully!", persistedUser.Username)
 		http.Error(w, "Invalid password", http.StatusUnauthorized)
 
 	}
@@ -116,7 +116,7 @@ func ParseToken(signedToken string) (claims *CustomClaims, err error) {
 
 	claims, ok := token.Claims.(*CustomClaims)
 	if !ok {
-		err = errors.New("Couldn't parse claims")
+		err = errors.New("couldn't parse claims")
 		return
 	}
 

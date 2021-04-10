@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Apply user middleware" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Apply context and return responses">
+      <change beforePath="$PROJECT_DIR$/api/user/userCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userCookies.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userJWT.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userJWT.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -169,6 +174,7 @@
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="postgresql" />
@@ -294,7 +300,8 @@
     <MESSAGE value="Adjust codebase" />
     <MESSAGE value="Add middleware" />
     <MESSAGE value="Apply user middleware" />
-    <option name="LAST_COMMIT_MESSAGE" value="Apply user middleware" />
+    <MESSAGE value="Apply context and return responses" />
+    <option name="LAST_COMMIT_MESSAGE" value="Apply context and return responses" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -313,24 +320,9 @@
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
-          <line>129</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
-          <line>137</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
-          <line>143</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user/userJWT.go</url>
-          <line>148</line>
-          <option name="timeStamp" value="20" />
+          <url>file://$PROJECT_DIR$/api/user-file.go</url>
+          <line>111</line>
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

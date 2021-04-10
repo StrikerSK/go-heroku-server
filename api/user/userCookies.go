@@ -10,10 +10,10 @@ import (
 
 const tokenName = "session_token"
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	var creds Credentials
+func login(w http.ResponseWriter, r *http.Request) {
+	var credentials Credentials
 	// Get the JSON body and decode into credentials
-	err := json.NewDecoder(r.Body).Decode(&creds)
+	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
 		// If the structure of the body is wrong, return an HTTP error
 		w.WriteHeader(http.StatusBadRequest)
@@ -21,12 +21,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the expected password from our in memory map
-	loggedUser := readUser(creds.Username)
+	loggedUser, _ := getUserFromDB(credentials.Username)
 
 	// If a password exists for the given user
 	// AND, if it is the same as the password we received, the we can move ahead
 	// if NOT, then we return an "Unauthorized" status
-	if loggedUser.Password != creds.Password {
+	if loggedUser.Password != credentials.Password {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

@@ -110,7 +110,12 @@ func GetFileList(w http.ResponseWriter, r *http.Request) {
 	receivedToken := r.Header.Get("Authorization")
 
 	if receivedToken != "null" {
-		userId, _ := user.GetIdFromToken(receivedToken)
+		userId, err := user.ParseToken(receivedToken)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		config.DBConnection.Where("user_id = ?", userId).Find(&files)
 		for index, file := range files {
 			fileName := file.FileName

@@ -38,7 +38,7 @@ func main() {
 	config.InitializeDatabase()
 	config.InitializeRedis()
 
-	config.DBConnection.AutoMigrate(&user.User{}, &types.Address{}, &todo.UserNumber{}, &todo.Todo{}, &api.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
+	config.DBConnection.AutoMigrate(&types.Address{}, &todo.UserNumber{}, &todo.Todo{}, &files.File{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
 
 	myRouter := mux.NewRouter().StrictSlash(true)
 

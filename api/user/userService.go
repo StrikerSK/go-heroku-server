@@ -23,7 +23,7 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
+func registerNewUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	var newUser User
@@ -35,15 +35,20 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userExists(newUser.Username) {
+	_, userExists := getUserFromDB(newUser.Username)
+	if userExists {
+		//encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+		//newUser.Password = string(encryptedPassword)
 		createUser(newUser)
 		w.WriteHeader(http.StatusOK)
+		return
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 }
 
-func EditUser(w http.ResponseWriter, r *http.Request) {
+func editUser(w http.ResponseWriter, r *http.Request) {
 
 	var updatedUser User
 	err := json.NewDecoder(r.Body).Decode(&updatedUser)
@@ -70,30 +75,14 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getUserFromDB(username string) (user User, userExist bool) {
-	userExist = config.DBConnection.Where("username = ?", username).First(&user).RecordNotFound()
-	return user, !userExist
-}
-
-//Function verifies user if it exists and has valid login credentials
-func GetUserDetail(w http.ResponseWriter, r *http.Request) {
-	userId := receiveCookie(r)
-	getUser(userId, w)
-}
-
-func GetUserDetailFromJWT(w http.ResponseWriter, r *http.Request) {
-	claims, err := ParseToken(r.Header.Get("Authorization"))
-	if err != nil {
-		log.Println(err.Error())
+func getUser(w http.ResponseWriter, r *http.Request) {
+	claimId := r.Context().Value("user_id")
+	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	getUser(claims.Id, w)
-}
-
-func getUser(id interface{}, w http.ResponseWriter) {
 	var requestedUser User
-	config.DBConnection.Where("id = ?", id).Find(&requestedUser).Find(&requestedUser.Address)
+	config.DBConnection.Where("id = ?", claimId).Find(&requestedUser).Find(&requestedUser.Address)
 	w.Header().Set("Content-Type", "application/json")
 	payload, _ := json.Marshal(requestedUser)
 	_, _ = w.Write(payload)

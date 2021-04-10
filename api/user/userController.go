@@ -1,26 +1,30 @@
 package user
 
 import (
+	"context"
 	"github.com/gorilla/mux"
 	"go-heroku-server/config"
 	"net/http"
+	"os/user"
 )
 
 func UserEnrichRouter(router *mux.Router) {
 
-	userSubroute := router.PathPrefix("/user").Subrouter()
-	userSubroute.HandleFunc("/login", Login).Methods("POST")
-	userSubroute.HandleFunc("/register", RegisterNewUser).Methods("POST")
+	config.DBConnection.AutoMigrate(&user.User{})
 
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(EditUser))).Methods("PUT")
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(GetUserDetail))).Methods("GET")
+	userSubroute := router.PathPrefix("/user").Subrouter()
+	userSubroute.HandleFunc("/login", login).Methods("POST")
+	userSubroute.HandleFunc("/register", registerNewUser).Methods("POST")
+
+	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(editUser))).Methods("PUT")
+	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(getUser))).Methods("GET")
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
 	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
-	jwtSubroute.HandleFunc("/register", RegisterNewUser).Methods("POST")
+	jwtSubroute.HandleFunc("/register", registerNewUser).Methods("POST")
 
-	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(EditUser))).Methods("PUT")
-	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(GetUserDetailFromJWT))).Methods("GET")
+	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(editUser))).Methods("PUT")
+	jwtSubroute.Handle("/", verifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
 	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(GetUserList))).Methods("GET")
@@ -55,7 +59,9 @@ func verifyCookieSession(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		userId := receiveCookie(r)
+		ctx := context.WithValue(r.Context(), "user_id", userId)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
@@ -63,10 +69,15 @@ func verifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {
-			// If the cookie is not set, return an unauthorized status
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		next.ServeHTTP(w, r)
+		userClaim, err := ParseToken(token)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		ctx := context.WithValue(r.Context(), "user_id", userClaim.Id)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
