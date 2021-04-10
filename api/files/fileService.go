@@ -41,7 +41,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	newFile.FileType = http.DetectContentType(fileBytes)
 	newFile.CreateDate = time.Now()
 
-	claimId := r.Context().Value("user_id")
+	claimId := r.Context().Value(user.UserIdContextKey)
 	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -53,7 +53,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 //Function provides requested file to the client
 func readFile(w http.ResponseWriter, r *http.Request) {
 	fileID := r.Context().Value("file_ID").(int64)
-	claimId := r.Context().Value("user_id")
+	claimId := r.Context().Value(user.UserIdContextKey)
 	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -80,7 +80,7 @@ func readFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFileList(w http.ResponseWriter, r *http.Request) {
-	claimId := r.Context().Value("user_id")
+	claimId := r.Context().Value(user.UserIdContextKey)
 	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -103,7 +103,7 @@ func getFileList(w http.ResponseWriter, r *http.Request) {
 //Function provides requested file to the client
 func removeFile(w http.ResponseWriter, r *http.Request) {
 	fileID := r.Context().Value("file_ID").(int64)
-	claimId := r.Context().Value("user_id")
+	claimId := r.Context().Value(user.UserIdContextKey)
 	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return

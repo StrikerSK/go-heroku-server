@@ -8,7 +8,9 @@ import (
 	"os/user"
 )
 
-func UserEnrichRouter(router *mux.Router) {
+const UserIdContextKey = "user_id"
+
+func EnrichRouterWithUser(router *mux.Router) {
 
 	config.DBConnection.AutoMigrate(&user.User{})
 
@@ -60,7 +62,7 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		}
 
 		userId := receiveCookie(r)
-		ctx := context.WithValue(r.Context(), "user_id", userId)
+		ctx := context.WithValue(r.Context(), UserIdContextKey, userId)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

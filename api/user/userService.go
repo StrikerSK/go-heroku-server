@@ -76,7 +76,7 @@ func editUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
-	claimId := r.Context().Value("user_id")
+	claimId := r.Context().Value(UserIdContextKey)
 	if claimId == nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
