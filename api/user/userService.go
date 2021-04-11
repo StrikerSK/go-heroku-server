@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"go-heroku-server/api/types"
 	"log"
 	"net/http"
 
@@ -37,7 +38,7 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 
 func addUser(userBody User) (err error) {
 	if _, err = getUserByUsername(userBody.Username); err != nil {
-		userBody.decryptPassword()
+		//userBody.decryptPassword()
 		userBody.setRole()
 		createUser(userBody)
 		log.Print("User has been created")
@@ -93,9 +94,14 @@ func InitAdminUser() {
 		FirstName: "admin",
 		LastName:  "admin",
 		Role:      AdminRole,
+		Address: types.Address{
+			Street: "Admin",
+			City:   "Admin",
+			Zip:    "Admin",
+		},
 	}
 
-	user.decryptPassword()
+	//user.decryptPassword()
 
 	_ = addUser(user)
 }
@@ -107,9 +113,14 @@ func InitCommonUser() {
 		FirstName: "tester",
 		LastName:  "tester",
 		Role:      UserRole,
+		Address: types.Address{
+			Street: "Tester",
+			City:   "Tester",
+			Zip:    "Tester",
+		},
 	}
 
-	user.decryptPassword()
+	//user.decryptPassword()
 
 	_ = addUser(user)
 }

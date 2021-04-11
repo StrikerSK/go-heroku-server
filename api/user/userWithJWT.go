@@ -29,7 +29,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = persistedUser.validatePassword(credentials.Password); err != nil {
+	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
+	if !persistedUser.validatePassword(credentials.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	} else {

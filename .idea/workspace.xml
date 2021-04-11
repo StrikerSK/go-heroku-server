@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add encryption and refactoring">
-      <change beforePath="$PROJECT_DIR$/templates/welcome-page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/welcome-page.html" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement ErrorRequest to user">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +80,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="request-error-type" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -178,9 +179,8 @@
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
-    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
-    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
+    <property name="configurable..is.expanded" value="false" />
+    <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.import.settings.migrated" value="true" />
@@ -188,7 +188,7 @@
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.github.ui.GithubSettingsConfigurable" />
+    <property name="settings.editor.selected.configurable" value="go.sdk" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -208,6 +208,16 @@
     <configuration name="Go build" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="go-heroku-server" />
       <working_directory value="$PROJECT_DIR$/" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        </ENTRIES>
+      </EXTENSION>
       <kind value="DIRECTORY" />
       <filePath value="$PROJECT_DIR$/main.go" />
       <package value="go-heroku-server" />
@@ -244,6 +254,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.Run Application" />
+        <item itemvalue="Go Build.Go build" />
+        <item itemvalue="Go Build.Go build" />
         <item itemvalue="Go Build.Go build" />
       </list>
     </recent_temporary>
@@ -312,9 +324,19 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/todo/todoService.go</url>
-          <line>72</line>
-          <option name="timeStamp" value="48" />
+          <url>file://$PROJECT_DIR$/api/user-file.go</url>
+          <line>54</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/user-file.go</url>
+          <line>66</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
+          <line>1189</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

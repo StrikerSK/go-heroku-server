@@ -33,7 +33,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 	// If a password exists for the given user
 	// AND, if it is the same as the password we received, the we can move ahead
 	// if NOT, then we return an "Unauthorized" status
-	if err = persistedUser.validatePassword(credentials.Password); err != nil {
+	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
+	if !persistedUser.validatePassword(credentials.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -57,13 +58,4 @@ func login(w http.ResponseWriter, r *http.Request) {
 		Value:   sessionToken,
 		Expires: time.Now().Add(120 * time.Second),
 	})
-}
-
-func receiveCookie(r *http.Request) interface{} {
-	c, _ := r.Cookie(tokenName)
-	sessionToken := c.Value
-
-	// We then get the name of the user from our cache, where we set the session token
-	response, _ := config.Cache.Do("GET", sessionToken)
-	return response
 }

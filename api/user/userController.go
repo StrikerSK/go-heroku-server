@@ -28,7 +28,6 @@ func EnrichRouterWithUser(router *mux.Router) {
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
 	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
-	jwtSubroute.HandleFunc("/register", registerUser).Methods("POST")
 
 	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
 	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
@@ -66,8 +65,7 @@ func verifyCookieSession(next http.Handler) http.Handler {
 			return
 		}
 
-		userId := receiveCookie(r)
-		ctx := context.WithValue(r.Context(), UserIdContextKey, userId)
+		ctx := context.WithValue(r.Context(), UserIdContextKey, response)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
