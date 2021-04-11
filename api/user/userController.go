@@ -20,7 +20,7 @@ func EnrichRouterWithUser(router *mux.Router) {
 	config.DBConnection.AutoMigrate(&user.User{})
 
 	userSubroute := router.PathPrefix("/user").Subrouter()
-	userSubroute.HandleFunc("/login", login).Methods("POST")
+	userSubroute.HandleFunc("/login", controllerLogin).Methods("POST")
 	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(registerUser))).Methods("POST")
 
 	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
@@ -100,4 +100,27 @@ func resolveUser(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func controllerLogin(w http.ResponseWriter, r *http.Request) {
+	var credentials Credentials
+	// Get the JSON body and decode into credentials
+	err := json.NewDecoder(r.Body).Decode(&credentials)
+	if err != nil {
+		// If the structure of the body is wrong, return an HTTP error
+		w.WriteHeader(http.StatusBadRequest)
+		log.Print(err.Error())
+		return
+	}
+
+	cookies, outputError := login(credentials)
+	if outputError != nil {
+		w.WriteHeader(outputError.StatusCode)
+		log.Print(outputError.Err)
+		return
+	}
+
+	// Finally, we set the client cookie for "session_token" as the session token we just generated
+	// we also set an expiry time of 120 seconds, the same as the cache
+	http.SetCookie(w, cookies)
 }
