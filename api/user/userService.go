@@ -1,8 +1,9 @@
 package user
 
 import (
-	"encoding/json"
+	"errors"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"go-heroku-server/api/src"
 	"go-heroku-server/api/types"
 	"log"
 	"net/http"
@@ -10,81 +11,62 @@ import (
 	"go-heroku-server/config"
 )
 
-func getUserList(w http.ResponseWriter, r *http.Request) {
-
-	var users []User
+func getUserList() (users []User) {
 	config.DBConnection.Find(&users)
 	for index, currentUser := range users {
 		config.DBConnection.Model(&currentUser).Related(&currentUser.Address, "Address")
 		users[index] = currentUser
 	}
-
-	_ = json.NewEncoder(w).Encode(users)
-	log.Println("Retrieved list of users")
-
+	return
 }
 
-func registerUser(w http.ResponseWriter, r *http.Request) {
-	userBody := r.Context().Value(userBodyContextKey).(User)
+func addUser(userBody User) *src.RequestError {
+	var requestError src.RequestError
 
-	if err := addUser(userBody); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	} else {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-}
-
-func addUser(userBody User) (err error) {
-	if _, err = getUserByUsername(userBody.Username); err != nil {
+	if _, err := getUserByUsername(userBody.Username); err != nil {
 		//userBody.decryptPassword()
 		userBody.setRole()
 		createUser(userBody)
 		log.Print("User has been created")
-		return
+		return nil
 	} else {
 		log.Print("User exists in database")
-		return
+		requestError.Err = errors.New("user exists in database")
+		requestError.StatusCode = http.StatusConflict
+		return &requestError
 	}
 }
 
-func editUser(w http.ResponseWriter, r *http.Request) {
+func editUser(updatedUser User) *src.RequestError {
+	var requestError src.RequestError
 
-	var updatedUser User
-	err := json.NewDecoder(r.Body).Decode(&updatedUser)
+	persistedUser, err := getUserByID(updatedUser.ID)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print("Decoding issues for user")
-		return
+		requestError.Err = errors.New("user not found")
+		requestError.StatusCode = http.StatusNotFound
+		return &requestError
 	}
 
-	userID := r.Context().Value(UserIdContextKey).(uint)
-	persistedUser, err := getUserByID(userID)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	persistedUser.ID = userID
+	persistedUser.ID = updatedUser.ID
 	if err = updateUser(persistedUser); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print("Something went wrong during user update")
-		return
+		requestError.Err = errors.New("user update failed")
+		requestError.StatusCode = http.StatusBadRequest
+		return &requestError
 	}
+
+	return nil
 }
 
-func getUser(w http.ResponseWriter, r *http.Request) {
-	claimId := r.Context().Value(UserIdContextKey)
-	if claimId == nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
+func getUser(userID interface{}) (*User, *src.RequestError) {
+	var requestError src.RequestError
+	requestedUser, err := getUserByID(userID)
+	if err != nil {
+		requestError.Err = err
+		requestError.StatusCode = http.StatusNotFound
+		log.Print(err)
+		return nil, &requestError
 	}
-	var requestedUser User
-	config.DBConnection.Where("id = ?", claimId).Find(&requestedUser).Find(&requestedUser.Address)
-	w.Header().Set("Content-Type", "application/json")
-	payload, _ := json.Marshal(requestedUser)
-	_, _ = w.Write(payload)
+	return &requestedUser, nil
 }
 
 func InitAdminUser() {

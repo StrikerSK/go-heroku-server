@@ -21,19 +21,19 @@ func EnrichRouterWithUser(router *mux.Router) {
 
 	userSubroute := router.PathPrefix("/user").Subrouter()
 	userSubroute.HandleFunc("/login", controllerLogin).Methods("POST")
-	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(registerUser))).Methods("POST")
+	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods("POST")
 
-	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(getUser))).Methods("GET")
+	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
+	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUser))).Methods("GET")
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
 	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
 
-	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(editUser)))).Methods("PUT")
-	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(getUser))).Methods("GET")
+	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
+	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods("GET")
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
-	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(getUserList))).Methods("GET")
+	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUserList))).Methods("GET")
 }
 
 func verifyCookieSession(next http.Handler) http.Handler {
@@ -105,8 +105,7 @@ func resolveUser(next http.Handler) http.Handler {
 func controllerLogin(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	// Get the JSON body and decode into credentials
-	err := json.NewDecoder(r.Body).Decode(&credentials)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		// If the structure of the body is wrong, return an HTTP error
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err.Error())
@@ -123,4 +122,46 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 	// Finally, we set the client cookie for "session_token" as the session token we just generated
 	// we also set an expiry time of 120 seconds, the same as the cache
 	http.SetCookie(w, cookies)
+}
+
+func controllerGetUserList(w http.ResponseWriter, r *http.Request) {
+	_ = json.NewEncoder(w).Encode(getUserList())
+	log.Println("Retrieved list of users")
+}
+
+func controllerRegisterUser(w http.ResponseWriter, r *http.Request) {
+	userBody := r.Context().Value(userBodyContextKey).(User)
+
+	if requestError := addUser(userBody); requestError != nil {
+		w.WriteHeader(requestError.StatusCode)
+		return
+	} else {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+}
+
+func controllerEditUser(w http.ResponseWriter, r *http.Request) {
+	userBody := r.Context().Value(userBodyContextKey).(User)
+	if requestError := editUser(userBody); requestError != nil {
+		w.WriteHeader(requestError.StatusCode)
+		log.Print(requestError.Err)
+		return
+	} else {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+}
+
+func controllerGetUser(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(UserIdContextKey)
+	userEntity, requestError := getUser(userID)
+	if requestError != nil {
+		w.WriteHeader(requestError.StatusCode)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		payload, _ := json.Marshal(userEntity)
+		_, _ = w.Write(payload)
+	}
 }
