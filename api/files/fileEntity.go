@@ -3,7 +3,7 @@ package files
 import "time"
 
 type File struct {
-	Id         int64     `json:"id"`
+	Id         uint      `json:"id"`
 	UserID     uint      `json:"-"`
 	FileName   string    `json:"fileName"`
 	FileType   string    `json:"fileType"`

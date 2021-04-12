@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement ErrorRequest to todos">
-      <change beforePath="$PROJECT_DIR$/api/todo/todoController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement ErrorRequest to files">
+      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,7 +318,8 @@
     <MESSAGE value="Revert bcrypting" />
     <MESSAGE value="Implement ErrorRequest to user" />
     <MESSAGE value="Implement ErrorRequest to todos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement ErrorRequest to todos" />
+    <MESSAGE value="Implement ErrorRequest to files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement ErrorRequest to files" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
