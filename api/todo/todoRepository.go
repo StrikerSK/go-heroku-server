@@ -12,6 +12,11 @@ func readTodo(todoID uint) (todo Todo, err error) {
 	return
 }
 
+func readAll(userID uint) (todos []Todo, err error) {
+	err = config.DBConnection.Where("user_id = ?", userID).Find(&todos).Error
+	return
+}
+
 func updateTodo(updatedTodo Todo) (err error) {
 	err = config.DBConnection.Model(&Todo{}).Update(&updatedTodo).Error
 	return

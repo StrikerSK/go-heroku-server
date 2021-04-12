@@ -1,93 +1,107 @@
 package todo
 
 import (
-	"encoding/json"
+	"errors"
+	"go-heroku-server/api/src"
 	"go-heroku-server/api/user"
-	"go-heroku-server/config"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-func findAllTodos(w http.ResponseWriter, r *http.Request) {
+func findAllTodos(userID uint) ([]Todo, *src.RequestError) {
 	var todos []Todo
-	claimId := r.Context().Value(user.UserIdContextKey).(uint)
-	config.DBConnection.Where("user_id = ?", claimId).Find(&todos)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(todos)
-}
-
-func getTodo(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(user.UserIdContextKey)
-	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
-
-	if persistedTodo, err := readTodo(todoID); err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(todoID)))
-		return
-	} else {
-		if persistedTodo.UserID != userID {
-			w.WriteHeader(http.StatusForbidden)
-			return
+	todos, err := readAll(userID)
+	if err != nil {
+		return nil, &src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
 		}
-
-		w.Header().Set("Content-Type", "application/json")
-		payload, _ := json.Marshal(persistedTodo)
-		_, _ = w.Write(payload)
 	}
+
+	return todos, nil
 }
 
-func addTodo(w http.ResponseWriter, r *http.Request) {
-	claimId := r.Context().Value(user.UserIdContextKey).(uint)
-	todo := r.Context().Value(todoBodyContextKey).(Todo)
-	todo.UserID = claimId
+func getTodo(todoID uint, userID uint) (*Todo, *src.RequestError) {
+	persistedTodo, err := readTodo(todoID)
+	if err != nil {
+		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(todoID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusNotFound,
+			Err:        err,
+		}
+	}
+
+	if persistedTodo.UserID != userID {
+		errorOutput := errors.New("todo access is denied")
+		log.Printf(errorOutput.Error() + " for id: " + strconv.Itoa(int(todoID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        errorOutput,
+		}
+	}
+
+	return &persistedTodo, nil
+}
+
+func addTodo(userID uint, todo Todo) {
+	todo.UserID = userID
 	createTodo(todo)
 }
 
-func removeTodo(w http.ResponseWriter, r *http.Request) {
-	fileID := uint(r.Context().Value(todoIdContextKey).(int64))
-	claimId := r.Context().Value(user.UserIdContextKey)
-
-	if persistedFile, err := readTodo(fileID); err != nil {
-		w.WriteHeader(http.StatusOK)
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
-		return
-	} else {
-		if persistedFile.UserID != claimId {
-			w.WriteHeader(http.StatusForbidden)
-			return
-		}
-
-		log.Printf("Deleted todo with ID: %d", persistedFile.Id)
-		_, _ = deleteTodo(persistedFile.Id)
+func removeTodo(userID, todoID uint) *src.RequestError {
+	persistedFile, err := readTodo(todoID)
+	if err != nil {
+		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(todoID)))
+		return nil
 	}
+
+	if persistedFile.UserID != userID {
+		return &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        errors.New("logged user cannot remove todo"),
+		}
+	}
+
+	log.Printf("Deleted todo with ID: %d", persistedFile.Id)
+	if _, err = deleteTodo(persistedFile.Id); err != nil {
+		log.Print(err)
+		return nil
+	}
+
+	return nil
 }
 
-func editTodo(w http.ResponseWriter, r *http.Request) {
-	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
-	todo := r.Context().Value(todoBodyContextKey).(Todo)
-
-	if persistedTodo, err := readTodo(todoID); err != nil {
-		w.WriteHeader(http.StatusNotFound)
+func editTodo(userID, todoID uint, updatedTodo Todo) *src.RequestError {
+	persistedTodo, err := readTodo(todoID)
+	if err != nil {
 		log.Print(err)
-		return
-	} else {
-		if persistedTodo.UserID != userID {
-			w.WriteHeader(http.StatusForbidden)
-			log.Printf("user were accessing unowned todo")
-			return
+		return &src.RequestError{
+			StatusCode: http.StatusNotFound,
+			Err:        err,
 		}
 	}
 
-	todo.Id = todoID
-	if err := updateTodo(todo); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
-		return
+	if persistedTodo.UserID != userID {
+		outputError := errors.New("user were accessing unowned todo")
+		log.Print(outputError)
+		return &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        outputError,
+		}
 	}
+
+	updatedTodo.Id = todoID
+	if err = updateTodo(updatedTodo); err != nil {
+		log.Print(err)
+		return &src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
+		}
+	}
+
+	return nil
 }
 
 func markDone(w http.ResponseWriter, r *http.Request) {
