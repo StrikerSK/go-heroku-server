@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement ErrorRequest to files">
-      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/locationEntity.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,11 +201,11 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/location" />
       <recent name="$PROJECT_DIR$/test/data" />
       <recent name="$PROJECT_DIR$/api/user/cookie" />
       <recent name="$PROJECT_DIR$/api/files" />
       <recent name="$PROJECT_DIR$/api/todo" />
-      <recent name="$PROJECT_DIR$/api" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">

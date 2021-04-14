@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 
-	"go-heroku-server/api"
 	"go-heroku-server/api/location"
 	"go-heroku-server/api/types"
 	"go-heroku-server/api/user"
@@ -31,7 +30,7 @@ func init() {
 	config.InitializeDatabase()
 	config.InitializeRedis()
 
-	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &api.Location{}, &api.LocationImage{}, &location.RestaurantLocation{})
+	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.Location{}, &location.LocationImage{}, &location.RestaurantLocation{})
 	user.InitAdminUser()
 	user.InitCommonUser()
 }
@@ -52,10 +51,8 @@ func main() {
 	user.EnrichRouterWithUser(myRouter)
 	files.EnrichRouteWithFile(myRouter)
 	todo.EnrichRouteWithTodo(myRouter)
+	location.EnrichRouteWithLocation(myRouter)
 
-	myRouter.HandleFunc("/getLocations", api.GetLocations).Methods("GET")
-	myRouter.HandleFunc("/getLocationImage/{id}", api.GetLocationImage).Methods("GET")
-	myRouter.HandleFunc("/saveLocation", api.AddLocation).Methods("POST")
 	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods("GET")
 	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods("POST")
 
