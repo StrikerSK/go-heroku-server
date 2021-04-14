@@ -116,6 +116,17 @@ func ResolveUserContext(context context.Context) (uint, src.IResponse) {
 	return value, nil
 }
 
+// LoginUser godoc
+// @Summary Login user
+// @Description Login user
+// @Tags user
+// @Accept json
+// @Produce  json
+// @Param Credentials body user.Credentials true "Credentials of logged user"
+// @Success 200 {object} user.Token "Token generate for user's session"
+// @Failure 401 {none} string "Credentials are not valid"
+// @Failure 404 {string} string "User does not exists"
+// @Router /user [post]
 func controllerLogin(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	// Get the JSON body and decode into credentials
@@ -138,11 +149,31 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookies)
 }
 
+// GetUsers godoc
+// @Summary Read all users
+// @Description Retrieving all available users
+// @Tags user
+// @Accept json
+// @Produce  json
+// @Param Authorization header string true "JWT Token provided from login"
+// @Success 200 {array} user.User "List of all stored users in application"
+// @Failure 401 {string} string "User is not authorized"
+// @Router /users [get]
 func controllerGetUserList(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(getUserList())
 	log.Println("Retrieved list of users")
 }
 
+// RegisterUser godoc
+// @Summary Create new user
+// @Description Endpoint to provide registration option
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body User true "Body of registered user"
+// @Success 201 {object} string "User has been store to database successfully"
+// @Failure 409 {object} src.ResponseObject "User with provided username already exists in database"
+// @Router /user/register [post]
 func controllerRegisterUser(w http.ResponseWriter, r *http.Request) {
 	userBody := r.Context().Value(userBodyContextKey).(User)
 
@@ -150,7 +181,7 @@ func controllerRegisterUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(requestError.StatusCode)
 		return
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusCreated)
 		return
 	}
 }
@@ -167,6 +198,16 @@ func controllerEditUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetUserDetail godoc
+// @Summary Get user details
+// @Description Detail of currently logged user
+// @Tags user
+// @Produce  json
+// @Param Authorization header string true "JWT Token provided from login"
+// @Success 200 {object} user.User "Details of currently logged user"
+// @Failure 401 {none} string "User is not authorized"
+// @Failure 404 {string} string "User does not exists"
+// @Router /user [get]
 func controllerGetUser(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(userIdContextKey)
 	userEntity, requestError := getUser(userID)

@@ -5,6 +5,7 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go-heroku-server/api/files"
 	"go-heroku-server/api/todo"
 	"html/template"
@@ -15,6 +16,8 @@ import (
 	"go-heroku-server/api/types"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+
+	_ "go-heroku-server/docs"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +38,15 @@ func init() {
 	user.InitCommonUser()
 }
 
-//Go application entrypoint
+// @title Monolithic Application
+// @version 1.0
+// @description Application imitating some popular applications
+// @contact.name Karel Testing
+// @contact.email soberkoder@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:5000
+// @BasePath /
 func main() {
 	port := os.Getenv("PORT")
 
@@ -55,6 +66,8 @@ func main() {
 
 	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods("GET")
 	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods("POST")
+
+	myRouter.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	fmt.Println("Listening")
 

@@ -11,12 +11,13 @@ const (
 	AdminRole = "admin"
 )
 
+// Representation of the User model
 type User struct {
 	ID        uint          `json:"-"`
-	Username  string        `json:"username"`
-	Password  string        `json:"password"`
-	FirstName string        `json:"firstName"`
-	LastName  string        `json:"lastName"`
+	Username  string        `json:"username" example:"JohnyDoe"`
+	Password  string        `json:"password"` example:"Custom"
+	FirstName string        `json:"firstName" example:"John"`
+	LastName  string        `json:"lastName" example:"Doe"`
 	Role      string        `json:"-" gorm:"default:user"`
 	Address   types.Address `json:"address"`
 }
@@ -44,11 +45,12 @@ func (user *User) setRole() {
 	}
 }
 
+// Login payload for user
 type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" example:"JohnyDoe"`
+	Password string `json:"password" example:"SecretPassword"`
 }
 
 type Token struct {
-	Token string `json:"token"`
+	Token string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6MiwiVXNlcm5hbWUiOiJ0ZXN0ZXIiLCJSb2xlIjoidXNlciIsImV4cCI6MTYxODI2MzM5Mn0.sq5SMVq4Q2UqhKUXglDc8KJV0OlRq0N_GTbJmn0jzVY"`
 }
