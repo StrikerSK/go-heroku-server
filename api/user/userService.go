@@ -24,7 +24,7 @@ func addUser(userBody User) *src.RequestError {
 	var requestError src.RequestError
 
 	if _, err := getUserByUsername(userBody.Username); err != nil {
-		//userBody.decryptPassword()
+		userBody.decryptPassword()
 		userBody.setRole()
 		createUser(userBody)
 		log.Print("User has been created")
@@ -83,7 +83,7 @@ func InitAdminUser() {
 		},
 	}
 
-	//user.decryptPassword()
+	user.decryptPassword()
 
 	_ = addUser(user)
 }
@@ -102,7 +102,7 @@ func InitCommonUser() {
 		},
 	}
 
-	//user.decryptPassword()
+	user.decryptPassword()
 
 	_ = addUser(user)
 }
