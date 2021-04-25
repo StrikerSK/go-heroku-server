@@ -25,7 +25,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	persistedUser, err := getUserByUsername(credentials.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Print(err.Error())
+		log.Printf("getUserByUsername error: %s\n", err)
 		return
 	}
 

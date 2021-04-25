@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement ErrorRequest to files">
-      <change afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/locationEntity.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userEnity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userEnity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userWithJWT.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithJWT.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +81,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="refactor-code" />
+        <entry key="$PROJECT_DIR$" value="request-error-type" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

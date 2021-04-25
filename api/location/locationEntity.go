@@ -1,7 +1,7 @@
 package location
 
 type Location struct {
-	Id          uint    `json:"id"`
+	Id          uint    `json:"-"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
 	Name        string  `json:"name"`

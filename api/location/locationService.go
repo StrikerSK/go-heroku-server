@@ -1,23 +1,12 @@
 package location
 
 import (
-	"encoding/json"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 	"strconv"
 
 	"go-heroku-server/config"
 )
-
-func GetLocations(w http.ResponseWriter, r *http.Request) {
-
-	var locations []Location
-	config.DBConnection.Find(&locations)
-	json.NewEncoder(w).Encode(locations)
-	log.Println("Retrieved list of location")
-
-}
 
 func GetLocationImage(w http.ResponseWriter, r *http.Request) {
 
