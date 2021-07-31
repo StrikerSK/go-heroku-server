@@ -11,21 +11,23 @@ import (
 	"strconv"
 )
 
+const fileContextName = "file_ID"
+
 func EnrichRouteWithFile(router *mux.Router) {
 
 	config.DBConnection.AutoMigrate(&File{})
 
 	subroute := router.PathPrefix("/file").Subrouter()
 	subroute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods("POST")
-	subroute.Handle("/{id}", ResolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods("GET")
-	subroute.Handle("/{id}", ResolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods("DELETE")
+	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods("GET")
+	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods("DELETE")
 
 	filesSubroute := router.PathPrefix("/files").Subrouter()
 	filesSubroute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods("GET")
 
 }
 
-func ResolveFileID(next http.Handler) http.Handler {
+func resolveFileID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
@@ -33,12 +35,18 @@ func ResolveFileID(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "file_ID", uri)
+		ctx := context.WithValue(r.Context(), fileContextName, uri)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := user.ResolveUserContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -58,14 +66,13 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 	//	log.Print(err)
 	//}
 
-	uploadFile(file, fileHeader, r.Context().Value(user.UserIdContextKey).(uint))
+	uploadFile(file, fileHeader, userID)
 }
 
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
-	fileID := uint(r.Context().Value("file_ID").(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 
-	if file, requestError := readFile(userID, fileID); requestError != nil {
+	if file, requestError := readFile(userID, resolveFileContext(r.Context())); requestError != nil {
 		w.WriteHeader(requestError.StatusCode)
 		return
 	} else {
@@ -78,9 +85,8 @@ func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {
-	fileID := uint(r.Context().Value("file_ID").(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
-	if requestError := removeFile(userID, fileID); requestError != nil {
+	userID, _ := user.ResolveUserContext(r.Context())
+	if requestError := removeFile(userID, resolveFileContext(r.Context())); requestError != nil {
 		w.WriteHeader(requestError.StatusCode)
 		return
 	} else {
@@ -92,5 +98,10 @@ func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {
 func controllerGetFileList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	_ = json.NewEncoder(w).Encode(getFileList(r.Context().Value(user.UserIdContextKey).(uint)))
+	userID, _ := user.ResolveUserContext(r.Context())
+	_ = json.NewEncoder(w).Encode(getFileList(userID))
+}
+
+func resolveFileContext(context context.Context) uint {
+	return uint(context.Value(fileContextName).(int64))
 }

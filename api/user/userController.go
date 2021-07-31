@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	UserIdContextKey   = "user_id"
+	userIdContextKey   = "user_id"
 	userBodyContextKey = "user_body"
 )
 
@@ -65,7 +65,7 @@ func verifyCookieSession(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserIdContextKey, response)
+		ctx := context.WithValue(r.Context(), userIdContextKey, response)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -82,7 +82,7 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), UserIdContextKey, userClaim.Id)
+		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -100,6 +100,15 @@ func resolveUser(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func ResolveUserContext(context context.Context) (uint, bool) {
+	value, ok := context.Value(userIdContextKey).(uint)
+	if !ok {
+		log.Println("Cannot resolve user context")
+	}
+
+	return value, ok
 }
 
 func controllerLogin(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +163,7 @@ func controllerEditUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerGetUser(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(UserIdContextKey)
+	userID := r.Context().Value(userIdContextKey)
 	userEntity, requestError := getUser(userID)
 	if requestError != nil {
 		w.WriteHeader(requestError.StatusCode)

@@ -58,7 +58,7 @@ func getFileList(userID uint) (files []File) {
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
-	log.Println("Retrieved list of file IDs and names")
+	log.Printf("Retrieved list of files for user's ID: %d \n", userID)
 	return
 }
 

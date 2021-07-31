@@ -1,6 +1,9 @@
 package files
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type File struct {
 	Id         uint      `json:"id"`
@@ -12,7 +15,7 @@ type File struct {
 	CreateDate time.Time `json:"createDate"`
 }
 
-type Metadata struct {
-	Hello   string
-	Testing string
+func (r File) toString() {
+	fmt.Printf("ID: %d, UserID: %d, FileName: %s, FileType: %s, FileSize: %s \n",
+		r.Id, r.UserID, r.FileName, r.FileType, r.FileSize)
 }

@@ -106,7 +106,7 @@ func editTodo(userID, todoID uint, updatedTodo Todo) *src.RequestError {
 
 func markDone(w http.ResponseWriter, r *http.Request) {
 	claimId := uint(r.Context().Value(todoIdContextKey).(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 
 	if persistedTodo, err := readTodo(claimId); err != nil {
 		w.WriteHeader(http.StatusBadRequest)

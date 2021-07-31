@@ -2,6 +2,8 @@ package location
 
 import (
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -32,4 +34,25 @@ func getImageFromDb(fileId int64) LocationImage {
 func addLocation(userID uint, location Location) {
 	location.UserID = userID
 	createLocation(location)
+}
+
+func retrieveLocation(userID, locationID uint) (*Location, *src.RequestError) {
+	var location, err = readLocation(locationID)
+	if err != nil {
+		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(locationID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusNotFound,
+			Err:        err,
+		}
+	}
+
+	if location.UserID != userID {
+		log.Printf("access denied for file id: " + strconv.Itoa(int(locationID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        err,
+		}
+	}
+
+	return &location, nil
 }

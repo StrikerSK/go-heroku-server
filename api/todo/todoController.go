@@ -61,7 +61,7 @@ func ResolveTodo(next http.Handler) http.Handler {
 }
 
 func controllerFindAllTodos(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 	if todos, requestError := findAllTodos(userID); requestError != nil {
 		w.WriteHeader(requestError.StatusCode)
 		return
@@ -73,7 +73,7 @@ func controllerFindAllTodos(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerGetTodo(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
 
 	if persistedTodo, requestError := getTodo(todoID, userID); requestError != nil {
@@ -87,14 +87,14 @@ func controllerGetTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerAddTodo(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(Todo)
 	addTodo(userID, todo)
 }
 
 func controllerRemoveTodo(w http.ResponseWriter, r *http.Request) {
 	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 
 	if requestError := removeTodo(userID, todoID); requestError != nil {
 		w.WriteHeader(requestError.StatusCode)
@@ -107,7 +107,7 @@ func controllerRemoveTodo(w http.ResponseWriter, r *http.Request) {
 
 func controllerEditTodo(w http.ResponseWriter, r *http.Request) {
 	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
-	userID := r.Context().Value(user.UserIdContextKey).(uint)
+	userID, _ := user.ResolveUserContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(Todo)
 
 	if requestError := editTodo(userID, todoID, todo); requestError != nil {
