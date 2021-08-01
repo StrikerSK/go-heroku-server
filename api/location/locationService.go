@@ -63,6 +63,35 @@ func deleteLocation(userID, locationID uint) src.IResponse {
 	return nil
 }
 
+func editLocation(userID, locationID uint, updatedLocation Location) src.IResponse {
+	persistedLocation, err := readLocation(locationID)
+	if err != nil {
+		return src.RequestError{
+			StatusCode: http.StatusNotFound,
+			Err:        err,
+		}
+	}
+
+	if persistedLocation.UserID != userID {
+		return src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        errors.New("user were accessing unowned todo"),
+		}
+	}
+
+	updatedLocation.Id = locationID
+	updatedLocation.UserID = persistedLocation.UserID
+
+	if err = updateLocationInRepository(updatedLocation); err != nil {
+		return &src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
+		}
+	}
+
+	return nil
+}
+
 func retrieveLocation(userID, locationID uint) (res src.IResponse) {
 	var location, err = readLocation(locationID)
 	if err != nil {

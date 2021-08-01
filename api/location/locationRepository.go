@@ -17,6 +17,11 @@ func readAllLocations(userID uint) (locations []Location, err error) {
 	return
 }
 
+func updateLocationInRepository(location Location) (err error) {
+	err = config.DBConnection.Save(&location).Error
+	return
+}
+
 func deleteLocationFromRepository(location Location) (err error) {
 	err = config.DBConnection.Delete(&location).Error
 	return

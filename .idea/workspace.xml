@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactoring code and User Context Resolver">
-      <change afterPath="$PROJECT_DIR$/api/src/ErrorResponse.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/src/IResponse.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/src/ResponseImpl.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/errorType.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add Updating to Location">
+      <change beforePath="$PROJECT_DIR$/api/user/userWithJWT.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithJWT.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,6 +86,16 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitRewordedCommitMessages">
+    <option name="commitMessagesMapping">
+      <RewordedCommitMessageMapping>
+        <option name="originalMessage" value="Disable bcrypt and refactor code" />
+        <option name="rewordedMessage" value="User ID getting and securing getting locations by user" />
+      </RewordedCommitMessageMapping>
+    </option>
+    <option name="currentCommit" value="1" />
+    <option name="onto" value="1d0c883ca16e4726ff41c19c3ca54ca63a06f73a" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -272,9 +273,9 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
       <item itemvalue="Go Build.Go build" />
       <item itemvalue="Go Build.Run Application" />
-      <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
     </list>
     <recent_temporary>
       <list>
@@ -347,7 +348,9 @@
     <MESSAGE value="Implement ErrorRequest to files" />
     <MESSAGE value="Refactoring code and User Context Resolver" />
     <MESSAGE value="Refactor File Package" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor File Package" />
+    <MESSAGE value="Refactoring code to use IResponse interface" />
+    <MESSAGE value="Add Updating to Location" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Updating to Location" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -369,6 +372,11 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/src/ErrorResponse.go</url>
+          <line>24</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

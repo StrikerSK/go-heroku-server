@@ -16,6 +16,7 @@ func EnrichRouteWithLocation(router *mux.Router) {
 
 	subroute := router.PathPrefix("/location").Subrouter()
 	subroute.Handle("/add", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods("POST")
+	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods("PUT")
 	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods("GET")
 	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods("DELETE")
 
@@ -57,6 +58,26 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	addLocation(userID, location)
+}
+
+func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
+	var res src.IResponse
+
+	locationID := resolveLocationContext(r.Context())
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
+		return
+	}
+
+	var location Location
+	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
+		res = src.NewErrorResponse(http.StatusInternalServerError, err)
+		res.WriteResponse(w)
+		return
+	}
+
+	editLocation(userID, locationID, location)
 }
 
 func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
