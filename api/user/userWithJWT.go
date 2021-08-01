@@ -10,6 +10,7 @@ import (
 )
 
 var tokenEncodeString = []byte("Wow, much safe")
+var tokenExpiration = time.Now().Local().Add(time.Second * 3600).Unix()
 
 //Function verifies user if it exists and has valid login credentials
 func LoginUser(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	persistedUser, err := getUserByUsername(credentials.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Print(err.Error())
+		log.Printf("getUserByUsername error: %s\n", err)
 		return
 	}
 
@@ -56,7 +57,7 @@ func createToken(verifiedUser User) (userToken Token) {
 		Username: verifiedUser.Username,
 		Role:     verifiedUser.Role,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Second * 15).Unix(),
+			ExpiresAt: tokenExpiration,
 		},
 	}
 

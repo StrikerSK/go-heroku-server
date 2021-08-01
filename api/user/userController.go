@@ -3,7 +3,9 @@ package user
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -11,7 +13,7 @@ import (
 )
 
 const (
-	UserIdContextKey   = "user_id"
+	userIdContextKey   = "user_id"
 	userBodyContextKey = "user_body"
 )
 
@@ -65,7 +67,7 @@ func verifyCookieSession(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserIdContextKey, response)
+		ctx := context.WithValue(r.Context(), userIdContextKey, response)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -82,7 +84,7 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), UserIdContextKey, userClaim.Id)
+		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -100,6 +102,18 @@ func resolveUser(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func ResolveUserContext(context context.Context) (uint, src.IResponse) {
+	value, ok := context.Value(userIdContextKey).(uint)
+	if !ok {
+		return 0, src.RequestError{
+			StatusCode: http.StatusInternalServerError,
+			Err:        errors.New("cannot resolve userID from context"),
+		}
+	}
+
+	return value, nil
 }
 
 func controllerLogin(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +168,7 @@ func controllerEditUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerGetUser(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(UserIdContextKey)
+	userID := r.Context().Value(userIdContextKey)
 	userEntity, requestError := getUser(userID)
 	if requestError != nil {
 		w.WriteHeader(requestError.StatusCode)

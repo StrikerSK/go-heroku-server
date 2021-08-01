@@ -22,16 +22,20 @@ type User struct {
 }
 
 func (user *User) decryptPassword() {
-	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("decriptPasswrod error: %s\n", err)
+	}
+
 	user.Password = string(encryptedPassword)
 }
 
 func (user *User) validatePassword(password string) bool {
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		log.Print(err)
-		return false
-	}
-	return true
+	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+	//	log.Printf("validatePassword error: %s\n", err)
+	//	return false
+	//}
+	return user.Password == password
 }
 
 func (user *User) setRole() {
