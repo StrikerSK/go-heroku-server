@@ -1,0 +1,697 @@
+{
+	"info": {
+		"_postman_id": "2d92d41e-9bae-4ee3-a29c-ded4f89f1577",
+		"name": "Go Main Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "Upload file",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "data/LittleJoda.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/file/upload",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User's files",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/files/",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"files",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get File",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/file/1",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get File - Non existing",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/file/999",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/file/4",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete File - Non existing",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/file/999",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "Create Todo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Test todo\",\n    \"done\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/todo/add",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User's Todo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/todos/",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Todo Done",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Test todo\",\n    \"done\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/todo/1/done",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"1",
+								"done"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Todo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Other chane\",\n    \"done\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/todo/1",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Todo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/todo/1",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Todo - Non existing",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/todo/999",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Todo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/todo/6",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"todo",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Todo - Non existing",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/file/999",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"file",
+								"999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Location",
+			"item": [
+				{
+					"name": "Create Location",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"latitude\": 999.99,\n\t\"longitude\": 999.99,\n\t\"name\": \"Custom Bar Location\",\n\t\"type\": \"Bar\",\n\t\"description\": \"Artificial Bar Location\",\n\t\"imageId\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/location/add",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"location",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Location",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/location/3",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"location",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User's Locations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/locations",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Location",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST_URL}}/location/1",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"location",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Location",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"latitude\": 20000.00,\n\t\"longitude\": 2000.00,\n\t\"name\": \"Updated Bar Location\",\n\t\"type\": \"Bar\",\n\t\"description\": \"Updated Bar Location\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST_URL}}/location/3",
+							"host": [
+								"{{HOST_URL}}"
+							],
+							"path": [
+								"location",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Register user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\",\n\t\"firstName\": \"admin\",\n\t\"lastName\": \"admin\",\n\t\"address\": {\n        \"street\": \"Tested\",\n\t    \"city\": \"Developed\",\n\t    \"zip\": \"90000\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST_URL}}/user/register",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST_URL}}/user/login",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST_URL}}/user",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user using JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"JWT_TOKEN\", pm.response.json().token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n\t\"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST_URL}}/jwt/login",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"jwt",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Detail Using JWT",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{HOST_URL}}/jwt",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"jwt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST_URL}}/user/welcome",
+					"host": [
+						"{{HOST_URL}}"
+					],
+					"path": [
+						"user",
+						"welcome"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
