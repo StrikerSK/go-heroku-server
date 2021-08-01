@@ -16,3 +16,8 @@ func readAllLocations(userID uint) (locations []Location, err error) {
 	err = config.DBConnection.Where("user_id = ?", userID).Find(&locations).Error
 	return
 }
+
+func deleteLocationFromRepository(location Location) (err error) {
+	err = config.DBConnection.Delete(&location).Error
+	return
+}

@@ -3,7 +3,9 @@ package user
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -102,13 +104,16 @@ func resolveUser(next http.Handler) http.Handler {
 	})
 }
 
-func ResolveUserContext(context context.Context) (uint, bool) {
+func ResolveUserContext(context context.Context) (uint, src.IResponse) {
 	value, ok := context.Value(userIdContextKey).(uint)
 	if !ok {
-		log.Println("Cannot resolve user context")
+		return 0, src.RequestError{
+			StatusCode: http.StatusInternalServerError,
+			Err:        errors.New("cannot resolve userID from context"),
+		}
 	}
 
-	return value, ok
+	return value, nil
 }
 
 func controllerLogin(w http.ResponseWriter, r *http.Request) {

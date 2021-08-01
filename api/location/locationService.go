@@ -1,6 +1,7 @@
 package location
 
 import (
+	"errors"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src"
 	"log"
@@ -36,23 +37,67 @@ func addLocation(userID uint, location Location) {
 	createLocation(location)
 }
 
-func retrieveLocation(userID, locationID uint) (*Location, *src.RequestError) {
+func deleteLocation(userID, locationID uint) src.IResponse {
+	persistedLocation, err := readLocation(locationID)
+	if err != nil {
+		return src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
+		}
+	}
+
+	if persistedLocation.UserID != userID {
+		return src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        errors.New("user cannot access requested location"),
+		}
+	}
+
+	if err = deleteLocationFromRepository(persistedLocation); err != nil {
+		return src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
+		}
+	}
+
+	return nil
+}
+
+func retrieveLocation(userID, locationID uint) (res src.IResponse) {
 	var location, err = readLocation(locationID)
 	if err != nil {
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(locationID)))
-		return nil, &src.RequestError{
+		res = src.RequestError{
 			StatusCode: http.StatusNotFound,
 			Err:        err,
 		}
+		return
 	}
 
 	if location.UserID != userID {
 		log.Printf("access denied for file id: " + strconv.Itoa(int(locationID)))
-		return nil, &src.RequestError{
+		res = src.RequestError{
 			StatusCode: http.StatusForbidden,
 			Err:        err,
 		}
+		return
 	}
 
-	return &location, nil
+	res = src.ResponseImpl{
+		Data: location,
+	}
+	return
+}
+
+func getAllLocations(userID uint) (res src.IResponse) {
+	if locations, err := readAllLocations(userID); err != nil {
+		res = src.RequestError{
+			StatusCode: http.StatusBadRequest,
+			Err:        err,
+		}
+	} else {
+		res = src.ResponseImpl{
+			Data: locations,
+		}
+	}
+	return
 }

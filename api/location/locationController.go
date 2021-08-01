@@ -3,10 +3,9 @@ package location
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
 	"go-heroku-server/api/user"
-	"go-heroku-server/config"
 	"net/http"
 	"strconv"
 )
@@ -31,9 +30,9 @@ func EnrichRouteWithLocation(router *mux.Router) {
 func ResolveLocationID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		uri, err := strconv.ParseInt(vars["id"], 10, 64)
+		uri, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), locationContextKey, uri)
@@ -42,15 +41,18 @@ func ResolveLocationID(next http.Handler) http.Handler {
 }
 
 func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
-	userID, ok := user.ResolveUserContext(r.Context())
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+	var res src.IResponse
+
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 
 	var location Location
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		res = src.NewErrorResponse(http.StatusInternalServerError, err)
+		res.WriteResponse(w)
 		return
 	}
 
@@ -58,48 +60,44 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
-	userID, ok := user.ResolveUserContext(r.Context())
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+	var res src.IResponse
+
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 
-	if persistedLocation, requestError := retrieveLocation(userID, resolveLocationContext(r.Context())); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		payload, _ := json.Marshal(persistedLocation)
-		_, _ = w.Write(payload)
-	}
+	res = retrieveLocation(userID, resolveLocationContext(r.Context()))
+	res.WriteResponse(w)
 }
 
 func controllerDeleteLocation(w http.ResponseWriter, r *http.Request) {
-	locationID := resolveLocationContext
-	userID, ok := user.ResolveUserContext(r.Context())
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+	locationID := resolveLocationContext(r.Context())
+	userID, err := user.ResolveUserContext(r.Context())
+	if err != nil {
+		err.WriteResponse(w)
 		return
 	}
 
-	fmt.Printf("Retreived user: %d and location: %d\n", userID, locationID)
+	if res := deleteLocation(userID, locationID); err != nil {
+		res.WriteResponse(w)
+		return
+	}
 }
 
 func controllerGetLocations(w http.ResponseWriter, r *http.Request) {
-	userID, ok := user.ResolveUserContext(r.Context())
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+	var res src.IResponse
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 
-	var locations []Location
-	config.DBConnection.Where("user_id = ?", userID).Find(&locations)
-
-	w.Header().Set("Content-Type", "application/json")
-	payload, _ := json.Marshal(locations)
-	_, _ = w.Write(payload)
+	res = getAllLocations(userID)
+	res.WriteResponse(w)
 }
 
 func resolveLocationContext(context context.Context) uint {
-	return uint(context.Value(locationContextKey).(int64))
+	return uint(context.Value(locationContextKey).(uint64))
 }

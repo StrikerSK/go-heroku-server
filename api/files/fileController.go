@@ -41,9 +41,9 @@ func resolveFileID(next http.Handler) http.Handler {
 }
 
 func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
-	userID, ok := user.ResolveUserContext(r.Context())
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 

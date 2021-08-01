@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactoring code and User Context Resolver">
+      <change afterPath="$PROJECT_DIR$/api/src/ErrorResponse.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/src/IResponse.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/src/ResponseImpl.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/errorType.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -339,7 +346,8 @@
     <MESSAGE value="Implement ErrorRequest to todos" />
     <MESSAGE value="Implement ErrorRequest to files" />
     <MESSAGE value="Refactoring code and User Context Resolver" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring code and User Context Resolver" />
+    <MESSAGE value="Refactor File Package" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor File Package" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -363,6 +371,9 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="DlvErrorBreakpoint" />
+      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GoApplicationRunConfiguration">
