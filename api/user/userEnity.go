@@ -3,6 +3,7 @@ package user
 import (
 	"go-heroku-server/api/types"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 type User struct {
 	ID        uint          `json:"-"`
 	Username  string        `json:"username"`
-	Password  string        `json:"-"`
+	Password  string        `json:"password"`
 	FirstName string        `json:"firstName"`
 	LastName  string        `json:"lastName"`
 	Role      string        `json:"-" gorm:"default:user"`
@@ -21,14 +22,18 @@ type User struct {
 }
 
 func (user *User) decryptPassword() {
-	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("decriptPasswrod error: %s\n", err)
+	}
+
 	user.Password = string(encryptedPassword)
 }
 
 func (user *User) validatePassword(password string) bool {
-	//err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	//if _, err = bcrypt.Cost([]byte(user.Password)); err != nil {
-	//	log.Print(err)
+	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+	//	log.Printf("validatePassword error: %s\n", err)
+	//	return false
 	//}
 	return user.Password == password
 }

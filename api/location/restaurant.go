@@ -1,13 +1,16 @@
 package location
 
 import (
-	"go-heroku-server/api/types"
 	"go-heroku-server/config"
 
 	"encoding/json"
 	"log"
 	"net/http"
 )
+
+type TemporaryName struct {
+	Name string "name"
+}
 
 type RestaurantLocation struct {
 	Id          uint    `json:"id"`
@@ -27,7 +30,7 @@ func GetRestaurantLocations(w http.ResponseWriter, r *http.Request) {
 
 func GetRestaurantByName(w http.ResponseWriter, r *http.Request) {
 
-	var restName types.TemporaryName
+	var restName TemporaryName
 	var restaurant RestaurantLocation
 
 	decoder := json.NewDecoder(r.Body)

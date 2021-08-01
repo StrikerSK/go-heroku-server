@@ -8,14 +8,14 @@ func createUser(newUser User) {
 }
 
 //Function retrieves user and flag if exists can be registered to database
-func getUserByID(userID uint) (user User, err error) {
-	err = config.DBConnection.Where("id = ?", userID).First(&user).Error
+func getUserByID(userID interface{}) (user User, err error) {
+	err = config.DBConnection.Preload("Address").Where("id = ?", userID).First(&user).Error
 	return
 }
 
 //Function retrieves user and flag if exists can be registered to database
 func getUserByUsername(username string) (user User, err error) {
-	err = config.DBConnection.Where("username = ?", username).First(&user).Error
+	err = config.DBConnection.Preload("Address").Where("username = ?", username).First(&user).Error
 	return
 }
 

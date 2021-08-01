@@ -9,17 +9,17 @@ func createFile(file File) {
 	config.DBConnection.Create(&file)
 }
 
-func getAll(userID interface{}) (files []File) {
+func getAll(userID uint) (files []File) {
 	config.DBConnection.Where("user_id = ?", userID).Find(&files)
 	return
 }
 
-func getFile(fileId int64) (file File, err error) {
+func getFile(fileId uint) (file File, err error) {
 	err = config.DBConnection.Where("id = ?", fileId).Find(&file).Error
 	return
 }
 
-func deleteFile(fileID interface{}) (file File, err error) {
-	err = config.DBConnection.Where("user_id = ?", fileID).Delete(&file).Error
+func deleteFile(fileID uint) (file File, err error) {
+	err = config.DBConnection.Where("id = ?", fileID).Delete(&file).Error
 	return
 }

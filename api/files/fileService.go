@@ -1,10 +1,11 @@
 package files
 
 import (
-	"encoding/json"
-	"go-heroku-server/api/user"
+	"errors"
+	"go-heroku-server/api/src"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,117 +13,77 @@ import (
 )
 
 //Function stores files received from the Front-End
-func uploadFile(w http.ResponseWriter, r *http.Request) {
-
-	var newFile File
-
-	file, fileHeader, err := r.FormFile("file")
-
-	if err != nil {
-		renderError(w, "INVALID_FILE", http.StatusBadRequest)
-		return
-	}
-
+func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID uint) {
 	fileBytes, _ := ioutil.ReadAll(file)
 	defer file.Close()
 
-	//Processing of received file metadata
-	r.ParseForm()
-
-	//r.FormValue("file") -> Receives metadata from sent file
-	//Spracovanie JSONu na jednotlive polozky (Pozor! Je dolezite mat vytvorenu struct formu!!!)
-	var token user.Token
-	json.Unmarshal([]byte(r.FormValue("file")), &token)
-	//fmt.Printf("hello: %s, testing: %s", metadata.Hello, metadata.Testing)
-
-	newFile.FileName = fileHeader.Filename
-	newFile.FileData = fileBytes
-	newFile.FileSize = getFileSize(fileHeader.Size)
-	newFile.FileType = http.DetectContentType(fileBytes)
-	newFile.CreateDate = time.Now()
-
-	claimId := r.Context().Value(user.UserIdContextKey)
-	if claimId == nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
+	customFile := File{
+		UserID:     userID,
+		FileName:   fileHeader.Filename,
+		FileType:   http.DetectContentType(fileBytes),
+		FileData:   fileBytes,
+		FileSize:   getFileSize(fileHeader.Size),
+		CreateDate: time.Now(),
 	}
-	newFile.UserID = claimId.(uint)
-	createFile(newFile)
+
+	createFile(customFile)
 }
 
 //Function provides requested file to the client
-func readFile(w http.ResponseWriter, r *http.Request) {
-	fileID := r.Context().Value("file_ID").(int64)
-	claimId := r.Context().Value(user.UserIdContextKey)
-	if claimId == nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
+func readFile(userID uint, fileID uint) (*File, *src.RequestError) {
 	var gotFile, err = getFile(fileID)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		log.Printf(err.Error() + " for id: " + strconv.FormatInt(fileID, 10))
-		return
+		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusNotFound,
+			Err:        err,
+		}
 	}
 
-	if gotFile.UserID != claimId {
-		w.WriteHeader(http.StatusForbidden)
-		return
+	if gotFile.UserID != userID {
+		log.Printf("access denied for file id: " + strconv.Itoa(int(fileID)))
+		return nil, &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        err,
+		}
 	}
 
-	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Disposition", "attachment; filename="+gotFile.FileName)
-	w.Header().Set("Content-Type", gotFile.FileType)
-
-	_, _ = w.Write(gotFile.FileData)
+	return &gotFile, nil
 }
 
-func getFileList(w http.ResponseWriter, r *http.Request) {
-	claimId := r.Context().Value(user.UserIdContextKey)
-	if claimId == nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	files := getAll(claimId)
+func getFileList(userID uint) (files []File) {
+	files = getAll(userID)
 	for index, file := range files {
 		fileName := file.FileName
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	_ = json.NewEncoder(w).Encode(files)
-	log.Println("Retrieved list of file IDs and names")
+	log.Printf("Retrieved list of files for user's ID: %d \n", userID)
+	return
 }
 
 //Function provides requested file to the client
-func removeFile(w http.ResponseWriter, r *http.Request) {
-	fileID := r.Context().Value("file_ID").(int64)
-	claimId := r.Context().Value(user.UserIdContextKey)
-	if claimId == nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
+func removeFile(userID, fileID uint) *src.RequestError {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
-		w.WriteHeader(http.StatusOK)
-		log.Printf(err.Error() + " for id: " + strconv.FormatInt(fileID, 10))
-		return
+		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
+		return nil
 	}
 
-	if persistedFile.UserID != claimId {
-		w.WriteHeader(http.StatusForbidden)
-		return
+	if persistedFile.UserID != userID {
+		log.Print("user attempted to access forbidden file")
+		return &src.RequestError{
+			StatusCode: http.StatusForbidden,
+			Err:        errors.New("user cannot access file"),
+		}
 	}
 
+	_, err = deleteFile(persistedFile.Id)
+	if err != nil {
+		log.Print(err)
+	}
 	log.Printf("Deleted file with ID: %d", persistedFile.Id)
-	_, _ = deleteFile(persistedFile.Id)
+	return nil
 }
 
 func getFileSize(fileSize int64) (outputSize string) {
@@ -142,9 +103,4 @@ func getFileSize(fileSize int64) (outputSize string) {
 	}
 
 	return
-}
-
-func renderError(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(statusCode)
-	_, _ = w.Write([]byte(message))
 }
