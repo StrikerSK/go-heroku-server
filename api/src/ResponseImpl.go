@@ -9,6 +9,12 @@ type ResponseImpl struct {
 	Data interface{} `json:"data"`
 }
 
+func NewResponse(data interface{}) ResponseImpl {
+	return ResponseImpl{
+		Data: data,
+	}
+}
+
 func (ri ResponseImpl) WriteResponse(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

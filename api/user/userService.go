@@ -5,10 +5,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"go-heroku-server/api/src"
 	"go-heroku-server/api/types"
+	"go-heroku-server/config"
 	"log"
 	"net/http"
-
-	"go-heroku-server/config"
 )
 
 func getUserList() (users []User) {
@@ -20,53 +19,39 @@ func getUserList() (users []User) {
 	return
 }
 
-func addUser(userBody User) *src.RequestError {
-	var requestError src.RequestError
-
+func addUser(userBody User) src.IResponse {
 	if _, err := getUserByUsername(userBody.Username); err != nil {
 		//userBody.decryptPassword()
 		userBody.setRole()
 		createUser(userBody)
 		log.Print("User has been created")
-		return nil
+		return src.NewEmptyResponse(http.StatusCreated)
 	} else {
-		log.Print("User exists in database")
-		requestError.Err = errors.New("user exists in database")
-		requestError.StatusCode = http.StatusConflict
-		return &requestError
+		return src.NewErrorResponse(http.StatusConflict, errors.New("user exists in database"))
 	}
 }
 
-func editUser(updatedUser User) *src.RequestError {
-	var requestError src.RequestError
-
+func editUser(updatedUser User) src.IResponse {
 	persistedUser, err := getUserByID(updatedUser.ID)
 	if err != nil {
-		requestError.Err = errors.New("user not found")
-		requestError.StatusCode = http.StatusNotFound
-		return &requestError
+		return src.NewErrorResponse(http.StatusNotFound, errors.New("user not found"))
 	}
 
 	persistedUser.ID = updatedUser.ID
 	if err = updateUser(persistedUser); err != nil {
-		requestError.Err = errors.New("user update failed")
-		requestError.StatusCode = http.StatusBadRequest
-		return &requestError
+		return src.NewErrorResponse(http.StatusBadRequest, errors.New("user update failed"))
 	}
 
-	return nil
+	return src.NewEmptyResponse(http.StatusOK)
 }
 
-func getUser(userID interface{}) (*User, *src.RequestError) {
-	var requestError src.RequestError
-	requestedUser, err := getUserByID(userID)
-	if err != nil {
-		requestError.Err = err
-		requestError.StatusCode = http.StatusNotFound
-		log.Print(err)
-		return nil, &requestError
+func getUser(userID interface{}) (res src.IResponse) {
+	if requestedUser, err := getUserByID(userID); err != nil {
+		res = src.NewErrorResponse(http.StatusNotFound, err)
+	} else {
+		res = src.NewResponse(requestedUser)
 	}
-	return &requestedUser, nil
+	return
 }
 
 func InitAdminUser() {
