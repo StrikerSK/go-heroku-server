@@ -23,10 +23,11 @@ func GetCacheInstance() redis.Conn {
 
 			conn, err := redis.DialURL(os.Getenv("REDIS_URL"), redis.DialTLSSkipVerify(true))
 			if err != nil {
-				log.Printf("Cache initialization: %s\n", err.Error())
+				log.Printf("Cache initialization erro: %s\n", err.Error())
 				os.Exit(1)
 			}
 
+			log.Println("Cache initialization: created")
 			cacheConnection = conn
 		} else {
 			log.Println("Application Cache instance already created!")
