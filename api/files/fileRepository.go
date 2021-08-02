@@ -19,7 +19,8 @@ func getFile(fileId uint) (file File, err error) {
 	return
 }
 
-func deleteFile(fileID uint) (file File, err error) {
+func deleteFile(fileID uint) (err error) {
+	var file File
 	err = config.DBConnection.Where("id = ?", fileID).Delete(&file).Error
 	return
 }

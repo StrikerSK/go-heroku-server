@@ -2,11 +2,10 @@ package files
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -32,7 +31,7 @@ func resolveFileID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), fileContextName, uri)
@@ -49,14 +48,14 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
+		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 		return
 	}
 
 	//Processing of received file metadata
 	if err = r.ParseForm(); err != nil {
-		log.Print(err)
+		src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+		return
 	}
 
 	//r.FormValue("file") -> Receives metadata from sent file
@@ -72,8 +71,8 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
 
-	if file, requestError := readFile(userID, resolveFileContext(r.Context())); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
+	if file, err := readFile(userID, resolveFileContext(r.Context())); err != nil {
+		err.WriteResponse(w)
 		return
 	} else {
 		w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
@@ -86,20 +85,15 @@ func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 
 func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
-	if requestError := removeFile(userID, resolveFileContext(r.Context())); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+	removeFile(userID, resolveFileContext(r.Context())).WriteResponse(w)
 }
 
 func controllerGetFileList(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	userID, _ := user.ResolveUserContext(r.Context())
-	_ = json.NewEncoder(w).Encode(getFileList(userID))
+	if userID, res := user.ResolveUserContext(r.Context()); res != nil {
+		res.WriteResponse(w)
+	} else {
+		getFileList(userID).WriteResponse(w)
+	}
 }
 
 func resolveFileContext(context context.Context) uint {

@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor error responses">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor file endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userEnity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userEnity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,7 +357,9 @@
     <MESSAGE value="Add Updating to Location" />
     <MESSAGE value="User response refactor" />
     <MESSAGE value="Refactor error responses" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor error responses" />
+    <MESSAGE value="Refactor getting user list" />
+    <MESSAGE value="Refactor file endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor file endpoint" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

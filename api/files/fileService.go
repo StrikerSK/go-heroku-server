@@ -51,39 +51,33 @@ func readFile(userID uint, fileID uint) (*File, *src.RequestError) {
 	return &gotFile, nil
 }
 
-func getFileList(userID uint) (files []File) {
-	files = getAll(userID)
+func getFileList(userID uint) src.ResponseImpl {
+	files := getAll(userID)
 	for index, file := range files {
 		fileName := file.FileName
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
-	log.Printf("Retrieved list of files for user's ID: %d \n", userID)
-	return
+	return src.NewResponse(files)
 }
 
 //Function provides requested file to the client
-func removeFile(userID, fileID uint) *src.RequestError {
+func removeFile(userID, fileID uint) src.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
-		return nil
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
 	if persistedFile.UserID != userID {
-		log.Print("user attempted to access forbidden file")
-		return &src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("user cannot access file"),
-		}
+		return src.NewErrorResponse(http.StatusForbidden, errors.New("user cannot access file"))
 	}
 
-	_, err = deleteFile(persistedFile.Id)
-	if err != nil {
-		log.Print(err)
+	if err = deleteFile(persistedFile.Id); err != nil {
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
+
 	log.Printf("Deleted file with ID: %d", persistedFile.Id)
-	return nil
+	return src.NewEmptyResponse(http.StatusOK)
 }
 
 func getFileSize(fileSize int64) (outputSize string) {
