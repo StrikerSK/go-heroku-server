@@ -40,24 +40,15 @@ func addLocation(userID uint, location Location) {
 func deleteLocation(userID, locationID uint) src.IResponse {
 	persistedLocation, err := readLocation(locationID)
 	if err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
 	if persistedLocation.UserID != userID {
-		return src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("user cannot access requested location"),
-		}
+		return src.NewErrorResponse(http.StatusForbidden, errors.New("user cannot access requested location"))
 	}
 
 	if err = deleteLocationFromRepository(persistedLocation); err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
 	return nil

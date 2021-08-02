@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor file endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/ErrorResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/ErrorResponse.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +86,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="request-error-type" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -91,12 +94,12 @@
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
       <RewordedCommitMessageMapping>
-        <option name="originalMessage" value="Disable bcrypt and refactor code" />
-        <option name="rewordedMessage" value="User ID getting and securing getting locations by user" />
+        <option name="originalMessage" value="Refactor error responses" />
+        <option name="rewordedMessage" value="Refactor user package" />
       </RewordedCommitMessageMapping>
     </option>
     <option name="currentCommit" value="1" />
-    <option name="onto" value="1d0c883ca16e4726ff41c19c3ca54ca63a06f73a" />
+    <option name="onto" value="99cac57cda28e7a600b66fa046abbcab7daf514f" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -285,10 +288,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.Run Application" />
+        <item itemvalue="Go Build.Go build" />
         <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
-        <item itemvalue="Go Build.Go build" />
         <item itemvalue="Go Build.Run Application" />
-        <item itemvalue="Go Build.Go build" />
+        <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -381,6 +384,11 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/main.go</url>
+          <line>25</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

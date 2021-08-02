@@ -30,22 +30,16 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 }
 
 //Function provides requested file to the client
-func readFile(userID uint, fileID uint) (*File, *src.RequestError) {
+func readFile(userID uint, fileID uint) (*File, src.IResponse) {
 	var gotFile, err = getFile(fileID)
 	if err != nil {
 		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
-		return nil, &src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		return nil, src.NewErrorResponse(http.StatusNotFound, err)
 	}
 
 	if gotFile.UserID != userID {
 		log.Printf("access denied for file id: " + strconv.Itoa(int(fileID)))
-		return nil, &src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        err,
-		}
+		return nil, src.NewErrorResponse(http.StatusForbidden, err)
 	}
 
 	return &gotFile, nil
