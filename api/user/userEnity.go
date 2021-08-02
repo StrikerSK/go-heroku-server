@@ -12,9 +12,8 @@ const (
 )
 
 type User struct {
+	Credentials
 	ID        uint          `json:"-"`
-	Username  string        `json:"username"`
-	Password  string        `json:"password"`
 	FirstName string        `json:"firstName"`
 	LastName  string        `json:"lastName"`
 	Role      string        `json:"-" gorm:"default:user"`
@@ -30,7 +29,7 @@ func (user *User) decryptPassword() {
 	user.Password = string(encryptedPassword)
 }
 
-func (user *User) validatePassword(password string) bool {
+func (user User) validatePassword(password string) bool {
 	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 	//	log.Printf("validatePassword error: %s\n", err)
 	//	return false
@@ -46,7 +45,7 @@ func (user *User) setRole() {
 
 type Credentials struct {
 	Username string `json:"username"`
-	Password string `json:"password"`
+	Password string `json:"password,omitempty"`
 }
 
 type Token struct {

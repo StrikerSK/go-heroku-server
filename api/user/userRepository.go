@@ -8,6 +8,12 @@ func createUser(newUser User) {
 }
 
 //Function retrieves user and flag if exists can be registered to database
+func readUsersFromRepository() (user []User, err error) {
+	err = config.DBConnection.Preload("Address").Find(&user).Error
+	return
+}
+
+//Function retrieves user and flag if exists can be registered to database
 func getUserByID(userID interface{}) (user User, err error) {
 	err = config.DBConnection.Preload("Address").Where("id = ?", userID).First(&user).Error
 	return

@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src"
 	"go-heroku-server/config"
-	"log"
 	"net/http"
 	"os/user"
 )
@@ -35,7 +34,7 @@ func EnrichRouterWithUser(router *mux.Router) {
 	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods("GET")
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
-	usersSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUserList))).Methods("GET")
+	usersSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUserList))).Methods("GET")
 }
 
 func verifyCookieSession(next http.Handler) http.Handler {
@@ -44,11 +43,11 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		if err != nil {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
-				w.WriteHeader(http.StatusUnauthorized)
+				src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 				return
 			}
 			// For any other type of error, return a bad request status
-			w.WriteHeader(http.StatusBadRequest)
+			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 			return
 		}
 
@@ -58,12 +57,12 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		response, err := config.Cache.Do("GET", sessionToken)
 		if err != nil {
 			// If there is an error fetching from cache, return an internal server error status
-			w.WriteHeader(http.StatusInternalServerError)
+			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		if response == nil {
 			// If the session token is not present in cache, return an unauthorized error
-			w.WriteHeader(http.StatusUnauthorized)
+			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 			return
 		}
 
@@ -81,7 +80,7 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 		}
 		userClaim, err := ParseToken(token)
 		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
+			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
@@ -133,8 +132,7 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerGetUserList(w http.ResponseWriter, r *http.Request) {
-	_ = json.NewEncoder(w).Encode(getUserList())
-	log.Println("Retrieved list of users")
+	getUserList().WriteResponse(w)
 }
 
 func controllerRegisterUser(w http.ResponseWriter, r *http.Request) {

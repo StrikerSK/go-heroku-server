@@ -5,18 +5,19 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"go-heroku-server/api/src"
 	"go-heroku-server/api/types"
-	"go-heroku-server/config"
 	"log"
 	"net/http"
 )
 
-func getUserList() (users []User) {
-	config.DBConnection.Find(&users)
-	for index, currentUser := range users {
-		config.DBConnection.Model(&currentUser).Related(&currentUser.Address, "Address")
-		users[index] = currentUser
+func getUserList() src.IResponse {
+	if users, err := readUsersFromRepository(); err != nil {
+		return src.NewErrorResponse(http.StatusBadRequest, err)
+	} else {
+		for i := range users {
+			users[i].Password = ""
+		}
+		return src.NewResponse(users)
 	}
-	return
 }
 
 func addUser(userBody User) src.IResponse {
@@ -45,19 +46,17 @@ func editUser(updatedUser User) src.IResponse {
 	return src.NewEmptyResponse(http.StatusOK)
 }
 
-func getUser(userID interface{}) (res src.IResponse) {
+func getUser(userID interface{}) src.IResponse {
 	if requestedUser, err := getUserByID(userID); err != nil {
-		res = src.NewErrorResponse(http.StatusNotFound, err)
+		return src.NewErrorResponse(http.StatusNotFound, err)
 	} else {
-		res = src.NewResponse(requestedUser)
+		requestedUser.Password = ""
+		return src.NewResponse(requestedUser)
 	}
-	return
 }
 
 func InitAdminUser() {
 	user := User{
-		Username:  "admin",
-		Password:  "admin",
 		FirstName: "admin",
 		LastName:  "admin",
 		Role:      AdminRole,
@@ -65,6 +64,10 @@ func InitAdminUser() {
 			Street: "Admin",
 			City:   "Admin",
 			Zip:    "Admin",
+		},
+		Credentials: Credentials{
+			Username: "admin",
+			Password: "admin",
 		},
 	}
 
@@ -75,8 +78,6 @@ func InitAdminUser() {
 
 func InitCommonUser() {
 	user := User{
-		Username:  "tester",
-		Password:  "tester",
 		FirstName: "tester",
 		LastName:  "tester",
 		Role:      UserRole,
@@ -84,6 +85,10 @@ func InitCommonUser() {
 			Street: "Tester",
 			City:   "Tester",
 			Zip:    "Tester",
+		},
+		Credentials: Credentials{
+			Username: "admin",
+			Password: "admin",
 		},
 	}
 
