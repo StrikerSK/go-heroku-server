@@ -59,11 +59,13 @@ func getFileList(userID uint) src.ResponseImpl {
 func removeFile(userID, fileID uint) src.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, err)
+		log.Printf("File [%d] not found", fileID)
+		return src.NewEmptyResponse(http.StatusOK)
 	}
 
 	if persistedFile.UserID != userID {
-		return src.NewErrorResponse(http.StatusForbidden, errors.New("user cannot access file"))
+		err = errors.New("access denied")
+		return src.NewErrorResponse(http.StatusForbidden, err)
 	}
 
 	if err = deleteFile(persistedFile.Id); err != nil {

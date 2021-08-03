@@ -4,12 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor file endpoint">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor error response type">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/ErrorResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/ErrorResponse.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -362,7 +365,8 @@
     <MESSAGE value="Refactor error responses" />
     <MESSAGE value="Refactor getting user list" />
     <MESSAGE value="Refactor file endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor file endpoint" />
+    <MESSAGE value="Refactor error response type" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor error response type" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -384,11 +388,6 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/main.go</url>
-          <line>25</line>
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

@@ -77,7 +77,8 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	editLocation(userID, locationID, location)
+	res = editLocation(userID, locationID, location)
+	res.WriteResponse(w)
 }
 
 func controllerGetLocation(w http.ResponseWriter, r *http.Request) {

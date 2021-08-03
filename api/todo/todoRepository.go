@@ -18,11 +18,12 @@ func readAll(userID uint) (todos []Todo, err error) {
 }
 
 func updateTodo(updatedTodo Todo) (err error) {
-	err = config.DBConnection.Model(&Todo{}).Update(&updatedTodo).Error
+	err = config.DBConnection.Save(&updatedTodo).Error
 	return
 }
 
-func deleteTodo(fileID interface{}) (todo Todo, err error) {
-	err = config.DBConnection.Where("id = ?", fileID).Delete(&todo).Error
+func deleteTodo(fileID interface{}) (err error) {
+	var t Todo
+	err = config.DBConnection.Where("id = ?", fileID).Delete(&t).Error
 	return
 }

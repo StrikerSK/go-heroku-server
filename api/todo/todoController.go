@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -51,8 +51,7 @@ func ResolveTodo(next http.Handler) http.Handler {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&todo)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Print(err.Error())
+			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), todoBodyContextKey, todo)
@@ -62,59 +61,35 @@ func ResolveTodo(next http.Handler) http.Handler {
 
 func controllerFindAllTodos(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
-	if todos, requestError := findAllTodos(userID); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(todos)
-	}
+	findAllTodos(userID).WriteResponse(w)
 }
 
 func controllerGetTodo(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
-	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
-
-	if persistedTodo, requestError := getTodo(todoID, userID); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		payload, _ := json.Marshal(persistedTodo)
-		_, _ = w.Write(payload)
-	}
+	todoID := resolveTodoID(r.Context())
+	getTodo(todoID, userID).WriteResponse(w)
 }
 
 func controllerAddTodo(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(Todo)
-	addTodo(userID, todo)
+	todo.UserID = userID
+	addTodo(todo).WriteResponse(w)
 }
 
 func controllerRemoveTodo(w http.ResponseWriter, r *http.Request) {
-	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
+	todoID := resolveTodoID(r.Context())
 	userID, _ := user.ResolveUserContext(r.Context())
-
-	if requestError := removeTodo(userID, todoID); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+	removeTodo(userID, todoID).WriteResponse(w)
 }
 
 func controllerEditTodo(w http.ResponseWriter, r *http.Request) {
-	todoID := uint(r.Context().Value(todoIdContextKey).(int64))
+	todoID := resolveTodoID(r.Context())
 	userID, _ := user.ResolveUserContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(Todo)
+	editTodo(userID, todoID, todo).WriteResponse(w)
+}
 
-	if requestError := editTodo(userID, todoID, todo); requestError != nil {
-		w.WriteHeader(requestError.StatusCode)
-		return
-	} else {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+func resolveTodoID(context context.Context) uint {
+	return uint(context.Value(todoIdContextKey).(int64))
 }

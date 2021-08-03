@@ -20,7 +20,10 @@ func NewErrorResponse(statusCode int, error error) RequestError {
 
 func (re RequestError) WriteResponse(w http.ResponseWriter) {
 	log.Println("Error: ", re.ErrorMessage)
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(re.StatusCode)
+
 	payload, _ := json.Marshal(re)
 	_, _ = w.Write(payload)
 	return

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -57,67 +56,45 @@ func deleteLocation(userID, locationID uint) src.IResponse {
 func editLocation(userID, locationID uint, updatedLocation Location) src.IResponse {
 	persistedLocation, err := readLocation(locationID)
 	if err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusNotFound, err)
 	}
 
 	if persistedLocation.UserID != userID {
-		return src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("user were accessing unowned todo"),
-		}
+		customError := errors.New("user were accessing unowned todo")
+		return src.NewErrorResponse(http.StatusForbidden, customError)
 	}
 
 	updatedLocation.Id = locationID
 	updatedLocation.UserID = persistedLocation.UserID
 
 	if err = updateLocationInRepository(updatedLocation); err != nil {
-		return &src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
-	return nil
+	return src.NewEmptyResponse(http.StatusOK)
 }
 
 func retrieveLocation(userID, locationID uint) (res src.IResponse) {
 	var location, err = readLocation(locationID)
 	if err != nil {
-		res = src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		res = src.NewErrorResponse(http.StatusNotFound, err)
 		return
 	}
 
 	if location.UserID != userID {
-		log.Printf("access denied for file id: " + strconv.Itoa(int(locationID)))
-		res = src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        err,
-		}
+		res = src.NewErrorResponse(http.StatusForbidden, err)
 		return
 	}
 
-	res = src.ResponseImpl{
-		Data: location,
-	}
+	res = src.NewResponse(location)
 	return
 }
 
 func getAllLocations(userID uint) (res src.IResponse) {
 	if locations, err := readAllLocations(userID); err != nil {
-		res = src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		res = src.NewErrorResponse(http.StatusBadRequest, err)
 	} else {
-		res = src.ResponseImpl{
-			Data: locations,
-		}
+		res = src.NewResponse(locations)
 	}
 	return
 }

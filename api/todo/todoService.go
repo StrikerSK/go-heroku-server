@@ -6,126 +6,101 @@ import (
 	"go-heroku-server/api/user"
 	"log"
 	"net/http"
-	"strconv"
 )
 
-func findAllTodos(userID uint) ([]Todo, *src.RequestError) {
+func findAllTodos(userID uint) src.IResponse {
 	var todos []Todo
 
 	todos, err := readAll(userID)
 	if err != nil {
-		return nil, &src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
-	return todos, nil
+	return src.NewResponse(todos)
 }
 
-func getTodo(todoID uint, userID uint) (*Todo, *src.RequestError) {
+func getTodo(todoID uint, userID uint) src.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(todoID)))
-		return nil, &src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusNotFound, err)
 	}
 
 	if persistedTodo.UserID != userID {
-		errorOutput := errors.New("todo access is denied")
-		log.Printf(errorOutput.Error() + " for id: " + strconv.Itoa(int(todoID)))
-		return nil, &src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errorOutput,
-		}
+		return src.NewErrorResponse(http.StatusForbidden, errors.New("todo access is denied"))
 	}
 
-	return &persistedTodo, nil
+	return src.NewResponse(persistedTodo)
 }
 
-func addTodo(userID uint, todo Todo) {
-	todo.UserID = userID
+func addTodo(todo Todo) src.IResponse {
 	createTodo(todo)
+	return src.NewEmptyResponse(http.StatusCreated)
 }
 
-func removeTodo(userID, todoID uint) *src.RequestError {
+func removeTodo(userID, todoID uint) src.IResponse {
 	persistedFile, err := readTodo(todoID)
 	if err != nil {
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(todoID)))
-		return nil
+		log.Printf("%s for todo id: %d\n", err.Error(), int(todoID))
+		return src.NewEmptyResponse(http.StatusOK)
 	}
 
 	if persistedFile.UserID != userID {
-		return &src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("logged user cannot remove todo"),
-		}
+		return src.NewErrorResponse(http.StatusForbidden, errors.New("access denied"))
 	}
 
-	log.Printf("Deleted todo with ID: %d", persistedFile.Id)
-	if _, err = deleteTodo(persistedFile.Id); err != nil {
+	if err = deleteTodo(persistedFile.Id); err != nil {
 		log.Print(err)
-		return nil
+		return src.NewEmptyResponse(http.StatusOK)
 	}
 
-	return nil
+	log.Printf("Deleted Todo with ID: %d", persistedFile.Id)
+	return src.NewEmptyResponse(http.StatusOK)
 }
 
-func editTodo(userID, todoID uint, updatedTodo Todo) *src.RequestError {
+func editTodo(userID, todoID uint, updatedTodo Todo) src.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Print(err)
-		return &src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		log.Printf("Todo [%d] not found\n", todoID)
+		return src.NewEmptyResponse(http.StatusNotFound)
 	}
 
 	if persistedTodo.UserID != userID {
-		outputError := errors.New("user were accessing unowned todo")
-		log.Print(outputError)
-		return &src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        outputError,
-		}
+		outputError := errors.New("access denied")
+		return src.NewErrorResponse(http.StatusForbidden, outputError)
 	}
 
 	updatedTodo.Id = todoID
+	updatedTodo.UserID = persistedTodo.UserID
+
 	if err = updateTodo(updatedTodo); err != nil {
-		log.Print(err)
-		return &src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
-	return nil
+	return src.EmptyResponse(http.StatusOK)
 }
 
 func markDone(w http.ResponseWriter, r *http.Request) {
-	claimId := uint(r.Context().Value(todoIdContextKey).(int64))
+	claimId := resolveTodoID(r.Context())
 	userID, _ := user.ResolveUserContext(r.Context())
 
-	if persistedTodo, err := readTodo(claimId); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
+	persistedTodo, err := readTodo(claimId)
+	if err != nil {
+		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 		return
-	} else {
-		if persistedTodo.UserID != userID {
-			w.WriteHeader(http.StatusForbidden)
-			log.Print("user is accessing forbidden file")
-			return
-		}
-
-		persistedTodo.Done = !persistedTodo.Done
-		err = updateTodo(persistedTodo)
-
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			log.Print(err)
-			return
-		}
 	}
+
+	if persistedTodo.UserID != userID {
+		err = errors.New("access denied")
+		src.NewErrorResponse(http.StatusForbidden, err).WriteResponse(w)
+		return
+	}
+
+	persistedTodo.Done = !persistedTodo.Done
+	err = updateTodo(persistedTodo)
+	if err != nil {
+		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		return
+	}
+
+	src.NewResponse(http.StatusOK).WriteResponse(w)
 }
