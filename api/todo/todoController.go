@@ -21,14 +21,14 @@ func EnrichRouteWithTodo(router *mux.Router) {
 	config.DBConnection.AutoMigrate(&Todo{})
 
 	subroute := router.PathPrefix("/todo").Subrouter()
-	subroute.Handle("/add", user.VerifyJwtToken(ResolveTodo(http.HandlerFunc(controllerAddTodo)))).Methods("POST")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveTodoID(http.HandlerFunc(controllerGetTodo)))).Methods("GET")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveTodoID(ResolveTodo(http.HandlerFunc(controllerEditTodo))))).Methods("PUT")
-	subroute.Handle("/{id}", ResolveTodoID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveTodo)))).Methods("DELETE")
-	subroute.Handle("/{id}/done", user.VerifyJwtToken(ResolveTodoID(http.HandlerFunc(markDone)))).Methods("POST", "GET", "PUT")
+	subroute.Handle("/add", user.VerifyJwtToken(ResolveTodo(http.HandlerFunc(controllerAddTodo)))).Methods(http.MethodPost)
+	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveTodoID(http.HandlerFunc(controllerGetTodo)))).Methods(http.MethodGet)
+	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveTodoID(ResolveTodo(http.HandlerFunc(controllerEditTodo))))).Methods(http.MethodPut)
+	subroute.Handle("/{id}", ResolveTodoID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveTodo)))).Methods(http.MethodDelete)
+	subroute.Handle("/{id}/done", user.VerifyJwtToken(ResolveTodoID(http.HandlerFunc(markDone)))).Methods(http.MethodPost, http.MethodGet, http.MethodPut)
 
 	todosSubroute := router.PathPrefix("/todos").Subrouter()
-	todosSubroute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerFindAllTodos))).Methods("GET")
+	todosSubroute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerFindAllTodos))).Methods(http.MethodGet)
 
 }
 

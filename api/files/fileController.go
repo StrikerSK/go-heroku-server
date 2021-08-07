@@ -16,13 +16,13 @@ func EnrichRouteWithFile(router *mux.Router) {
 
 	config.DBConnection.AutoMigrate(&File{})
 
-	subroute := router.PathPrefix("/file").Subrouter()
-	subroute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods("POST")
-	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods("GET")
-	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods("DELETE")
+	fileRoute := router.PathPrefix("/file").Subrouter()
+	fileRoute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods(http.MethodPost)
+	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods(http.MethodGet)
+	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods(http.MethodDelete)
 
-	filesSubroute := router.PathPrefix("/files").Subrouter()
-	filesSubroute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods("GET")
+	filesRoute := router.PathPrefix("/files").Subrouter()
+	filesRoute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods(http.MethodGet)
 
 }
 
@@ -70,17 +70,23 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
+	fileID := resolveFileContext(r.Context())
+	res := readFile(userID, fileID)
 
-	if file, err := readFile(userID, resolveFileContext(r.Context())); err != nil {
-		err.WriteResponse(w)
-		return
-	} else {
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Disposition", "attachment; filename="+file.FileName)
-		w.Header().Set("Content-Type", file.FileType)
-		_, _ = w.Write(file.FileData)
+	switch res.(type) {
+	case src.ResponseImpl:
+		res := res.(src.ResponseImpl)
+		file := res.Data.(File)
+		res.AddHeader("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
+		res.AddHeader("Access-Control-Allow-Origin", "*")
+		res.AddHeader("Content-Disposition", "attachment; filename="+file.FileName)
+		res.AddHeader("Content-Type", file.FileType)
+		res.WriteImage(file.FileData, w)
+	default:
+		res.WriteResponse(w)
 	}
+
+	return
 }
 
 func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {

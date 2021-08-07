@@ -53,8 +53,8 @@ func main() {
 	todo.EnrichRouteWithTodo(myRouter)
 	location.EnrichRouteWithLocation(myRouter)
 
-	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods("GET")
-	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods("POST")
+	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods(http.MethodGet)
+	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods(http.MethodPost)
 
 	fmt.Println("Listening")
 

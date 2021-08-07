@@ -2,12 +2,12 @@ package files
 
 import (
 	"errors"
+	"fmt"
 	"go-heroku-server/api/src"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -30,25 +30,25 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 }
 
 //Function provides requested file to the client
-func readFile(userID uint, fileID uint) (*File, src.IResponse) {
+func readFile(userID uint, fileID uint) src.IResponse {
 	var gotFile, err = getFile(fileID)
 	if err != nil {
-		log.Printf(err.Error() + " for id: " + strconv.Itoa(int(fileID)))
-		return nil, src.NewErrorResponse(http.StatusNotFound, err)
+		log.Printf("%s for id: %d\n", err.Error(), fileID)
+		return src.NewErrorResponse(http.StatusNotFound, err)
 	}
 
 	if gotFile.UserID != userID {
-		log.Printf("access denied for file id: " + strconv.Itoa(int(fileID)))
-		return nil, src.NewErrorResponse(http.StatusForbidden, err)
+		log.Printf("Access denie for file id: %d\n", fileID)
+		return src.NewErrorResponse(http.StatusForbidden, err)
 	}
 
-	return &gotFile, nil
+	return src.NewResponse(gotFile)
 }
 
 func getFileList(userID uint) src.ResponseImpl {
 	files := getAll(userID)
-	for index, file := range files {
-		fileName := file.FileName
+	for index := range files {
+		fileName := files[index].FileName
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
@@ -77,20 +77,18 @@ func removeFile(userID, fileID uint) src.IResponse {
 }
 
 func getFileSize(fileSize int64) (outputSize string) {
-
 	switch {
 	case fileSize < 1024:
-		outputSize = strconv.FormatInt(fileSize, 10) + " B"
+		outputSize = fmt.Sprintf("%d BB", fileSize)
 		break
 	case fileSize < 1048576:
 		fileSize = fileSize / 1024
-		outputSize = strconv.FormatInt(fileSize, 10) + " kB"
+		outputSize = fmt.Sprintf("%d kB", fileSize)
 		break
 	default:
 		fileSize = fileSize / 1048576
-		outputSize = strconv.FormatInt(fileSize, 10) + " MB"
+		outputSize = fmt.Sprintf("%d MB", fileSize)
 		break
 	}
-
 	return
 }

@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor error response type">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Extend response interface and implementation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/ErrorResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/ErrorResponse.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/ResponseImpl.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/ResponseImpl.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userWithCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithCookies.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -341,9 +337,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="User registration control - duplicates prevention" />
-    <MESSAGE value="Initialize code cleanup" />
-    <MESSAGE value="M" />
     <MESSAGE value="Adjust codebase" />
     <MESSAGE value="Add middleware" />
     <MESSAGE value="Apply user middleware" />
@@ -366,7 +359,10 @@
     <MESSAGE value="Refactor getting user list" />
     <MESSAGE value="Refactor file endpoint" />
     <MESSAGE value="Refactor error response type" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor error response type" />
+    <MESSAGE value="Refactoring codebase" />
+    <MESSAGE value="Refactoring response to accept headers" />
+    <MESSAGE value="Extend response interface and implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Extend response interface and implementation" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -388,6 +384,11 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/files/fileController.go</url>
+          <line>85</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

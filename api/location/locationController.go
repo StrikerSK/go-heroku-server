@@ -14,17 +14,17 @@ const locationContextKey = "locationID"
 
 func EnrichRouteWithLocation(router *mux.Router) {
 
-	subroute := router.PathPrefix("/location").Subrouter()
-	subroute.Handle("/add", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods("POST")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods("PUT")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods("GET")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods("DELETE")
+	locationRoute := router.PathPrefix("/location").Subrouter()
+	locationRoute.Handle("/add", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods(http.MethodPost)
+	locationRoute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods(http.MethodPut)
+	locationRoute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods(http.MethodGet)
+	locationRoute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods(http.MethodDelete)
 
-	imageSubroute := subroute.PathPrefix("/image").Subrouter()
-	imageSubroute.HandleFunc("/{id}", GetLocationImage).Methods("GET")
+	imageSubRoute := locationRoute.PathPrefix("/image").Subrouter()
+	imageSubRoute.HandleFunc("/{id}", GetLocationImage).Methods(http.MethodGet)
 
 	locationsRoute := router.PathPrefix("/locations").Subrouter()
-	locationsRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods("GET")
+	locationsRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods(http.MethodGet)
 
 }
 
@@ -95,14 +95,15 @@ func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerDeleteLocation(w http.ResponseWriter, r *http.Request) {
+	var res src.IResponse
 	locationID := resolveLocationContext(r.Context())
-	userID, err := user.ResolveUserContext(r.Context())
-	if err != nil {
-		err.WriteResponse(w)
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 
-	if res := deleteLocation(userID, locationID); err != nil {
+	if res = deleteLocation(userID, locationID); res != nil {
 		res.WriteResponse(w)
 		return
 	}

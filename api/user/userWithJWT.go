@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"go-heroku-server/api/src"
 	"log"
 	"net/http"
 	"time"
@@ -38,11 +39,12 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		serverToken = createToken(persistedUser)
 		w.Header().Set("Content-Type", "application/json")
 		payload, _ := json.Marshal(serverToken)
-		log.Printf("User %s logged successfully!", persistedUser.Username)
+		log.Printf("User %s logged successfully!\n", persistedUser.Username)
 		_, _ = w.Write(payload)
 	}
 }
 
+//TODO CustomClaims renaming to something like UserClaims
 type CustomClaims struct {
 	Id       uint
 	Username string
@@ -71,8 +73,8 @@ func createToken(verifiedUser User) (userToken Token) {
 	return serverToken
 }
 
-//Method extracts user CustomClaims from token
-func ParseToken(signedToken string) (claims *CustomClaims, err error) {
+// ParseToken Method extracts user CustomClaims from token
+func ParseToken(signedToken string) (claims *CustomClaims, res src.IResponse) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&CustomClaims{},
@@ -82,17 +84,20 @@ func ParseToken(signedToken string) (claims *CustomClaims, err error) {
 	)
 
 	if err != nil {
+		res = src.NewErrorResponse(http.StatusUnauthorized, err)
 		return
 	}
 
 	claims, ok := token.Claims.(*CustomClaims)
 	if !ok {
-		err = errors.New("couldn't parse claims")
+		err = errors.New("could not parse claims")
+		res = src.NewErrorResponse(http.StatusUnauthorized, err)
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		err = errors.New("JWT is expired")
+		err = errors.New("JWT token has expired")
+		res = src.NewErrorResponse(http.StatusUnauthorized, err)
 		return
 	}
 

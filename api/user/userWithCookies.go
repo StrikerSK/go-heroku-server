@@ -11,7 +11,6 @@ import (
 const tokenName = "session_token"
 
 func login(credentials Credentials) (*http.Cookie, *src.RequestError) {
-	// Get the expected password from our in memory map
 	var requestError src.RequestError
 
 	persistedUser, err := getUserByUsername(credentials.Username)

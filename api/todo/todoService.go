@@ -76,7 +76,7 @@ func editTodo(userID, todoID uint, updatedTodo Todo) src.IResponse {
 		return src.NewErrorResponse(http.StatusBadRequest, err)
 	}
 
-	return src.EmptyResponse(http.StatusOK)
+	return src.NewEmptyResponse(http.StatusOK)
 }
 
 func markDone(w http.ResponseWriter, r *http.Request) {

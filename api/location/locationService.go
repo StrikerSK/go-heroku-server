@@ -60,7 +60,7 @@ func editLocation(userID, locationID uint, updatedLocation Location) src.IRespon
 	}
 
 	if persistedLocation.UserID != userID {
-		customError := errors.New("user were accessing unowned todo")
+		customError := errors.New("access denied")
 		return src.NewErrorResponse(http.StatusForbidden, customError)
 	}
 

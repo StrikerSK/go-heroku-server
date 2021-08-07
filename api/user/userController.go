@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"os/user"
 )
@@ -21,20 +21,20 @@ func EnrichRouterWithUser(router *mux.Router) {
 	config.DBConnection.AutoMigrate(&user.User{})
 
 	userSubroute := router.PathPrefix("/user").Subrouter()
-	userSubroute.HandleFunc("/login", controllerLogin).Methods("POST")
-	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods("POST")
+	userSubroute.HandleFunc("/login", controllerLogin).Methods(http.MethodPost)
+	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods(http.MethodPost)
 
-	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUser))).Methods("GET")
+	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods(http.MethodPut)
+	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUser))).Methods(http.MethodGet)
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
-	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
+	jwtSubroute.HandleFunc("/login", LoginUser).Methods(http.MethodPost)
 
-	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
-	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods("GET")
+	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods(http.MethodPut)
+	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods(http.MethodGet)
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
-	usersSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUserList))).Methods("GET")
+	usersSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUserList))).Methods(http.MethodGet)
 }
 
 func verifyCookieSession(next http.Handler) http.Handler {
@@ -75,12 +75,12 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {
-			w.WriteHeader(http.StatusUnauthorized)
+			src.NewEmptyResponse(http.StatusUnauthorized).WriteResponse(w)
 			return
 		}
-		userClaim, err := ParseToken(token)
-		if err != nil {
-			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+		userClaim, res := ParseToken(token)
+		if res != nil {
+			res.WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
@@ -105,7 +105,8 @@ func resolveUser(next http.Handler) http.Handler {
 func ResolveUserContext(context context.Context) (uint, src.IResponse) {
 	value, ok := context.Value(userIdContextKey).(uint)
 	if !ok {
-		return 0, src.NewErrorResponse(http.StatusInternalServerError, errors.New("cannot resolve userID from context"))
+		log.Println("cannot resolve userID from context")
+		return 0, src.NewEmptyResponse(http.StatusInternalServerError)
 	}
 
 	return value, nil
