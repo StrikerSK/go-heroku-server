@@ -1,106 +1,102 @@
 package todo
 
 import (
-	"errors"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
 	"log"
 	"net/http"
 )
 
-func findAllTodos(userID uint) src.IResponse {
-	var todos []Todo
-
+func findAllTodos(userID uint) responses.IResponse {
 	todos, err := readAll(userID)
 	if err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, err)
+		log.Printf("Todos read: %s\n", err.Error())
+		return responses.NewEmptyResponse(http.StatusBadRequest)
 	}
 
-	return src.NewResponse(todos)
+	log.Printf("Todos read: success\n")
+	return responses.NewResponse(todos)
 }
 
-func getTodo(todoID uint, userID uint) src.IResponse {
+func getTodo(todoID uint, userID uint) responses.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		return src.NewErrorResponse(http.StatusNotFound, err)
+		log.Printf("Todo [%d] read: %s\n", todoID, err.Error())
+		return responses.NewEmptyResponse(http.StatusNotFound)
 	}
 
 	if persistedTodo.UserID != userID {
-		return src.NewErrorResponse(http.StatusForbidden, errors.New("todo access is denied"))
+		log.Printf("Todo [%d] read: access denied\n", todoID)
+		return responses.NewEmptyResponse(http.StatusForbidden)
 	}
 
-	return src.NewResponse(persistedTodo)
+	log.Printf("Todo [%d] read: success\n", todoID)
+	return responses.NewResponse(persistedTodo)
 }
 
-func addTodo(todo Todo) src.IResponse {
+func addTodo(todo Todo) responses.IResponse {
 	createTodo(todo)
-	return src.NewEmptyResponse(http.StatusCreated)
+	return responses.NewEmptyResponse(http.StatusCreated)
 }
 
-func removeTodo(userID, todoID uint) src.IResponse {
+func removeTodo(userID, todoID uint) responses.IResponse {
 	persistedFile, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("%s for todo id: %d\n", err.Error(), int(todoID))
-		return src.NewEmptyResponse(http.StatusOK)
+		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
+		return responses.NewEmptyResponse(http.StatusOK)
 	}
 
 	if persistedFile.UserID != userID {
-		return src.NewErrorResponse(http.StatusForbidden, errors.New("access denied"))
+		log.Printf("Todo [%d] delete: access denied\n", todoID)
+		return responses.NewEmptyResponse(http.StatusForbidden)
 	}
 
 	if err = deleteTodo(persistedFile.Id); err != nil {
-		log.Print(err)
-		return src.NewEmptyResponse(http.StatusOK)
+		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
+		return responses.NewEmptyResponse(http.StatusOK)
 	}
 
-	log.Printf("Deleted Todo with ID: %d", persistedFile.Id)
-	return src.NewEmptyResponse(http.StatusOK)
+	log.Printf("Todo [%d] delete: success\n", todoID)
+	return responses.NewEmptyResponse(http.StatusOK)
 }
 
-func editTodo(userID, todoID uint, updatedTodo Todo) src.IResponse {
+func editTodo(userID, todoID uint, updatedTodo Todo) responses.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("Todo [%d] not found\n", todoID)
-		return src.NewEmptyResponse(http.StatusNotFound)
+		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
+		return responses.NewEmptyResponse(http.StatusNotFound)
 	}
 
 	if persistedTodo.UserID != userID {
-		outputError := errors.New("access denied")
-		return src.NewErrorResponse(http.StatusForbidden, outputError)
+		log.Printf("Todo [%d] edit: access denied\n", todoID)
+		return responses.NewEmptyResponse(http.StatusForbidden)
 	}
 
 	updatedTodo.Id = todoID
 	updatedTodo.UserID = persistedTodo.UserID
 
 	if err = updateTodo(updatedTodo); err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, err)
+		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
+		return responses.NewEmptyResponse(http.StatusBadRequest)
 	}
 
-	return src.NewEmptyResponse(http.StatusOK)
+	log.Printf("Todo [%d] edit: success\n", todoID)
+	return responses.NewEmptyResponse(http.StatusOK)
 }
 
 func markDone(w http.ResponseWriter, r *http.Request) {
-	claimId := resolveTodoID(r.Context())
+	todoID := resolveTodoID(r.Context())
 	userID, _ := user.ResolveUserContext(r.Context())
 
-	persistedTodo, err := readTodo(claimId)
+	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
-		return
-	}
-
-	if persistedTodo.UserID != userID {
-		err = errors.New("access denied")
-		src.NewErrorResponse(http.StatusForbidden, err).WriteResponse(w)
+		log.Printf("Todo [%d] toggle: %s\n", todoID, err.Error())
+		responses.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 		return
 	}
 
 	persistedTodo.Done = !persistedTodo.Done
-	err = updateTodo(persistedTodo)
-	if err != nil {
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
-		return
-	}
+	editTodo(userID, todoID, persistedTodo)
 
-	src.NewResponse(http.StatusOK).WriteResponse(w)
+	responses.NewResponse(http.StatusOK).WriteResponse(w)
 }

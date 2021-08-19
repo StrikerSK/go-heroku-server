@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Extend response interface and implementation">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Update log of errors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/ResponseImpl.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/ResponseImpl.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userWithCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithCookies.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,12 +92,12 @@
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
       <RewordedCommitMessageMapping>
-        <option name="originalMessage" value="Refactor error responses" />
-        <option name="rewordedMessage" value="Refactor user package" />
+        <option name="originalMessage" value="Refactoring response to accept headers" />
+        <option name="rewordedMessage" value="Extend response interface and implementation" />
       </RewordedCommitMessageMapping>
     </option>
     <option name="currentCommit" value="1" />
-    <option name="onto" value="99cac57cda28e7a600b66fa046abbcab7daf514f" />
+    <option name="onto" value="0cc8c829831fbdb0f0e89da08c3508b5eebd0b99" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -221,11 +220,11 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/user/auth" />
+      <recent name="$PROJECT_DIR$/api/src/responses" />
       <recent name="$PROJECT_DIR$/api/location" />
       <recent name="$PROJECT_DIR$/test/data" />
       <recent name="$PROJECT_DIR$/api/user/cookie" />
-      <recent name="$PROJECT_DIR$/api/files" />
-      <recent name="$PROJECT_DIR$/api/todo" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
@@ -337,7 +336,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Adjust codebase" />
     <MESSAGE value="Add middleware" />
     <MESSAGE value="Apply user middleware" />
     <MESSAGE value="Apply context and return responses" />
@@ -362,7 +360,8 @@
     <MESSAGE value="Refactoring codebase" />
     <MESSAGE value="Refactoring response to accept headers" />
     <MESSAGE value="Extend response interface and implementation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Extend response interface and implementation" />
+    <MESSAGE value="Update log of errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update log of errors" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -386,9 +385,9 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/files/fileController.go</url>
-          <line>85</line>
-          <option name="timeStamp" value="15" />
+          <url>file://$PROJECT_DIR$/api/files/fileService.go</url>
+          <line>33</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

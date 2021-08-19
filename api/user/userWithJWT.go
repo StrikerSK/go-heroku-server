@@ -2,9 +2,8 @@ package user
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"log"
 	"net/http"
 	"time"
@@ -20,27 +19,26 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var serverToken Token
 
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		log.Printf("Logging error: %s\n", err)
+		responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
 		return
 	}
 
 	persistedUser, err := getUserByUsername(credentials.Username)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		log.Printf("getUserByUsername error: %s\n", err)
+		log.Printf("Logging error: %s\n", err)
+		responses.NewEmptyResponse(http.StatusUnauthorized).WriteResponse(w)
 		return
 	}
 
 	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
 	if !persistedUser.validatePassword(credentials.Password) {
-		w.WriteHeader(http.StatusUnauthorized)
+		responses.NewEmptyResponse(http.StatusUnauthorized)
 		return
 	} else {
 		serverToken = createToken(persistedUser)
-		w.Header().Set("Content-Type", "application/json")
-		payload, _ := json.Marshal(serverToken)
-		log.Printf("User %s logged successfully!\n", persistedUser.Username)
-		_, _ = w.Write(payload)
+		log.Printf("User [%d] login: success\n", persistedUser.ID)
+		responses.NewResponse(serverToken).WriteResponse(w)
 	}
 }
 
@@ -74,7 +72,7 @@ func createToken(verifiedUser User) (userToken Token) {
 }
 
 // ParseToken Method extracts user CustomClaims from token
-func ParseToken(signedToken string) (claims *CustomClaims, res src.IResponse) {
+func ParseToken(signedToken string) (claims *CustomClaims, res responses.IResponse) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&CustomClaims{},
@@ -84,20 +82,21 @@ func ParseToken(signedToken string) (claims *CustomClaims, res src.IResponse) {
 	)
 
 	if err != nil {
-		res = src.NewErrorResponse(http.StatusUnauthorized, err)
+		log.Printf("Token parse: %s\n", err.Error())
+		res = responses.NewEmptyResponse(http.StatusUnauthorized)
 		return
 	}
 
 	claims, ok := token.Claims.(*CustomClaims)
 	if !ok {
-		err = errors.New("could not parse claims")
-		res = src.NewErrorResponse(http.StatusUnauthorized, err)
+		log.Printf("Token parse: %s\n", err.Error())
+		res = responses.NewEmptyResponse(http.StatusUnauthorized)
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		err = errors.New("JWT token has expired")
-		res = src.NewErrorResponse(http.StatusUnauthorized, err)
+		log.Println("Token parse: JWT token has expired")
+		res = responses.NewEmptyResponse(http.StatusUnauthorized)
 		return
 	}
 

@@ -1,9 +1,8 @@
 package files
 
 import (
-	"errors"
 	"fmt"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -13,73 +12,88 @@ import (
 )
 
 //Function stores files received from the Front-End
-func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID uint) {
-	fileBytes, _ := ioutil.ReadAll(file)
-	defer file.Close()
+func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID uint) responses.IResponse {
+	fileBytes, err := ioutil.ReadAll(file)
 
-	customFile := File{
+	if err != nil {
+		log.Printf("File add: %s\n", err.Error())
+		return responses.NewEmptyResponse(http.StatusInternalServerError)
+	}
+
+	contentType := fileHeader.Header.Get("Content-Type")
+
+	resolvedFile := File{
 		UserID:     userID,
 		FileName:   fileHeader.Filename,
-		FileType:   http.DetectContentType(fileBytes),
+		FileType:   contentType,
 		FileData:   fileBytes,
 		FileSize:   getFileSize(fileHeader.Size),
 		CreateDate: time.Now(),
 	}
 
-	createFile(customFile)
+	createFile(resolvedFile)
+	return responses.NewEmptyResponse(http.StatusCreated)
 }
 
 //Function provides requested file to the client
-func readFile(userID uint, fileID uint) src.IResponse {
-	var gotFile, err = getFile(fileID)
+func readFile(userID uint, fileID uint) responses.IResponse {
+	var persistedFile, err = getFile(fileID)
 	if err != nil {
-		log.Printf("%s for id: %d\n", err.Error(), fileID)
-		return src.NewErrorResponse(http.StatusNotFound, err)
+		log.Printf("File [%d] read: %s\n", fileID, err.Error())
+		return responses.NewEmptyResponse(http.StatusNotFound)
 	}
 
-	if gotFile.UserID != userID {
-		log.Printf("Access denie for file id: %d\n", fileID)
-		return src.NewErrorResponse(http.StatusForbidden, err)
+	if persistedFile.UserID != userID {
+		log.Printf("File [%d] read: access denied\n", fileID)
+		return responses.NewResponse(http.StatusForbidden)
 	}
 
-	return src.NewResponse(gotFile)
+	responseMap := map[string]string{
+		"Access-Control-Expose-Headers": "Content-Disposition, Content-Length, X-Content-Transfer-Id",
+		"Access-Control-Allow-Origin":   "*",
+		"Content-Disposition":           "attachment; filename=" + persistedFile.FileName,
+		"Content-Type":                  persistedFile.FileType,
+	}
+
+	return responses.NewFileResponse(persistedFile.FileData, responseMap)
 }
 
-func getFileList(userID uint) src.ResponseImpl {
+func getFileList(userID uint) responses.ResponseImpl {
 	files := getAll(userID)
 	for index := range files {
 		fileName := files[index].FileName
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
-	return src.NewResponse(files)
+	return responses.NewResponse(files)
 }
 
 //Function provides requested file to the client
-func removeFile(userID, fileID uint) src.IResponse {
+func removeFile(userID, fileID uint) responses.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
-		log.Printf("File [%d] not found", fileID)
-		return src.NewEmptyResponse(http.StatusOK)
+		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		return responses.NewEmptyResponse(http.StatusOK)
 	}
 
 	if persistedFile.UserID != userID {
-		err = errors.New("access denied")
-		return src.NewErrorResponse(http.StatusForbidden, err)
+		log.Printf("File [%d] delete: access denied\n", fileID)
+		return responses.NewEmptyResponse(http.StatusForbidden)
 	}
 
 	if err = deleteFile(persistedFile.Id); err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, err)
+		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		return responses.NewEmptyResponse(http.StatusBadRequest)
 	}
 
-	log.Printf("Deleted file with ID: %d", persistedFile.Id)
-	return src.NewEmptyResponse(http.StatusOK)
+	log.Printf("File [%d] delete: success\n", fileID)
+	return responses.NewEmptyResponse(http.StatusOK)
 }
 
 func getFileSize(fileSize int64) (outputSize string) {
 	switch {
 	case fileSize < 1024:
-		outputSize = fmt.Sprintf("%d BB", fileSize)
+		outputSize = fmt.Sprintf("%d B", fileSize)
 		break
 	case fileSize < 1048576:
 		fileSize = fileSize / 1024

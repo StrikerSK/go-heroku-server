@@ -3,55 +3,60 @@ package user
 import (
 	"errors"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/types"
 	"log"
 	"net/http"
 )
 
-func getUserList() src.IResponse {
+func getUserList() responses.IResponse {
 	if users, err := readUsersFromRepository(); err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, err)
+		log.Printf("Users read: %s\n", err.Error())
+		return responses.NewErrorResponse(http.StatusBadRequest, err)
 	} else {
 		for i := range users {
 			users[i].Password = ""
 		}
-		return src.NewResponse(users)
+		return responses.NewResponse(users)
 	}
 }
 
-func addUser(userBody User) src.IResponse {
+func addUser(userBody User) responses.IResponse {
 	if _, err := getUserByUsername(userBody.Username); err != nil {
 		//userBody.decryptPassword()
 		userBody.setRole()
 		createUser(userBody)
-		log.Print("User has been created")
-		return src.NewEmptyResponse(http.StatusCreated)
+		log.Printf("User add: created\n")
+		return responses.NewEmptyResponse(http.StatusCreated)
 	} else {
-		return src.NewErrorResponse(http.StatusConflict, errors.New("user exists in database"))
+		log.Printf("User add: already exists\n")
+		return responses.NewEmptyResponse(http.StatusConflict)
 	}
 }
 
-func editUser(updatedUser User) src.IResponse {
+func editUser(updatedUser User) responses.IResponse {
 	persistedUser, err := getUserByID(updatedUser.ID)
 	if err != nil {
-		return src.NewErrorResponse(http.StatusNotFound, errors.New("user not found"))
+		log.Printf("User [%d] edit: %s\n", updatedUser.ID, err.Error())
+		return responses.NewEmptyResponse(http.StatusNotFound)
 	}
 
 	persistedUser.ID = updatedUser.ID
 	if err = updateUser(persistedUser); err != nil {
-		return src.NewErrorResponse(http.StatusBadRequest, errors.New("user update failed"))
+		log.Printf("User [%d] edit: %s", updatedUser.ID, err.Error())
+		return responses.NewErrorResponse(http.StatusBadRequest, errors.New("user update failed"))
 	}
 
-	return src.NewEmptyResponse(http.StatusOK)
+	return responses.NewEmptyResponse(http.StatusOK)
 }
 
-func getUser(userID interface{}) src.IResponse {
+func getUser(userID interface{}) responses.IResponse {
 	if requestedUser, err := getUserByID(userID); err != nil {
-		return src.NewErrorResponse(http.StatusNotFound, err)
+		log.Printf("User [%d] read: %s", userID, err.Error())
+		return responses.NewErrorResponse(http.StatusNotFound, err)
 	} else {
 		requestedUser.Password = ""
-		return src.NewResponse(requestedUser)
+		return responses.NewResponse(requestedUser)
 	}
 }
 

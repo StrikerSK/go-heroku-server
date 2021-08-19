@@ -3,9 +3,10 @@ package files
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -31,7 +32,8 @@ func resolveFileID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
 		if err != nil {
-			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			log.Printf("Request file resolving: %s\n", err.Error())
+			responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), fileContextName, uri)
@@ -48,13 +50,15 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		log.Printf("Controller file upload: %s\n", err.Error())
+		responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
 		return
 	}
 
 	//Processing of received file metadata
 	if err = r.ParseForm(); err != nil {
-		src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+		log.Printf("Controller file upload: %s\n", err.Error())
+		responses.NewEmptyResponse(http.StatusInternalServerError).WriteResponse(w)
 		return
 	}
 
@@ -65,27 +69,13 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 	//	log.Print(err)
 	//}
 
-	uploadFile(file, fileHeader, userID)
+	uploadFile(file, fileHeader, userID).WriteResponse(w)
 }
 
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
 	fileID := resolveFileContext(r.Context())
-	res := readFile(userID, fileID)
-
-	switch res.(type) {
-	case src.ResponseImpl:
-		res := res.(src.ResponseImpl)
-		file := res.Data.(File)
-		res.AddHeader("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-		res.AddHeader("Access-Control-Allow-Origin", "*")
-		res.AddHeader("Content-Disposition", "attachment; filename="+file.FileName)
-		res.AddHeader("Content-Type", file.FileType)
-		res.WriteImage(file.FileData, w)
-	default:
-		res.WriteResponse(w)
-	}
-
+	readFile(userID, fileID).WriteResponse(w)
 	return
 }
 

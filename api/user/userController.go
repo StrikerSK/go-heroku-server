@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -43,11 +43,11 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		if err != nil {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
-				src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+				responses.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 				return
 			}
 			// For any other type of error, return a bad request status
-			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			responses.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 			return
 		}
 
@@ -57,12 +57,12 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		response, err := config.Cache.Do("GET", sessionToken)
 		if err != nil {
 			// If there is an error fetching from cache, return an internal server error status
-			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		if response == nil {
 			// If the session token is not present in cache, return an unauthorized error
-			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+			responses.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 			return
 		}
 
@@ -75,7 +75,7 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {
-			src.NewEmptyResponse(http.StatusUnauthorized).WriteResponse(w)
+			responses.NewEmptyResponse(http.StatusUnauthorized).WriteResponse(w)
 			return
 		}
 		userClaim, res := ParseToken(token)
@@ -94,7 +94,7 @@ func resolveUser(next http.Handler) http.Handler {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&user)
 		if err != nil {
-			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
@@ -102,11 +102,11 @@ func resolveUser(next http.Handler) http.Handler {
 	})
 }
 
-func ResolveUserContext(context context.Context) (uint, src.IResponse) {
+func ResolveUserContext(context context.Context) (uint, responses.IResponse) {
 	value, ok := context.Value(userIdContextKey).(uint)
 	if !ok {
 		log.Println("cannot resolve userID from context")
-		return 0, src.NewEmptyResponse(http.StatusInternalServerError)
+		return 0, responses.NewEmptyResponse(http.StatusInternalServerError)
 	}
 
 	return value, nil
@@ -117,7 +117,7 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		// If the structure of the body is wrong, return an HTTP error
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		responses.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
 		return
 	}
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 	"net/http"
@@ -51,7 +51,7 @@ func ResolveTodo(next http.Handler) http.Handler {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&todo)
 		if err != nil {
-			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), todoBodyContextKey, todo)
