@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Update log of errors">
+      <change afterPath="$PROJECT_DIR$/api/location/image/ImageService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/image/imageController.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/image/imageRepository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/image/imageType.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantType.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationEntity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/restaurant.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +93,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="refactor-error-response" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -220,11 +229,11 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/location/restaurant" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
       <recent name="$PROJECT_DIR$/api/src/responses" />
       <recent name="$PROJECT_DIR$/api/location" />
       <recent name="$PROJECT_DIR$/test/data" />
-      <recent name="$PROJECT_DIR$/api/user/cookie" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
@@ -385,9 +394,9 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/files/fileService.go</url>
-          <line>33</line>
-          <option name="timeStamp" value="18" />
+          <url>file://$PROJECT_DIR$/api/files/fileController.go</url>
+          <line>71</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

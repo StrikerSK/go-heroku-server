@@ -1,4 +1,4 @@
-package location
+package restaurant
 
 import (
 	"go-heroku-server/config"
@@ -10,15 +10,6 @@ import (
 
 type TemporaryName struct {
 	Name string "name"
-}
-
-type RestaurantLocation struct {
-	Id          uint    `json:"id"`
-	Latitude    float64 `json:"latitude"`
-	Longitude   float64 `json:"longitude"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	MenuURL     string  `json:"url"`
 }
 
 func GetRestaurantLocations(w http.ResponseWriter, r *http.Request) {
@@ -42,5 +33,4 @@ func GetRestaurantByName(w http.ResponseWriter, r *http.Request) {
 	config.DBConnection.Where("name = ?", restName.Name).First(&restaurant)
 	_ = json.NewEncoder(w).Encode(restaurant)
 	log.Println("Retrieved restaurant location")
-
 }

@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"go-heroku-server/api/files"
+	"go-heroku-server/api/location/image"
+	"go-heroku-server/api/location/restaurant"
 	"go-heroku-server/api/todo"
 	"html/template"
 	"net/http"
@@ -30,7 +32,7 @@ func init() {
 	config.InitializeDatabase()
 	config.InitializeRedis()
 
-	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.Location{}, &location.LocationImage{}, &location.RestaurantLocation{})
+	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	user.InitAdminUser()
 	user.InitCommonUser()
 }
@@ -53,8 +55,8 @@ func main() {
 	todo.EnrichRouteWithTodo(myRouter)
 	location.EnrichRouteWithLocation(myRouter)
 
-	myRouter.HandleFunc("/getRestaurants", location.GetRestaurantLocations).Methods(http.MethodGet)
-	myRouter.HandleFunc("/getRestaurantByName", location.GetRestaurantByName).Methods(http.MethodPost)
+	myRouter.HandleFunc("/getRestaurants", restaurant.GetRestaurantLocations).Methods(http.MethodGet)
+	myRouter.HandleFunc("/getRestaurantByName", restaurant.GetRestaurantByName).Methods(http.MethodPost)
 
 	fmt.Println("Listening")
 
