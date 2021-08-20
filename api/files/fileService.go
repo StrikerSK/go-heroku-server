@@ -31,6 +31,7 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 		CreateDate: time.Now(),
 	}
 
+	log.Printf("File create: success\n")
 	createFile(resolvedFile)
 	return responses.NewEmptyResponse(http.StatusCreated)
 }
@@ -55,6 +56,7 @@ func readFile(userID uint, fileID uint) responses.IResponse {
 		"Content-Type":                  persistedFile.FileType,
 	}
 
+	log.Printf("File [%d] read: success\n", fileID)
 	return responses.NewFileResponse(persistedFile.FileData, responseMap)
 }
 
@@ -65,10 +67,11 @@ func getFileList(userID uint) responses.ResponseImpl {
 		fileName = fileName[:strings.IndexByte(fileName, '.')]
 		files[index].FileName = fileName
 	}
+	log.Printf("File listing: success\n")
 	return responses.NewResponse(files)
 }
 
-//Function provides requested file to the client
+//Deletion of file base on userID
 func removeFile(userID, fileID uint) responses.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
@@ -90,6 +93,7 @@ func removeFile(userID, fileID uint) responses.IResponse {
 	return responses.NewEmptyResponse(http.StatusOK)
 }
 
+//Resolve ideal file size up to MegaBytes
 func getFileSize(fileSize int64) (outputSize string) {
 	switch {
 	case fileSize < 1024:
