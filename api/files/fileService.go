@@ -31,8 +31,8 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 		CreateDate: time.Now(),
 	}
 
-	log.Printf("File create: success\n")
 	createFile(resolvedFile)
+	log.Printf("File create: success\n")
 	return responses.NewEmptyResponse(http.StatusCreated)
 }
 

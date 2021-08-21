@@ -9,12 +9,12 @@ import (
 	"go-heroku-server/api/location/image"
 	"go-heroku-server/api/location/restaurant"
 	"go-heroku-server/api/todo"
+	"go-heroku-server/api/types"
 	"html/template"
 	"net/http"
 	"os"
 
 	"go-heroku-server/api/location"
-	"go-heroku-server/api/types"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 )
@@ -29,10 +29,9 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.InitializeDatabase()
-	config.InitializeRedis()
+	config.GetDatabaseInstance().AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetCacheInstance()
 
-	config.DBConnection.AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	user.InitAdminUser()
 	user.InitCommonUser()
 }
@@ -55,12 +54,8 @@ func main() {
 	todo.EnrichRouteWithTodo(myRouter)
 	location.EnrichRouteWithLocation(myRouter)
 
-	myRouter.HandleFunc("/getRestaurants", restaurant.GetRestaurantLocations).Methods(http.MethodGet)
-	myRouter.HandleFunc("/getRestaurantByName", restaurant.GetRestaurantByName).Methods(http.MethodPost)
-
-	fmt.Println("Listening")
-
 	handler := cors.AllowAll().Handler(myRouter)
 
+	fmt.Println("Listening")
 	fmt.Println(http.ListenAndServe(":"+port, handler))
 }

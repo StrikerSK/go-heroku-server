@@ -32,7 +32,7 @@ func login(credentials Credentials) (*http.Cookie, *responses.RequestError) {
 	sessionToken := uuid.NewV4().String()
 	// Set the token in the cache, along with the user whom it represents
 	// The token has an expiry time of 120 seconds
-	_, err = config.Cache.Do("SETEX", sessionToken, "120", persistedUser.ID)
+	_, err = config.GetCacheInstance().Do("SETEX", sessionToken, "120", persistedUser.ID)
 	if err != nil {
 		// If there is an error in setting the cache, return an internal server error
 		requestError = responses.NewErrorResponse(http.StatusInternalServerError, err)

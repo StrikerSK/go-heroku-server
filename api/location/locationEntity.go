@@ -9,6 +9,7 @@ type Location struct {
 	Name        string  `json:"name"`
 	Type        string  `json:"type"`
 	Description string  `json:"description"`
+	URL         string  `json:"url,omitempty"`
 }
 
 type UserLocation struct {

@@ -1,29 +1,31 @@
 package todo
 
-import "go-heroku-server/config"
+import (
+	"go-heroku-server/config"
+)
 
 func createTodo(newTodo Todo) {
-	config.DBConnection.NewRecord(newTodo)
-	config.DBConnection.Create(&newTodo)
+	config.GetDatabaseInstance().NewRecord(newTodo)
+	config.GetDatabaseInstance().Create(&newTodo)
 }
 
 func readTodo(todoID uint) (todo Todo, err error) {
-	err = config.DBConnection.Where("id = ?", todoID).Find(&todo).Error
+	err = config.GetDatabaseInstance().Where("id = ?", todoID).Find(&todo).Error
 	return
 }
 
 func readAll(userID uint) (todos []Todo, err error) {
-	err = config.DBConnection.Where("user_id = ?", userID).Find(&todos).Error
+	err = config.GetDatabaseInstance().Where("user_id = ?", userID).Find(&todos).Error
 	return
 }
 
 func updateTodo(updatedTodo Todo) (err error) {
-	err = config.DBConnection.Save(&updatedTodo).Error
+	err = config.GetDatabaseInstance().Save(&updatedTodo).Error
 	return
 }
 
 func deleteTodo(fileID interface{}) (err error) {
 	var t Todo
-	err = config.DBConnection.Where("id = ?", fileID).Delete(&t).Error
+	err = config.GetDatabaseInstance().Where("id = ?", fileID).Delete(&t).Error
 	return
 }

@@ -8,7 +8,6 @@ import (
 	"go-heroku-server/config"
 	"log"
 	"net/http"
-	"os/user"
 )
 
 const (
@@ -17,8 +16,6 @@ const (
 )
 
 func EnrichRouterWithUser(router *mux.Router) {
-
-	config.DBConnection.AutoMigrate(&user.User{})
 
 	userSubroute := router.PathPrefix("/user").Subrouter()
 	userSubroute.HandleFunc("/login", controllerLogin).Methods(http.MethodPost)
@@ -54,14 +51,12 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		sessionToken := c.Value
 
 		// We then get the name of the user from our cache, where we set the session token
-		response, err := config.Cache.Do("GET", sessionToken)
+		response, err := config.GetCacheInstance().Do("GET", sessionToken)
 		if err != nil {
-			// If there is an error fetching from cache, return an internal server error status
 			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
 			return
 		}
 		if response == nil {
-			// If the session token is not present in cache, return an unauthorized error
 			responses.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
 			return
 		}

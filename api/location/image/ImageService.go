@@ -1,22 +1,25 @@
 package image
 
 import (
-	"github.com/gorilla/mux"
+	"go-heroku-server/api/src/responses"
+	"log"
 	"net/http"
-	"strconv"
 )
 
-func getLocationImage(w http.ResponseWriter, r *http.Request) {
+func sReadLocationImage(imageID int64) responses.IResponse {
+	persistedImage, err := readImage(imageID)
+	if err != nil {
+		log.Printf("Location image [%d] read: %s\n", imageID, err)
+		return responses.NewEmptyResponse(http.StatusBadRequest)
+	}
 
-	vars := mux.Vars(r)
-	uri, _ := strconv.ParseInt(vars["imageId"], 10, 64)
+	responseMap := map[string]string{
+		"Access-Control-Expose-Headers": "Content-Disposition, Content-Length, X-Content-Transfer-Id",
+		"Access-Control-Allow-Origin":   "*",
+		"Content-Disposition":           "attachment; filename=" + persistedImage.FileName,
+		"Content-Type":                  persistedImage.FileType,
+	}
 
-	var receivedImage = getImageFromDb(uri)
-
-	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Disposition", "attachment; filename="+receivedImage.FileName)
-	w.Header().Set("Content-Type", receivedImage.FileType)
-
-	w.Write(receivedImage.FileData)
+	log.Printf("Location image [%d] read: success\n", imageID)
+	return responses.NewFileResponse(persistedImage.FileData, responseMap)
 }

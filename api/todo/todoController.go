@@ -18,7 +18,7 @@ const (
 
 func EnrichRouteWithTodo(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&Todo{})
+	config.InitializeType("Todo", &Todo{})
 
 	subroute := router.PathPrefix("/todo").Subrouter()
 	subroute.Handle("/add", user.VerifyJwtToken(ResolveTodo(http.HandlerFunc(controllerAddTodo)))).Methods(http.MethodPost)

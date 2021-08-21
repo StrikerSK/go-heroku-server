@@ -7,6 +7,7 @@ import (
 	"go-heroku-server/api/location/image"
 	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
+	"go-heroku-server/config"
 	"log"
 	"net/http"
 	"strconv"
@@ -15,6 +16,8 @@ import (
 const locationContextKey = "locationID"
 
 func EnrichRouteWithLocation(router *mux.Router) {
+
+	config.InitializeType("Location", &Location{})
 
 	locationRoute := router.PathPrefix("/location").Subrouter()
 	locationRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods(http.MethodPost)

@@ -4,18 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Update log of errors">
-      <change afterPath="$PROJECT_DIR$/api/location/image/ImageService.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/image/imageController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/image/imageRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/image/imageType.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantType.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement Singleton design pattern">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationEntity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/restaurant.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/restaurant/restaurantController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/restaurant/restaurantRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/restaurant/restaurantService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -256,6 +250,28 @@
       <filePath value="$PROJECT_DIR$/main.go" />
       <method v="2" />
     </configuration>
+    <configuration name="Run Application (1)" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="go-heroku-server" />
+      <working_directory value="$PROJECT_DIR$" />
+      <envs>
+        <env name="REDIS_URL" value="redis://:@localhost:6379" />
+      </envs>
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        </ENTRIES>
+      </EXTENSION>
+      <kind value="PACKAGE" />
+      <package value="go-heroku-server" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="Run Application" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
       <module name="go-heroku-server" />
       <working_directory value="$PROJECT_DIR$" />
@@ -289,6 +305,7 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
+      <item itemvalue="Go Build.Run Application (1)" />
       <item itemvalue="Go Build.Go build" />
       <item itemvalue="Go Build.Run Application" />
     </list>
@@ -345,7 +362,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add middleware" />
     <MESSAGE value="Apply user middleware" />
     <MESSAGE value="Apply context and return responses" />
     <MESSAGE value="File processing with user" />
@@ -369,8 +385,9 @@
     <MESSAGE value="Refactoring codebase" />
     <MESSAGE value="Refactoring response to accept headers" />
     <MESSAGE value="Extend response interface and implementation" />
-    <MESSAGE value="Update log of errors" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update log of errors" />
+    <MESSAGE value="Split Restaurant and Image" />
+    <MESSAGE value="Implement Singleton design pattern" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement Singleton design pattern" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -392,11 +409,6 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/files/fileController.go</url>
-          <line>71</line>
-          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

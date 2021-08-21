@@ -15,7 +15,7 @@ const fileContextName = "file_ID"
 
 func EnrichRouteWithFile(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&File{})
+	config.InitializeType("File", &File{})
 
 	fileRoute := router.PathPrefix("/file").Subrouter()
 	fileRoute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods(http.MethodPost)

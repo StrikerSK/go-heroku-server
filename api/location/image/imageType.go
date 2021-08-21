@@ -1,11 +1,9 @@
 package image
 
-import "go-heroku-server/api/location"
-
 type LocationImage struct {
-	Id       uint                  `json:"id"`
-	Location location.UserLocation `json:"-"`
-	FileName string                `json:"filename"`
-	FileType string                `json:"-"`
-	FileData []byte                `json:"-"`
+	Id         uint   `json:"id"`
+	LocationID uint   `json:"-"`
+	FileName   string `json:"filename"`
+	FileType   string `json:"fileType"`
+	FileData   []byte `json:"-"`
 }

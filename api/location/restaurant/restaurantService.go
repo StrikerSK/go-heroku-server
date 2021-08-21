@@ -1,36 +1,19 @@
 package restaurant
 
 import (
-	"go-heroku-server/config"
-
-	"encoding/json"
-	"log"
+	"go-heroku-server/api/src/responses"
 	"net/http"
+
+	"log"
 )
 
-type TemporaryName struct {
-	Name string "name"
-}
-
-func GetRestaurantLocations(w http.ResponseWriter, r *http.Request) {
-	var locations []RestaurantLocation
-	config.DBConnection.Find(&locations)
-	json.NewEncoder(w).Encode(locations)
-	log.Println("Retrieved list of restaurant locations")
-}
-
-func GetRestaurantByName(w http.ResponseWriter, r *http.Request) {
-
-	var restName TemporaryName
-	var restaurant RestaurantLocation
-
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&restName)
+func sGetRestaurantByName(name string) responses.IResponse {
+	restaurant, err := findByName(name)
 	if err != nil {
-		panic(err)
+		log.Printf("Restaurant location [%s] read: %s\n", name, err.Error())
+		return responses.NewEmptyResponse(http.StatusNotFound)
 	}
-	defer config.DBConnection.Close()
-	config.DBConnection.Where("name = ?", restName.Name).First(&restaurant)
-	_ = json.NewEncoder(w).Encode(restaurant)
-	log.Println("Retrieved restaurant location")
+
+	log.Printf("Restaurant location [%s] read: success\n", name)
+	return responses.NewResponse(restaurant)
 }

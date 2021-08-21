@@ -2,8 +2,7 @@ package image
 
 import "go-heroku-server/config"
 
-func getImageFromDb(fileId int64) LocationImage {
-	var image LocationImage
-	config.DBConnection.Where("id = ?", fileId).Find(&image)
-	return image
+func readImage(imageID int64) (image LocationImage, err error) {
+	err = config.GetDatabaseInstance().Where("id = ?", imageID).Find(&image).Error
+	return
 }
