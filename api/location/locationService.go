@@ -1,132 +1,84 @@
 package location
 
 import (
-	"errors"
-	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"log"
 	"net/http"
-	"strconv"
-
-	"go-heroku-server/config"
 )
 
-func GetLocationImage(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	uri, _ := strconv.ParseInt(vars["id"], 10, 64)
-
-	var receivedImage = getImageFromDb(uri)
-
-	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Disposition", "attachment; filename="+receivedImage.FileName)
-	w.Header().Set("Content-Type", receivedImage.FileType)
-
-	w.Write(receivedImage.FileData)
-}
-
-func getImageFromDb(fileId int64) LocationImage {
-	var image LocationImage
-	config.DBConnection.Where("id = ?", fileId).Find(&image)
-	return image
-}
-
-func addLocation(userID uint, location Location) {
+func addLocation(userID uint, location UserLocation) {
 	location.UserID = userID
 	createLocation(location)
 }
 
-func deleteLocation(userID, locationID uint) src.IResponse {
+func deleteLocation(userID, locationID uint) responses.IResponse {
 	persistedLocation, err := readLocation(locationID)
 	if err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		log.Printf("UserLocation [%d] delete: %s", locationID, err.Error())
+		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
 	if persistedLocation.UserID != userID {
-		return src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("user cannot access requested location"),
-		}
+		log.Printf("UserLocation [%d] delete: access denied", locationID)
+		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	if err = deleteLocationFromRepository(persistedLocation); err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		log.Printf("UserLocation [%d] delete: %s", locationID, err.Error())
+		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
 	return nil
 }
 
-func editLocation(userID, locationID uint, updatedLocation Location) src.IResponse {
+func editLocation(userID, locationID uint, updatedLocation UserLocation) responses.IResponse {
 	persistedLocation, err := readLocation(locationID)
 	if err != nil {
-		return src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		log.Printf("UserLocation [%d] edit: %s", locationID, err.Error())
+		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	if persistedLocation.UserID != userID {
-		return src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        errors.New("user were accessing unowned todo"),
-		}
+		log.Printf("UserLocation [%d] edit: access denied", locationID)
+		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	updatedLocation.Id = locationID
 	updatedLocation.UserID = persistedLocation.UserID
 
 	if err = updateLocationInRepository(updatedLocation); err != nil {
-		return &src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		log.Printf("Location [%d] edit: %s", locationID, err.Error())
+		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
-	return nil
+	log.Printf("Location [%d] edit: success", locationID)
+	return responses.CreateResponse(http.StatusOK, nil)
 }
 
-func retrieveLocation(userID, locationID uint) (res src.IResponse) {
+func retrieveLocation(userID, locationID uint) (res responses.IResponse) {
 	var location, err = readLocation(locationID)
 	if err != nil {
-		res = src.RequestError{
-			StatusCode: http.StatusNotFound,
-			Err:        err,
-		}
+		log.Printf("Location [%d] read: %s", locationID, err.Error())
+		res = responses.CreateResponse(http.StatusNotFound, nil)
 		return
 	}
 
 	if location.UserID != userID {
-		log.Printf("access denied for file id: " + strconv.Itoa(int(locationID)))
-		res = src.RequestError{
-			StatusCode: http.StatusForbidden,
-			Err:        err,
-		}
+		log.Printf("Location [%d] read: access denied", locationID)
+		res = responses.CreateResponse(http.StatusForbidden, nil)
 		return
 	}
 
-	res = src.ResponseImpl{
-		Data: location,
-	}
+	res = responses.CreateResponse(http.StatusOK, location)
 	return
 }
 
-func getAllLocations(userID uint) (res src.IResponse) {
+func getAllLocations(userID uint) (res responses.IResponse) {
 	if locations, err := readAllLocations(userID); err != nil {
-		res = src.RequestError{
-			StatusCode: http.StatusBadRequest,
-			Err:        err,
-		}
+		log.Printf("Locations reading: %s", err.Error())
+		res = responses.CreateResponse(http.StatusBadRequest, nil)
 	} else {
-		res = src.ResponseImpl{
-			Data: locations,
-		}
+		res = responses.CreateResponse(http.StatusOK, locations)
 	}
 	return
 }

@@ -3,9 +3,10 @@ package files
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -14,15 +15,15 @@ const fileContextName = "file_ID"
 
 func EnrichRouteWithFile(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&File{})
+	config.InitializeType("File", &File{})
 
-	subroute := router.PathPrefix("/file").Subrouter()
-	subroute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods("POST")
-	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods("GET")
-	subroute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods("DELETE")
+	fileRoute := router.PathPrefix("/file").Subrouter()
+	fileRoute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods(http.MethodPost)
+	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods(http.MethodGet)
+	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods(http.MethodDelete)
 
-	filesSubroute := router.PathPrefix("/files").Subrouter()
-	filesSubroute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods("GET")
+	filesRoute := router.PathPrefix("/files").Subrouter()
+	filesRoute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods(http.MethodGet)
 
 }
 
@@ -31,7 +32,8 @@ func resolveFileID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
 		if err != nil {
-			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			log.Printf("Request file resolving: %s\n", err.Error())
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), fileContextName, uri)
@@ -48,13 +50,15 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		log.Printf("Controller file upload: %s\n", err.Error())
+		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}
 
 	//Processing of received file metadata
 	if err = r.ParseForm(); err != nil {
-		src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+		log.Printf("Controller file upload: %s\n", err.Error())
+		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
 	}
 
@@ -65,22 +69,14 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 	//	log.Print(err)
 	//}
 
-	uploadFile(file, fileHeader, userID)
+	uploadFile(file, fileHeader, userID).WriteResponse(w)
 }
 
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
 	userID, _ := user.ResolveUserContext(r.Context())
-
-	if file, err := readFile(userID, resolveFileContext(r.Context())); err != nil {
-		err.WriteResponse(w)
-		return
-	} else {
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Disposition", "attachment; filename="+file.FileName)
-		w.Header().Set("Content-Type", file.FileType)
-		_, _ = w.Write(file.FileData)
-	}
+	fileID := resolveFileContext(r.Context())
+	readFile(userID, fileID).WriteResponse(w)
+	return
 }
 
 func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {

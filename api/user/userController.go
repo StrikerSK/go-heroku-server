@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/src/responses"
+	customAuth "go-heroku-server/api/user/auth"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
-	"os/user"
 )
 
 const (
@@ -18,23 +18,21 @@ const (
 
 func EnrichRouterWithUser(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&user.User{})
-
 	userSubroute := router.PathPrefix("/user").Subrouter()
-	userSubroute.HandleFunc("/login", controllerLogin).Methods("POST")
-	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods("POST")
+	userSubroute.HandleFunc("/login", loginGeneratingCookie).Methods(http.MethodPost)
+	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods(http.MethodPost)
 
-	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
-	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUser))).Methods("GET")
+	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods(http.MethodPut)
+	userSubroute.Handle("/", verifyCookieSession(http.HandlerFunc(controllerGetUser))).Methods(http.MethodGet)
 
 	jwtSubroute := router.PathPrefix("/jwt").Subrouter()
-	jwtSubroute.HandleFunc("/login", LoginUser).Methods("POST")
+	jwtSubroute.HandleFunc("/login", LoginUser).Methods(http.MethodPost)
 
-	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods("PUT")
-	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods("GET")
+	jwtSubroute.Handle("/", VerifyJwtToken(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods(http.MethodPut)
+	jwtSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUser))).Methods(http.MethodGet)
 
 	usersSubroute := router.PathPrefix("/users").Subrouter()
-	usersSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUserList))).Methods("GET")
+	usersSubroute.Handle("/", VerifyJwtToken(http.HandlerFunc(controllerGetUserList))).Methods(http.MethodGet)
 }
 
 func verifyCookieSession(next http.Handler) http.Handler {
@@ -43,26 +41,27 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		if err != nil {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
-				src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+				log.Printf("Verify cookie: %s\n", err.Error())
+				responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 				return
 			}
 			// For any other type of error, return a bad request status
-			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			log.Printf("Verify cookie: %s\n", err.Error())
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 
 		sessionToken := c.Value
 
 		// We then get the name of the user from our cache, where we set the session token
-		response, err := config.Cache.Do("GET", sessionToken)
+		response, err := config.GetCacheInstance().Do("GET", sessionToken)
 		if err != nil {
-			// If there is an error fetching from cache, return an internal server error status
-			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+			log.Printf("Cache login: %s\n", err.Error())
+			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
 		if response == nil {
-			// If the session token is not present in cache, return an unauthorized error
-			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
 
@@ -75,12 +74,13 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {
-			w.WriteHeader(http.StatusUnauthorized)
+			log.Println("Verify JWT Token: Cannot find header")
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
-		userClaim, err := ParseToken(token)
+		userClaim, err := customAuth.ParseToken(token)
 		if err != nil {
-			src.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
@@ -92,35 +92,38 @@ func resolveUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var user User
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&user)
-		if err != nil {
-			src.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+
+		if err := decoder.Decode(&user); err != nil {
+			log.Printf("Resolve user: %s\n", err.Error())
+			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
+
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func ResolveUserContext(context context.Context) (uint, src.IResponse) {
+func ResolveUserContext(context context.Context) (uint, responses.IResponse) {
 	value, ok := context.Value(userIdContextKey).(uint)
 	if !ok {
-		return 0, src.NewErrorResponse(http.StatusInternalServerError, errors.New("cannot resolve userID from context"))
+		log.Println("UserID resolve: cannot resolve from context")
+		return 0, responses.CreateResponse(http.StatusInternalServerError, nil)
 	}
 
 	return value, nil
 }
 
-func controllerLogin(w http.ResponseWriter, r *http.Request) {
+func loginGeneratingCookie(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
-		// If the structure of the body is wrong, return an HTTP error
-		src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		log.Printf("Cookie Login: %s\n", err.Error())
+		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}
 
-	cookies, outputError := login(credentials)
+	cookies, outputError := loginWithCookies(credentials)
 	if outputError != nil {
 		outputError.WriteResponse(w)
 		return
@@ -128,7 +131,7 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 
 	// Finally, we set the client cookie for "session_token" as the session token we just generated
 	// we also set an expiry time of 120 seconds, the same as the cache
-	http.SetCookie(w, cookies)
+	http.SetCookie(w, &cookies)
 }
 
 func controllerGetUserList(w http.ResponseWriter, r *http.Request) {

@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src"
+	"go-heroku-server/api/location/image"
+	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
+	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -14,18 +17,20 @@ const locationContextKey = "locationID"
 
 func EnrichRouteWithLocation(router *mux.Router) {
 
-	subroute := router.PathPrefix("/location").Subrouter()
-	subroute.Handle("/add", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods("POST")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods("PUT")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods("GET")
-	subroute.Handle("/{id}", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods("DELETE")
+	config.InitializeType("Location", &Location{})
 
-	imageSubroute := subroute.PathPrefix("/image").Subrouter()
-	imageSubroute.HandleFunc("/{id}", GetLocationImage).Methods("GET")
+	locationRoute := router.PathPrefix("/location").Subrouter()
+	locationRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods(http.MethodPost)
+
+	locationSubRoute := locationRoute.PathPrefix("/{id}").Subrouter()
+	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods(http.MethodPut)
+	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods(http.MethodGet)
+	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods(http.MethodDelete)
 
 	locationsRoute := router.PathPrefix("/locations").Subrouter()
-	locationsRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods("GET")
+	locationsRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods(http.MethodGet)
 
+	image.EnrichRouteWithImages(locationSubRoute)
 }
 
 func ResolveLocationID(next http.Handler) http.Handler {
@@ -33,7 +38,8 @@ func ResolveLocationID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
-			src.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			log.Printf("Resolving location: %s\n", err.Error())
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), locationContextKey, uri)
@@ -42,7 +48,7 @@ func ResolveLocationID(next http.Handler) http.Handler {
 }
 
 func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
-	var res src.IResponse
+	var res responses.IResponse
 
 	userID, res := user.ResolveUserContext(r.Context())
 	if res != nil {
@@ -50,9 +56,10 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var location Location
+	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		res = src.NewErrorResponse(http.StatusInternalServerError, err)
+		log.Printf("Controller location add: %s\n", err.Error())
+		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return
 	}
@@ -61,7 +68,7 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
-	var res src.IResponse
+	var res responses.IResponse
 
 	locationID := resolveLocationContext(r.Context())
 	userID, res := user.ResolveUserContext(r.Context())
@@ -70,18 +77,20 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var location Location
+	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		res = src.NewErrorResponse(http.StatusInternalServerError, err)
+		log.Printf("Location [%d] edit (Controller): %s\n", locationID, err.Error())
+		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return
 	}
 
-	editLocation(userID, locationID, location)
+	res = editLocation(userID, locationID, location)
+	res.WriteResponse(w)
 }
 
 func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
-	var res src.IResponse
+	var res responses.IResponse
 
 	userID, res := user.ResolveUserContext(r.Context())
 	if res != nil {
@@ -94,21 +103,22 @@ func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerDeleteLocation(w http.ResponseWriter, r *http.Request) {
+	var res responses.IResponse
 	locationID := resolveLocationContext(r.Context())
-	userID, err := user.ResolveUserContext(r.Context())
-	if err != nil {
-		err.WriteResponse(w)
+	userID, res := user.ResolveUserContext(r.Context())
+	if res != nil {
+		res.WriteResponse(w)
 		return
 	}
 
-	if res := deleteLocation(userID, locationID); err != nil {
+	if res = deleteLocation(userID, locationID); res != nil {
 		res.WriteResponse(w)
 		return
 	}
 }
 
 func controllerGetLocations(w http.ResponseWriter, r *http.Request) {
-	var res src.IResponse
+	var res responses.IResponse
 	userID, res := user.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
