@@ -20,32 +20,48 @@ type User struct {
 	Address   types.Address `json:"address"`
 }
 
-func (user *User) decryptPassword() {
-	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+func (u User) GetID() uint {
+	return u.ID
+}
+
+func (u User) GetUsername() string {
+	return u.Username
+}
+
+func (u User) GetRole() string {
+	return u.Role
+}
+
+func (u *User) decryptPassword() {
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("decriptPasswrod error: %s\n", err)
 	}
 
-	user.Password = string(encryptedPassword)
+	u.Password = string(encryptedPassword)
 }
 
-func (user User) validatePassword(password string) bool {
+func (u User) validatePassword(password string) bool {
 	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 	//	log.Printf("validatePassword error: %s\n", err)
 	//	return false
 	//}
-	return user.Password == password
+	return u.Password == password
 }
 
-func (user *User) setRole() {
-	if user.Role == "" {
-		user.Role = UserRole
+func (u *User) setRole() {
+	if u.Role == "" {
+		u.Role = UserRole
 	}
 }
 
 type Credentials struct {
 	Username string `json:"username"`
 	Password string `json:"password,omitempty"`
+}
+
+func (c *Credentials) clearPassword() {
+	c.Password = ""
 }
 
 type Token struct {

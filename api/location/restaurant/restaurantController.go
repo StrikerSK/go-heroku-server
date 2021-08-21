@@ -15,7 +15,7 @@ func EnrichRouteWithRestaurants(router *mux.Router) {
 }
 
 func GetRestaurantLocations(w http.ResponseWriter, r *http.Request) {
-	responses.NewResponse(findAll()).WriteResponse(w)
+	responses.CreateResponse(http.StatusOK, findAll()).WriteResponse(w)
 	return
 }
 

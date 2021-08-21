@@ -5,8 +5,9 @@ import (
 )
 
 func createFile(file File) {
-	config.GetDatabaseInstance().NewRecord(file)
-	config.GetDatabaseInstance().Create(&file)
+	instance := config.GetDatabaseInstance()
+	instance.NewRecord(file)
+	instance.Create(&file)
 }
 
 func getAll(userID uint) (files []File) {

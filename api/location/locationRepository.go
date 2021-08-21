@@ -5,8 +5,9 @@ import (
 )
 
 func createLocation(location UserLocation) {
-	config.GetDatabaseInstance().NewRecord(location)
-	config.GetDatabaseInstance().Create(&location)
+	instance := config.GetDatabaseInstance()
+	instance.NewRecord(location)
+	instance.Create(&location)
 }
 
 func readLocation(locationID uint) (location UserLocation, err error) {

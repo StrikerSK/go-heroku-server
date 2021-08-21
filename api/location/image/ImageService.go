@@ -10,7 +10,7 @@ func sReadLocationImage(imageID int64) responses.IResponse {
 	persistedImage, err := readImage(imageID)
 	if err != nil {
 		log.Printf("Location image [%d] read: %s\n", imageID, err)
-		return responses.NewEmptyResponse(http.StatusBadRequest)
+		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
 	responseMap := map[string]string{
@@ -21,5 +21,7 @@ func sReadLocationImage(imageID int64) responses.IResponse {
 	}
 
 	log.Printf("Location image [%d] read: success\n", imageID)
-	return responses.NewFileResponse(persistedImage.FileData, responseMap)
+	res := responses.CreateResponse(http.StatusOK, persistedImage.FileData)
+	res.SetHeaders(responseMap)
+	return res
 }

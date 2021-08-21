@@ -33,7 +33,7 @@ func resolveFileID(next http.Handler) http.Handler {
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
 		if err != nil {
 			log.Printf("Request file resolving: %s\n", err.Error())
-			responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), fileContextName, uri)
@@ -51,14 +51,14 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
-		responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
+		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}
 
 	//Processing of received file metadata
 	if err = r.ParseForm(); err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
-		responses.NewEmptyResponse(http.StatusInternalServerError).WriteResponse(w)
+		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
 	}
 

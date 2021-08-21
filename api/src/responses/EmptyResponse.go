@@ -9,8 +9,8 @@ type EmptyResponse struct {
 	Header     map[string]string `json:"-"`
 }
 
-func NewEmptyResponse(statusCode int) EmptyResponse {
-	return EmptyResponse{StatusCode: statusCode}
+func NewEmptyResponse(statusCode int) *EmptyResponse {
+	return &EmptyResponse{StatusCode: statusCode}
 }
 
 func (er EmptyResponse) WriteResponse(w http.ResponseWriter) {
@@ -22,7 +22,12 @@ func (er EmptyResponse) WriteResponse(w http.ResponseWriter) {
 	return
 }
 
-func (er EmptyResponse) AddHeader(newKey, keyValue string) {
+func (er *EmptyResponse) AddHeader(newKey, keyValue string) {
 	er.Header[newKey] = keyValue
+	return
+}
+
+func (er *EmptyResponse) SetHeaders(input map[string]string) {
+	er.Header = input
 	return
 }

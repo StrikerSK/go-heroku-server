@@ -3,8 +3,9 @@ package user
 import "go-heroku-server/config"
 
 func createUser(newUser User) {
-	config.GetDatabaseInstance().NewRecord(newUser)
-	config.GetDatabaseInstance().Create(&newUser)
+	instance := config.GetDatabaseInstance()
+	instance.NewRecord(newUser)
+	instance.Create(&newUser)
 }
 
 //Function retrieves user and flag if exists can be registered to database

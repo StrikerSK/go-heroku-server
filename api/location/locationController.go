@@ -39,7 +39,7 @@ func ResolveLocationID(next http.Handler) http.Handler {
 		uri, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			log.Printf("Resolving location: %s\n", err.Error())
-			responses.NewEmptyResponse(http.StatusBadRequest).WriteResponse(w)
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), locationContextKey, uri)
@@ -59,7 +59,7 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
 		log.Printf("Controller location add: %s\n", err.Error())
-		res = responses.NewEmptyResponse(http.StatusInternalServerError)
+		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return
 	}
@@ -79,7 +79,8 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 
 	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		res = responses.NewErrorResponse(http.StatusInternalServerError, err)
+		log.Printf("Location [%d] edit (Controller): %s\n", locationID, err.Error())
+		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return
 	}

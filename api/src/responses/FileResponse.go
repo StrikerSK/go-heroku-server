@@ -10,11 +10,10 @@ type FileResponse struct {
 	Header     map[string]string `json:"-"`
 }
 
-func NewFileResponse(data []byte, headerMap map[string]string) FileResponse {
-	return FileResponse{
+func NewFileResponse(data []byte) *FileResponse {
+	return &FileResponse{
 		StatusCode: http.StatusOK,
 		Data:       data,
-		Header:     headerMap,
 	}
 }
 
@@ -27,7 +26,12 @@ func (ir FileResponse) WriteResponse(w http.ResponseWriter) {
 	return
 }
 
-func (ir FileResponse) AddHeader(newKey, keyValue string) {
+func (ir *FileResponse) AddHeader(newKey, keyValue string) {
 	ir.Header[newKey] = keyValue
+	return
+}
+
+func (ir *FileResponse) SetHeaders(input map[string]string) {
+	ir.Header = input
 	return
 }

@@ -11,9 +11,9 @@ func sGetRestaurantByName(name string) responses.IResponse {
 	restaurant, err := findByName(name)
 	if err != nil {
 		log.Printf("Restaurant location [%s] read: %s\n", name, err.Error())
-		return responses.NewEmptyResponse(http.StatusNotFound)
+		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	log.Printf("Restaurant location [%s] read: success\n", name)
-	return responses.NewResponse(restaurant)
+	return responses.CreateResponse(http.StatusOK, restaurant)
 }

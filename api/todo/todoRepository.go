@@ -5,8 +5,9 @@ import (
 )
 
 func createTodo(newTodo Todo) {
-	config.GetDatabaseInstance().NewRecord(newTodo)
-	config.GetDatabaseInstance().Create(&newTodo)
+	instance := config.GetDatabaseInstance()
+	instance.NewRecord(newTodo)
+	instance.Create(&newTodo)
 }
 
 func readTodo(todoID uint) (todo Todo, err error) {

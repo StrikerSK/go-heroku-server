@@ -18,7 +18,7 @@ func cReadLocationImage(w http.ResponseWriter, r *http.Request) {
 	imageID, err := strconv.ParseInt(vars["imageId"], 10, 64)
 	if err != nil {
 		log.Printf("Location image [%d] read: %s\n", imageID, err)
-		responses.NewEmptyResponse(http.StatusInternalServerError).WriteResponse(w)
+		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
 	}
 
