@@ -17,7 +17,7 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 
 	if err != nil {
 		log.Printf("File add: %s\n", err.Error())
-		return responses.NewEmptyResponse(http.StatusInternalServerError)
+		return responses.CreateResponse(http.StatusInternalServerError, nil)
 	}
 
 	contentType := fileHeader.Header.Get("Content-Type")
@@ -31,9 +31,9 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 		CreateDate: time.Now(),
 	}
 
-	log.Printf("File create: success\n")
 	createFile(resolvedFile)
-	return responses.NewEmptyResponse(http.StatusCreated)
+	log.Printf("File create: success\n")
+	return responses.CreateResponse(http.StatusCreated, nil)
 }
 
 //Function provides requested file to the client
@@ -41,12 +41,12 @@ func readFile(userID uint, fileID uint) responses.IResponse {
 	var persistedFile, err = getFile(fileID)
 	if err != nil {
 		log.Printf("File [%d] read: %s\n", fileID, err.Error())
-		return responses.NewEmptyResponse(http.StatusNotFound)
+		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	if persistedFile.UserID != userID {
 		log.Printf("File [%d] read: access denied\n", fileID)
-		return responses.NewResponse(http.StatusForbidden)
+		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	responseMap := map[string]string{
@@ -57,10 +57,13 @@ func readFile(userID uint, fileID uint) responses.IResponse {
 	}
 
 	log.Printf("File [%d] read: success\n", fileID)
-	return responses.NewFileResponse(persistedFile.FileData, responseMap)
+
+	res := responses.CreateResponse(http.StatusOK, persistedFile.FileData)
+	res.SetHeaders(responseMap)
+	return res
 }
 
-func getFileList(userID uint) responses.ResponseImpl {
+func getFileList(userID uint) responses.IResponse {
 	files := getAll(userID)
 	for index := range files {
 		fileName := files[index].FileName
@@ -68,7 +71,7 @@ func getFileList(userID uint) responses.ResponseImpl {
 		files[index].FileName = fileName
 	}
 	log.Printf("File listing: success\n")
-	return responses.NewResponse(files)
+	return responses.CreateResponse(http.StatusOK, files)
 }
 
 //Deletion of file base on userID
@@ -76,21 +79,21 @@ func removeFile(userID, fileID uint) responses.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
 		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
-		return responses.NewEmptyResponse(http.StatusOK)
+		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
 	if persistedFile.UserID != userID {
 		log.Printf("File [%d] delete: access denied\n", fileID)
-		return responses.NewEmptyResponse(http.StatusForbidden)
+		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	if err = deleteFile(persistedFile.Id); err != nil {
 		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
-		return responses.NewEmptyResponse(http.StatusBadRequest)
+		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
 	log.Printf("File [%d] delete: success\n", fileID)
-	return responses.NewEmptyResponse(http.StatusOK)
+	return responses.CreateResponse(http.StatusOK, nil)
 }
 
 //Resolve ideal file size up to MegaBytes

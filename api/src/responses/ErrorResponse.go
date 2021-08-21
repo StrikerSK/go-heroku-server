@@ -12,8 +12,8 @@ type RequestError struct {
 	Header       map[string]string `json:"-"`
 }
 
-func NewErrorResponse(statusCode int, error error) RequestError {
-	return RequestError{
+func NewErrorResponse(statusCode int, error error) *RequestError {
+	return &RequestError{
 		StatusCode:   statusCode,
 		ErrorMessage: error.Error(),
 		Header: map[string]string{
@@ -34,7 +34,12 @@ func (re RequestError) WriteResponse(w http.ResponseWriter) {
 	return
 }
 
-func (re RequestError) AddHeader(newKey, keyValue string) {
+func (re *RequestError) AddHeader(newKey, keyValue string) {
 	re.Header[newKey] = keyValue
+	return
+}
+
+func (re *RequestError) SetHeaders(input map[string]string) {
+	re.Header = input
 	return
 }

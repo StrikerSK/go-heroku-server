@@ -4,19 +4,20 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go-heroku-server/api/src/responses"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"time"
 )
 
 const tokenName = "session_token"
 
-func login(credentials Credentials) (*http.Cookie, *responses.RequestError) {
-	var requestError responses.RequestError
+func loginWithCookies(credentials Credentials) (http.Cookie, responses.IResponse) {
+	var requestError responses.IResponse
 
 	persistedUser, err := getUserByUsername(credentials.Username)
 	if err != nil {
-		requestError = responses.NewErrorResponse(http.StatusBadRequest, err)
-		return nil, &requestError
+		requestError = responses.CreateResponse(http.StatusBadRequest, err)
+		return http.Cookie{}, requestError
 	}
 
 	// If a password exists for the given user
@@ -24,22 +25,24 @@ func login(credentials Credentials) (*http.Cookie, *responses.RequestError) {
 	// if NOT, then we return an "Unauthorized" status
 	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
 	if !persistedUser.validatePassword(credentials.Password) {
-		requestError = responses.NewErrorResponse(http.StatusUnauthorized, err)
-		return nil, &requestError
+		log.Println("Login with Cookies: password are not matching")
+		requestError = responses.CreateResponse(http.StatusUnauthorized, nil)
+		return http.Cookie{}, requestError
 	}
 
 	// Create a new random session token
 	sessionToken := uuid.NewV4().String()
 	// Set the token in the cache, along with the user whom it represents
 	// The token has an expiry time of 120 seconds
-	_, err = config.Cache.Do("SETEX", sessionToken, "120", persistedUser.ID)
+	_, err = config.GetCacheInstance().Do("SETEX", sessionToken, "120", persistedUser.ID)
 	if err != nil {
 		// If there is an error in setting the cache, return an internal server error
-		requestError = responses.NewErrorResponse(http.StatusInternalServerError, err)
-		return nil, &requestError
+		log.Printf("Login with Cookies: %s\n", err.Error())
+		requestError = responses.CreateResponse(http.StatusInternalServerError, nil)
+		return http.Cookie{}, requestError
 	}
 
-	cookie := &http.Cookie{
+	cookie := http.Cookie{
 		Name:    tokenName,
 		Value:   sessionToken,
 		Expires: time.Now().Add(120 * time.Second),

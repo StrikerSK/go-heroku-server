@@ -10,8 +10,8 @@ type ResponseImpl struct {
 	Header map[string]string `json:"-"`
 }
 
-func NewResponse(data interface{}) ResponseImpl {
-	return ResponseImpl{
+func NewBodyResponse(data interface{}) *ResponseImpl {
+	return &ResponseImpl{
 		Data: data,
 		Header: map[string]string{
 			"Content-Type": "application/json",
@@ -30,7 +30,12 @@ func (ri ResponseImpl) WriteResponse(w http.ResponseWriter) {
 	return
 }
 
-func (ri ResponseImpl) AddHeader(newKey, keyValue string) {
+func (ri *ResponseImpl) AddHeader(newKey, keyValue string) {
 	ri.Header[newKey] = keyValue
+	return
+}
+
+func (ri *ResponseImpl) SetHeaders(input map[string]string) {
+	ri.Header = input
 	return
 }

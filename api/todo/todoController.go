@@ -7,6 +7,7 @@ import (
 	"go-heroku-server/api/src/responses"
 	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -18,7 +19,7 @@ const (
 
 func EnrichRouteWithTodo(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&Todo{})
+	config.InitializeType("Todo", &Todo{})
 
 	subroute := router.PathPrefix("/todo").Subrouter()
 	subroute.Handle("/add", user.VerifyJwtToken(ResolveTodo(http.HandlerFunc(controllerAddTodo)))).Methods(http.MethodPost)
@@ -49,11 +50,13 @@ func ResolveTodo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var todo Todo
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&todo)
-		if err != nil {
-			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+
+		if err := decoder.Decode(&todo); err != nil {
+			log.Printf("Resolve Todo: %s\n", err.Error())
+			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
+
 		ctx := context.WithValue(r.Context(), todoBodyContextKey, todo)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

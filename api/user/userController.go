@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src/responses"
+	customAuth "go-heroku-server/api/user/auth"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
-	"os/user"
 )
 
 const (
@@ -18,10 +18,8 @@ const (
 
 func EnrichRouterWithUser(router *mux.Router) {
 
-	config.DBConnection.AutoMigrate(&user.User{})
-
 	userSubroute := router.PathPrefix("/user").Subrouter()
-	userSubroute.HandleFunc("/login", controllerLogin).Methods(http.MethodPost)
+	userSubroute.HandleFunc("/login", loginGeneratingCookie).Methods(http.MethodPost)
 	userSubroute.Handle("/register", resolveUser(http.HandlerFunc(controllerRegisterUser))).Methods(http.MethodPost)
 
 	userSubroute.Handle("/", verifyCookieSession(resolveUser(http.HandlerFunc(controllerEditUser)))).Methods(http.MethodPut)
@@ -43,26 +41,27 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		if err != nil {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
-				responses.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+				log.Printf("Verify cookie: %s\n", err.Error())
+				responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 				return
 			}
 			// For any other type of error, return a bad request status
-			responses.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+			log.Printf("Verify cookie: %s\n", err.Error())
+			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
 
 		sessionToken := c.Value
 
 		// We then get the name of the user from our cache, where we set the session token
-		response, err := config.Cache.Do("GET", sessionToken)
+		response, err := config.GetCacheInstance().Do("GET", sessionToken)
 		if err != nil {
-			// If there is an error fetching from cache, return an internal server error status
-			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+			log.Printf("Cache login: %s\n", err.Error())
+			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
 		if response == nil {
-			// If the session token is not present in cache, return an unauthorized error
-			responses.NewErrorResponse(http.StatusUnauthorized, err).WriteResponse(w)
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
 
@@ -75,12 +74,13 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if token == "" {
-			responses.NewEmptyResponse(http.StatusUnauthorized).WriteResponse(w)
+			log.Println("Verify JWT Token: Cannot find header")
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
-		userClaim, res := ParseToken(token)
-		if res != nil {
-			res.WriteResponse(w)
+		userClaim, err := customAuth.ParseToken(token)
+		if err != nil {
+			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Id)
@@ -92,11 +92,13 @@ func resolveUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var user User
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&user)
-		if err != nil {
-			responses.NewErrorResponse(http.StatusInternalServerError, err).WriteResponse(w)
+
+		if err := decoder.Decode(&user); err != nil {
+			log.Printf("Resolve user: %s\n", err.Error())
+			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
+
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -105,23 +107,23 @@ func resolveUser(next http.Handler) http.Handler {
 func ResolveUserContext(context context.Context) (uint, responses.IResponse) {
 	value, ok := context.Value(userIdContextKey).(uint)
 	if !ok {
-		log.Println("cannot resolve userID from context")
-		return 0, responses.NewEmptyResponse(http.StatusInternalServerError)
+		log.Println("UserID resolve: cannot resolve from context")
+		return 0, responses.CreateResponse(http.StatusInternalServerError, nil)
 	}
 
 	return value, nil
 }
 
-func controllerLogin(w http.ResponseWriter, r *http.Request) {
+func loginGeneratingCookie(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
-		// If the structure of the body is wrong, return an HTTP error
-		responses.NewErrorResponse(http.StatusBadRequest, err).WriteResponse(w)
+		log.Printf("Cookie Login: %s\n", err.Error())
+		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}
 
-	cookies, outputError := login(credentials)
+	cookies, outputError := loginWithCookies(credentials)
 	if outputError != nil {
 		outputError.WriteResponse(w)
 		return
@@ -129,7 +131,7 @@ func controllerLogin(w http.ResponseWriter, r *http.Request) {
 
 	// Finally, we set the client cookie for "session_token" as the session token we just generated
 	// we also set an expiry time of 120 seconds, the same as the cache
-	http.SetCookie(w, cookies)
+	http.SetCookie(w, &cookies)
 }
 
 func controllerGetUserList(w http.ResponseWriter, r *http.Request) {
