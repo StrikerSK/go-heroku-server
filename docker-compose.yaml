@@ -17,6 +17,7 @@ services:
     environment:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
       - REDIS_URL=redis://:@${REDIS_HOST}:${REDIS_PORT}
+
   fullstack-postgres:
     image: postgres
     container_name: go-app-postgres
@@ -29,6 +30,7 @@ services:
       - '5432:5432'
     networks:
       - fullstack
+
   fullstack-redis:
     image: redis
     container_name: go-app-redis
@@ -36,6 +38,7 @@ services:
       - "6379:6379"
     networks:
       - fullstack
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
@@ -49,6 +52,19 @@ services:
     networks:
       - fullstack
     restart: unless-stopped
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    depends_on:
+      - fullstack-redis
+    environment:
+      - REDIS_HOSTS=local:${REDIS_HOST}:${REDIS_PORT}
+    ports:
+      - "8081:8081"
+    networks:
+      - fullstack
 
 # Networks to be created to facilitate communication between containers
 networks:
