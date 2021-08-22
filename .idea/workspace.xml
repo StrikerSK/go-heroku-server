@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement Factory pattern and refactor user">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/cacheInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/cacheInstance.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor main and add Dockerfile">
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -377,7 +372,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Apply context and return responses" />
     <MESSAGE value="File processing with user" />
     <MESSAGE value="Add todos" />
     <MESSAGE value="Add logging to log" />
@@ -402,7 +396,8 @@
     <MESSAGE value="Split Restaurant and Image" />
     <MESSAGE value="Implement Singleton design pattern" />
     <MESSAGE value="Implement Factory pattern and refactor user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement Factory pattern and refactor user" />
+    <MESSAGE value="Refactor main and add Dockerfile" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor main and add Dockerfile" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
