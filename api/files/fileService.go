@@ -44,8 +44,8 @@ func readFile(userID uint, fileID uint) responses.IResponse {
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
-	if persistedFile.UserID != userID {
-		log.Printf("File [%d] read: access denied\n", fileID)
+	if err = persistedFile.validateAccess(userID); err != nil {
+		log.Printf("File [%d] read: %s\n", fileID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -82,8 +82,8 @@ func removeFile(userID, fileID uint) responses.IResponse {
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
-	if persistedFile.UserID != userID {
-		log.Printf("File [%d] delete: access denied\n", fileID)
+	if err = persistedFile.validateAccess(userID); err != nil {
+		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 

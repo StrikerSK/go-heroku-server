@@ -18,8 +18,8 @@ func deleteLocation(userID, locationID uint) responses.IResponse {
 		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
-	if persistedLocation.UserID != userID {
-		log.Printf("UserLocation [%d] delete: access denied", locationID)
+	if err = persistedLocation.validateAccess(userID); err != nil {
+		log.Printf("UserLocation [%d] delete: %s", locationID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -38,8 +38,8 @@ func editLocation(userID, locationID uint, updatedLocation UserLocation) respons
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
-	if persistedLocation.UserID != userID {
-		log.Printf("UserLocation [%d] edit: access denied", locationID)
+	if err = persistedLocation.validateAccess(userID); err != nil {
+		log.Printf("UserLocation [%d] edit: %s", locationID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -56,20 +56,19 @@ func editLocation(userID, locationID uint, updatedLocation UserLocation) respons
 }
 
 func retrieveLocation(userID, locationID uint) (res responses.IResponse) {
-	var location, err = readLocation(locationID)
+	var persistedLocation, err = readLocation(locationID)
 	if err != nil {
 		log.Printf("Location [%d] read: %s", locationID, err.Error())
 		res = responses.CreateResponse(http.StatusNotFound, nil)
 		return
 	}
 
-	if location.UserID != userID {
-		log.Printf("Location [%d] read: access denied", locationID)
-		res = responses.CreateResponse(http.StatusForbidden, nil)
-		return
+	if err = persistedLocation.validateAccess(userID); err != nil {
+		log.Printf("UserLocation [%d] delete: %s", locationID, err.Error())
+		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
-	res = responses.CreateResponse(http.StatusOK, location)
+	res = responses.CreateResponse(http.StatusOK, persistedLocation)
 	return
 }
 

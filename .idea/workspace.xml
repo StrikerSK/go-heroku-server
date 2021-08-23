@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor main and add Dockerfile">
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Fix not including static files">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileEntity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoEntity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,12 +94,12 @@
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
       <RewordedCommitMessageMapping>
-        <option name="originalMessage" value="Refactoring response to accept headers" />
-        <option name="rewordedMessage" value="Extend response interface and implementation" />
+        <option name="originalMessage" value="Refactor file endpoint" />
+        <option name="rewordedMessage" value="Refactor code, add dockerfile and include .env file" />
       </RewordedCommitMessageMapping>
     </option>
     <option name="currentCommit" value="1" />
-    <option name="onto" value="0cc8c829831fbdb0f0e89da08c3508b5eebd0b99" />
+    <option name="onto" value="639ab6896640d2295139994629e4272f446a1356" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -226,26 +230,7 @@
       <recent name="$PROJECT_DIR$/api/location" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yaml: Compose Deployment">
-    <configuration name="Go build" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
-      <module name="go-heroku-server" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <EXTENSION ID="net.ashald.envfile">
-        <option name="IS_ENABLED" value="false" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-        </ENTRIES>
-      </EXTENSION>
-      <kind value="DIRECTORY" />
-      <package value="go-heroku-server" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/main.go" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Docker.docker-compose.yaml.redis-commander: Compose Deployment">
     <configuration name="Run Application (1)" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="go-heroku-server" />
       <working_directory value="$PROJECT_DIR$" />
@@ -299,6 +284,32 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yaml.fullstack-app: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="fullstack-app" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yaml.redis-commander: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="redis-commander" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yaml.web: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -314,18 +325,19 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
-      <item itemvalue="Go Build.Run Application (1)" />
-      <item itemvalue="Go Build.Go build" />
-      <item itemvalue="Go Build.Run Application" />
       <item itemvalue="Docker.docker-compose.yaml.web: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yaml.fullstack-app: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yaml.redis-commander: Compose Deployment" />
+      <item itemvalue="Go Build.Run Application (1)" />
+      <item itemvalue="Go Build.Run Application" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.docker-compose.yaml.redis-commander: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
+        <item itemvalue="Go Build.Run Application" />
+        <item itemvalue="Docker.docker-compose.yaml.fullstack-app: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml.web: Compose Deployment" />
-        <item itemvalue="Go Build.Run Application" />
-        <item itemvalue="Go Build.Go build" />
-        <item itemvalue="Go Build.Run Application" />
       </list>
     </recent_temporary>
   </component>
@@ -372,8 +384,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="File processing with user" />
-    <MESSAGE value="Add todos" />
     <MESSAGE value="Add logging to log" />
     <MESSAGE value="User edit and body parsing" />
     <MESSAGE value="Add encryption and refactoring" />
@@ -397,7 +407,9 @@
     <MESSAGE value="Implement Singleton design pattern" />
     <MESSAGE value="Implement Factory pattern and refactor user" />
     <MESSAGE value="Refactor main and add Dockerfile" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor main and add Dockerfile" />
+    <MESSAGE value="Rename, add pgadmin and inlcude .env file" />
+    <MESSAGE value="Fix not including static files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix not including static files" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

@@ -1,6 +1,7 @@
 package files
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -15,7 +16,15 @@ type File struct {
 	CreateDate time.Time `json:"createDate"`
 }
 
-func (r File) toString() {
+func (f File) toString() {
 	fmt.Printf("ID: %d, UserID: %d, FileName: %s, FileType: %s, FileSize: %s \n",
-		r.Id, r.UserID, r.FileName, r.FileType, r.FileSize)
+		f.Id, f.UserID, f.FileName, f.FileType, f.FileSize)
+}
+
+func (f *File) validateAccess(userID uint) error {
+	if f.UserID != userID {
+		return errors.New("access denied")
+	} else {
+		return nil
+	}
 }

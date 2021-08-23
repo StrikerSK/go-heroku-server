@@ -1,6 +1,9 @@
 package location
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Location struct {
 	Id          uint    `json:"id"`
@@ -18,7 +21,15 @@ type UserLocation struct {
 	UserID  uint `json:"-"`
 }
 
-func (r UserLocation) toString() {
+func (ul UserLocation) toString() {
 	fmt.Printf("Id: %d, Latitude: %f, Longitutde: %f, Name: %s, Type: %s, Description: %s, ImageId: %d, UserID: %d\n",
-		r.Id, r.Latitude, r.Longitude, r.Name, r.Type, r.Description, r.ImageId, r.UserID)
+		ul.Id, ul.Latitude, ul.Longitude, ul.Name, ul.Type, ul.Description, ul.ImageId, ul.UserID)
+}
+
+func (ul *UserLocation) validateAccess(userID uint) error {
+	if ul.UserID != userID {
+		return errors.New("access denied")
+	} else {
+		return nil
+	}
 }

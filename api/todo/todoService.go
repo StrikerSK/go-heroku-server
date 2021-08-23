@@ -25,8 +25,8 @@ func getTodo(todoID uint, userID uint) responses.IResponse {
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
-	if persistedTodo.UserID != userID {
-		log.Printf("Todo [%d] read: access denied\n", todoID)
+	if err = persistedTodo.validateAccess(userID); err != nil {
+		log.Printf("Todo [%d] read: %s\n", todoID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -40,18 +40,18 @@ func addTodo(todo Todo) responses.IResponse {
 }
 
 func removeTodo(userID, todoID uint) responses.IResponse {
-	persistedFile, err := readTodo(todoID)
+	persistedTodo, err := readTodo(todoID)
 	if err != nil {
 		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
-	if persistedFile.UserID != userID {
-		log.Printf("Todo [%d] delete: access denied\n", todoID)
+	if err = persistedTodo.validateAccess(userID); err != nil {
+		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
-	if err = deleteTodo(persistedFile.Id); err != nil {
+	if err = deleteTodo(persistedTodo.Id); err != nil {
 		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
@@ -67,8 +67,8 @@ func editTodo(userID, todoID uint, updatedTodo Todo) responses.IResponse {
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
-	if persistedTodo.UserID != userID {
-		log.Printf("Todo [%d] edit: access denied\n", todoID)
+	if err = persistedTodo.validateAccess(userID); err != nil {
+		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
