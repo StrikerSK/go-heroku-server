@@ -1,6 +1,8 @@
 package restaurant
 
-import "go-heroku-server/api/location"
+import (
+	"go-heroku-server/src/api/location"
+)
 
 type RestaurantLocation struct {
 	location.Location

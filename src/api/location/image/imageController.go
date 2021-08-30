@@ -2,13 +2,16 @@ package image
 
 import (
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src/responses"
+	"go-heroku-server/config"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 	"strconv"
 )
 
 func EnrichRouteWithImages(router *mux.Router) {
+	config.InitializeType("LocationImage", &LocationImage{})
+
 	imageRoute := router.PathPrefix("/image").Subrouter()
 	imageRoute.HandleFunc("/{imageId}", cReadLocationImage).Methods(http.MethodGet)
 }

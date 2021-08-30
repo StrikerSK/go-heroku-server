@@ -3,9 +3,9 @@ package files
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+	"go-heroku-server/src/api/user"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 	"strconv"
@@ -32,7 +32,7 @@ func resolveFileID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseInt(vars["id"], 10, 64)
 		if err != nil {
-			log.Printf("Request file resolving: %s\n", err.Error())
+			log.Printf("Request file resolving: %v\n", err)
 			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
@@ -50,14 +50,14 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
+		log.Printf("Controller file upload: %v\n", err)
 		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}
 
 	//Processing of received file metadata
 	if err = r.ParseForm(); err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
+		log.Printf("Controller file upload: %v\n", err)
 		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
 	}

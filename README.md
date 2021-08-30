@@ -1,5 +1,6 @@
 # Custom Server Application
-Application developed to gain knowledge of Go language. Main focus is to work with database, currently with GORM and PostgreSQL.
+Application developed to gain knowledge of Go programming language and Docker. 
+Main focus is to work with database using [GORM](https://gorm.io/) and [PostgreSQL](https://www.postgresql.org/).
 
 ### Configuration
 Application requires to have the following configurations:

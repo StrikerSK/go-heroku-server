@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src/responses"
-	customAuth "go-heroku-server/api/user/auth"
 	"go-heroku-server/config"
+	customAuth "go-heroku-server/src/api/user/auth"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 )
@@ -41,12 +41,12 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		if err != nil {
 			if err == http.ErrNoCookie {
 				// If the cookie is not set, return an unauthorized status
-				log.Printf("Verify cookie: %s\n", err.Error())
+				log.Printf("Verify cookie: %v\n", err)
 				responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 				return
 			}
 			// For any other type of error, return a bad request status
-			log.Printf("Verify cookie: %s\n", err.Error())
+			log.Printf("Verify cookie: %v\n", err)
 			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
@@ -56,11 +56,13 @@ func verifyCookieSession(next http.Handler) http.Handler {
 		// We then get the name of the user from our cache, where we set the session token
 		response, err := config.GetCacheInstance().Do("GET", sessionToken)
 		if err != nil {
-			log.Printf("Cache login: %s\n", err.Error())
+			log.Printf("Cache login: %v\n", err)
 			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
+
 		if response == nil {
+			log.Println("Cache login: no cache received")
 			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
@@ -94,7 +96,7 @@ func resolveUser(next http.Handler) http.Handler {
 		decoder := json.NewDecoder(r.Body)
 
 		if err := decoder.Decode(&user); err != nil {
-			log.Printf("Resolve user: %s\n", err.Error())
+			log.Printf("Resolve user: %v\n", err)
 			responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 			return
 		}
@@ -118,7 +120,7 @@ func loginGeneratingCookie(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
-		log.Printf("Cookie Login: %s\n", err.Error())
+		log.Printf("Cookie Login: %v\n", err)
 		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}

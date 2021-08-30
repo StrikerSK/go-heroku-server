@@ -2,7 +2,7 @@ package files
 
 import (
 	"fmt"
-	"go-heroku-server/api/src/responses"
+	"go-heroku-server/src/responses"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -16,7 +16,7 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 	fileBytes, err := ioutil.ReadAll(file)
 
 	if err != nil {
-		log.Printf("File add: %s\n", err.Error())
+		log.Printf("File create: %v\n", err)
 		return responses.CreateResponse(http.StatusInternalServerError, nil)
 	}
 
@@ -40,12 +40,12 @@ func uploadFile(file multipart.File, fileHeader *multipart.FileHeader, userID ui
 func readFile(userID uint, fileID uint) responses.IResponse {
 	var persistedFile, err = getFile(fileID)
 	if err != nil {
-		log.Printf("File [%d] read: %s\n", fileID, err.Error())
+		log.Printf("File [%d] read: %v\n", fileID, err)
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	if err = persistedFile.validateAccess(userID); err != nil {
-		log.Printf("File [%d] read: %s\n", fileID, err.Error())
+		log.Printf("File [%d] read: %v\n", fileID, err)
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -78,17 +78,17 @@ func getFileList(userID uint) responses.IResponse {
 func removeFile(userID, fileID uint) responses.IResponse {
 	persistedFile, err := getFile(fileID)
 	if err != nil {
-		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		log.Printf("File [%d] delete: %v\n", fileID, err)
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
 	if err = persistedFile.validateAccess(userID); err != nil {
-		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		log.Printf("File [%d] delete: %v\n", fileID, err)
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	if err = deleteFile(persistedFile.Id); err != nil {
-		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		log.Printf("File [%d] delete: %v\n", fileID, err)
 		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 

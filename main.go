@@ -4,25 +4,26 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"go-heroku-server/api/files"
-	"go-heroku-server/api/location/image"
-	"go-heroku-server/api/location/restaurant"
-	"go-heroku-server/api/todo"
-	"go-heroku-server/api/types"
 	"go-heroku-server/config"
+	"go-heroku-server/src/api/files"
+	"go-heroku-server/src/api/location"
+	"go-heroku-server/src/api/location/image"
+	"go-heroku-server/src/api/location/restaurant"
+	"go-heroku-server/src/api/todo"
+	"go-heroku-server/src/api/types"
+	"go-heroku-server/src/api/user"
+	"go-heroku-server/src/responses"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
-
-	"go-heroku-server/api/location"
-	"go-heroku-server/api/user"
 )
 
 func serveMainPage(w http.ResponseWriter, r *http.Request) {
 	templates := template.Must(template.ParseFiles("static/index.html"))
 	if err := templates.ExecuteTemplate(w, "index.html", nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Server static files: %v\n", err)
+		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 	}
 }
 
@@ -35,7 +36,7 @@ func init() {
 //Go application entrypoint
 func main() {
 	if err := createServer().ListenAndServe(); err != nil {
-		log.Printf("Server starting: %s\n", err.Error())
+		log.Printf("Server starting: %v\n", err)
 		os.Exit(1)
 		return
 	}

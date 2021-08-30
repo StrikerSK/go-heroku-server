@@ -1,7 +1,7 @@
 package restaurant
 
 import (
-	"go-heroku-server/api/src/responses"
+	"go-heroku-server/src/responses"
 	"net/http"
 
 	"log"
@@ -10,7 +10,7 @@ import (
 func sGetRestaurantByName(name string) responses.IResponse {
 	restaurant, err := findByName(name)
 	if err != nil {
-		log.Printf("Restaurant location [%s] read: %s\n", name, err.Error())
+		log.Printf("Restaurant location [%s] read: %v\n", name, err)
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 

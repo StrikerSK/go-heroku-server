@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/location/image"
-	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
 	"go-heroku-server/config"
+	"go-heroku-server/src/api/location/image"
+	"go-heroku-server/src/api/user"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 	"strconv"
@@ -38,7 +38,7 @@ func ResolveLocationID(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		uri, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
-			log.Printf("Resolving location: %s\n", err.Error())
+			log.Printf("Resolving location: %v\n", err)
 			responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 			return
 		}
@@ -58,7 +58,7 @@ func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 
 	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		log.Printf("Controller location add: %s\n", err.Error())
+		log.Printf("Controller location add: %v\n", err)
 		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return
@@ -79,7 +79,7 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 
 	var location UserLocation
 	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		log.Printf("Location [%d] edit (Controller): %s\n", locationID, err.Error())
+		log.Printf("Location [%d] edit (Controller): %v\n", locationID, err)
 		res = responses.CreateResponse(http.StatusInternalServerError, nil)
 		res.WriteResponse(w)
 		return

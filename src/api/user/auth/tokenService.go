@@ -23,11 +23,6 @@ func CreateToken(user ClaimValues) (token string, err error) {
 
 	// Sign and get the complete encoded token as a string using the secret
 	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(tokenEncodeString)
-	if err != nil {
-		log.Printf("Create Token: %s\n", err.Error())
-		return
-	}
-
 	return
 }
 
@@ -42,20 +37,20 @@ func ParseToken(signedToken string) (claims *UserClaims, err error) {
 	)
 
 	if err != nil {
-		log.Printf("Token parse: %s\n", err.Error())
+		log.Printf("Token parse: %v\n", err)
 		return
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok {
 		err = errors.New("cannot resolve token claims")
-		log.Printf("Token parse: %s\n", err.Error())
+		log.Printf("Token parse: %v\n", err)
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		err = errors.New("JWT token has expired")
-		log.Printf("Token parse: %s\n", err.Error())
+		log.Printf("Token parse: %v\n", err)
 		return
 	}
 

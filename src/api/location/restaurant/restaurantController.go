@@ -2,8 +2,8 @@ package restaurant
 
 import (
 	"github.com/gorilla/mux"
-	"go-heroku-server/api/src/responses"
 	"go-heroku-server/config"
+	"go-heroku-server/src/responses"
 	"net/http"
 )
 

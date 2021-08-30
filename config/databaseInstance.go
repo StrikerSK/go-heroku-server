@@ -24,7 +24,7 @@ func GetDatabaseInstance() *gorm.DB {
 			//DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name}?sslmode=disable
 			db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
 			if err != nil {
-				log.Printf("Database initialization error: %s\n", err.Error())
+				log.Printf("Database initialization error: %v\n", err)
 				os.Exit(1)
 			}
 

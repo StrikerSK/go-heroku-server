@@ -23,7 +23,7 @@ func GetCacheInstance() redis.Conn {
 
 			conn, err := redis.DialURL(os.Getenv("REDIS_URL"), redis.DialTLSSkipVerify(true))
 			if err != nil {
-				log.Printf("Cache initialization erro: %s\n", err.Error())
+				log.Printf("Cache initialization erro: %v\n", err)
 				os.Exit(1)
 			}
 

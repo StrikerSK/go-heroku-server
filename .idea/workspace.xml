@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Fix not including static files">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Move files and refactor code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileEntity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/fileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoEntity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/todoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,6 +198,7 @@
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="NEW_TOOLWINDOW_STRIPE_DEFAULTS" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="TODO_SCOPE" value="All Places" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="configurable..is.expanded" value="false" />
     <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
@@ -223,14 +221,14 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/responses" />
+      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/static" />
       <recent name="$PROJECT_DIR$/api/location/restaurant" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
-      <recent name="$PROJECT_DIR$/api/src/responses" />
-      <recent name="$PROJECT_DIR$/api/location" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yaml.redis-commander: Compose Deployment">
+  <component name="RunManager" selected="Go Build.Run Application">
     <configuration name="Run Application (1)" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="go-heroku-server" />
       <working_directory value="$PROJECT_DIR$" />
@@ -325,17 +323,17 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yaml.web: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yaml.fullstack-app: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yaml.redis-commander: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yaml.web: Compose Deployment" />
       <item itemvalue="Go Build.Run Application (1)" />
       <item itemvalue="Go Build.Run Application" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.Run Application" />
         <item itemvalue="Docker.docker-compose.yaml.redis-commander: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
-        <item itemvalue="Go Build.Run Application" />
         <item itemvalue="Docker.docker-compose.yaml.fullstack-app: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml.web: Compose Deployment" />
       </list>
@@ -384,7 +382,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add logging to log" />
     <MESSAGE value="User edit and body parsing" />
     <MESSAGE value="Add encryption and refactoring" />
     <MESSAGE value="Revert bcrypting" />
@@ -409,7 +406,8 @@
     <MESSAGE value="Refactor main and add Dockerfile" />
     <MESSAGE value="Rename, add pgadmin and inlcude .env file" />
     <MESSAGE value="Fix not including static files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix not including static files" />
+    <MESSAGE value="Move files and refactor code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Move files and refactor code" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -418,12 +416,12 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user-file.go</url>
+          <url>file://$PROJECT_DIR$/src/api/user-file.go</url>
           <line>54</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user-file.go</url>
+          <url>file://$PROJECT_DIR$/src/api/user-file.go</url>
           <line>66</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>

@@ -1,13 +1,13 @@
 package user
 
 import (
-	"go-heroku-server/api/types"
+	"go-heroku-server/src/api/types"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
 const (
-	UserRole  = "user"
+	GuestRole = "guest"
 	AdminRole = "admin"
 )
 
@@ -16,7 +16,7 @@ type User struct {
 	ID        uint          `json:"-"`
 	FirstName string        `json:"firstName"`
 	LastName  string        `json:"lastName"`
-	Role      string        `json:"-" gorm:"default:user"`
+	Role      string        `json:"-" gorm:"default:guest"`
 	Address   types.Address `json:"address"`
 }
 
@@ -51,7 +51,7 @@ func (u User) validatePassword(password string) bool {
 
 func (u *User) setRole() {
 	if u.Role == "" {
-		u.Role = UserRole
+		u.Role = GuestRole
 	}
 }
 

@@ -1,8 +1,8 @@
 package todo
 
 import (
-	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
+	"go-heroku-server/src/api/user"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 )
@@ -10,7 +10,7 @@ import (
 func findAllTodos(userID uint) responses.IResponse {
 	todos, err := readAll(userID)
 	if err != nil {
-		log.Printf("Todos read: %s\n", err.Error())
+		log.Printf("Todos read: %v\n", err)
 		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
@@ -21,12 +21,12 @@ func findAllTodos(userID uint) responses.IResponse {
 func getTodo(todoID uint, userID uint) responses.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("Todo [%d] read: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] read: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	if err = persistedTodo.validateAccess(userID); err != nil {
-		log.Printf("Todo [%d] read: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] read: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -42,17 +42,17 @@ func addTodo(todo Todo) responses.IResponse {
 func removeTodo(userID, todoID uint) responses.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] delete: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
 	if err = persistedTodo.validateAccess(userID); err != nil {
-		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] delete: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
 	if err = deleteTodo(persistedTodo.Id); err != nil {
-		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] delete: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusOK, nil)
 	}
 
@@ -63,12 +63,12 @@ func removeTodo(userID, todoID uint) responses.IResponse {
 func editTodo(userID, todoID uint, updatedTodo Todo) responses.IResponse {
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] edit: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusNotFound, nil)
 	}
 
 	if err = persistedTodo.validateAccess(userID); err != nil {
-		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] edit: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusForbidden, nil)
 	}
 
@@ -76,7 +76,7 @@ func editTodo(userID, todoID uint, updatedTodo Todo) responses.IResponse {
 	updatedTodo.UserID = persistedTodo.UserID
 
 	if err = updateTodo(updatedTodo); err != nil {
-		log.Printf("Todo [%d] edit: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] edit: %v\n", todoID, err)
 		return responses.CreateResponse(http.StatusBadRequest, nil)
 	}
 
@@ -90,7 +90,7 @@ func markDone(w http.ResponseWriter, r *http.Request) {
 
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {
-		log.Printf("Todo [%d] toggle: %s\n", todoID, err.Error())
+		log.Printf("Todo [%d] toggle: %v\n", todoID, err)
 		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
 		return
 	}

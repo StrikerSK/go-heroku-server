@@ -1,7 +1,7 @@
 package image
 
 import (
-	"go-heroku-server/api/src/responses"
+	"go-heroku-server/src/responses"
 	"log"
 	"net/http"
 )

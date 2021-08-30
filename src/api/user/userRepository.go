@@ -14,7 +14,7 @@ func readUsersFromRepository() (user []User, err error) {
 	return
 }
 
-//Function retrieves user and flag if exists can be registered to database
+//Function retrieves user and error if exists can be registered to database
 func getUserByID(userID interface{}) (user User, err error) {
 	err = config.GetDatabaseInstance().Preload("Address").Where("id = ?", userID).First(&user).Error
 	return
