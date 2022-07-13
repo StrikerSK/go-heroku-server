@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implement Factory pattern and refactor user">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Move files and refactor code">
+      <change afterPath="$PROJECT_DIR$/api/user/domain/userCredentials.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/user/domain/userToken.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/appUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/appUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userEnity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userEnity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/userWithCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithCookies.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/welcome-page.html" beforeDir="false" afterPath="$PROJECT_DIR$/static/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,14 +87,15 @@
       <find>hello</find>
     </findStrings>
   </component>
-  <component name="GOROOT" url="file://$USER_HOME$/sdk/go1.16" />
+  <component name="GOROOT" url="file:///opt/homebrew/Cellar/go/1.18/libexec" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="refactor-error-response" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
@@ -110,6 +116,7 @@
     </file-type-list>
   </component>
   <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
     <option name="urls">
       <list>
         <option value="file://$PROJECT_DIR$/../.." />
@@ -133,6 +140,9 @@
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="rjpilfhv" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="240" />
@@ -196,25 +206,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DatabaseDriversLRU" value="postgresql" />
-    <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="NEW_TOOLWINDOW_STRIPE_DEFAULTS" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="configurable..is.expanded" value="false" />
-    <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
-    <property name="database.console.LAST_STATE" value="false" />
-    <property name="go.formatter.settings.were.checked" value="true" />
-    <property name="go.gopath.indexing.explicitly.defined" value="true" />
-    <property name="go.import.settings.migrated" value="true" />
-    <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/api/user/auth" />
-    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api/user/auth" />
@@ -223,11 +219,11 @@
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/user/domain" />
       <recent name="$PROJECT_DIR$/static" />
       <recent name="$PROJECT_DIR$/api/location/restaurant" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
       <recent name="$PROJECT_DIR$/api/src/responses" />
-      <recent name="$PROJECT_DIR$/api/location" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
@@ -359,7 +355,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Apply context and return responses" />
@@ -390,7 +385,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="Implement Factory pattern and refactor user" />
   </component>
   <component name="VgoProject">
-    <integration-enabled>true</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

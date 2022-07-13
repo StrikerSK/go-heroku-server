@@ -3,6 +3,7 @@ package user
 import (
 	uuid "github.com/satori/go.uuid"
 	"go-heroku-server/api/src/responses"
+	"go-heroku-server/api/user/domain"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 
 const tokenName = "session_token"
 
-func loginWithCookies(credentials Credentials) (http.Cookie, responses.IResponse) {
+func loginWithCookies(credentials domain.Credentials) (http.Cookie, responses.IResponse) {
 	var requestError responses.IResponse
 
 	persistedUser, err := getUserByUsername(credentials.Username)

@@ -10,6 +10,7 @@ import (
 	"go-heroku-server/api/location/restaurant"
 	"go-heroku-server/api/todo"
 	"go-heroku-server/api/types"
+	"go-heroku-server/api/user/domain"
 	"html/template"
 	"net/http"
 	"os"
@@ -29,7 +30,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&user.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetDatabaseInstance().AutoMigrate(&userDomains.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
 	user.InitializeUsers()
 }

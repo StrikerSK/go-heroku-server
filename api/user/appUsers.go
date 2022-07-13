@@ -1,32 +1,35 @@
 package user
 
-import "go-heroku-server/api/types"
+import (
+	"go-heroku-server/api/types"
+	userDomains "go-heroku-server/api/user/domain"
+)
 
-var admin = User{
+var admin = userDomains.User{
 	FirstName: "admin",
 	LastName:  "admin",
-	Role:      AdminRole,
+	Role:      userDomains.AdminRole,
 	Address: types.Address{
 		Street: "Admin",
 		City:   "Admin",
 		Zip:    "Admin",
 	},
-	Credentials: Credentials{
+	Credentials: userDomains.Credentials{
 		Username: "admin",
 		Password: "admin",
 	},
 }
 
-var guestUser = User{
+var guestUser = userDomains.User{
 	FirstName: "tester",
 	LastName:  "tester",
-	Role:      UserRole,
+	Role:      userDomains.UserRole,
 	Address: types.Address{
 		Street: "Tester",
 		City:   "Tester",
 		Zip:    "Tester",
 	},
-	Credentials: Credentials{
+	Credentials: userDomains.Credentials{
 		Username: "admin",
 		Password: "admin",
 	},

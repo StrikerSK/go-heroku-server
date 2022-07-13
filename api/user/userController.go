@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src/responses"
 	customAuth "go-heroku-server/api/user/auth"
+	"go-heroku-server/api/user/domain"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -90,7 +91,7 @@ func VerifyJwtToken(next http.Handler) http.Handler {
 
 func resolveUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var user User
+		var user domain.User
 		decoder := json.NewDecoder(r.Body)
 
 		if err := decoder.Decode(&user); err != nil {
@@ -115,7 +116,7 @@ func ResolveUserContext(context context.Context) (uint, responses.IResponse) {
 }
 
 func loginGeneratingCookie(w http.ResponseWriter, r *http.Request) {
-	var credentials Credentials
+	var credentials domain.Credentials
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		log.Printf("Cookie Login: %s\n", err.Error())
@@ -139,12 +140,12 @@ func controllerGetUserList(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerRegisterUser(w http.ResponseWriter, r *http.Request) {
-	userBody := r.Context().Value(userBodyContextKey).(User)
+	userBody := r.Context().Value(userBodyContextKey).(domain.User)
 	addUser(userBody).WriteResponse(w)
 }
 
 func controllerEditUser(w http.ResponseWriter, r *http.Request) {
-	userBody := r.Context().Value(userBodyContextKey).(User)
+	userBody := r.Context().Value(userBodyContextKey).(domain.User)
 	editUser(userBody).WriteResponse(w)
 }
 

@@ -5,6 +5,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"go-heroku-server/api/src/responses"
 	customAuth "go-heroku-server/api/user/auth"
+	"go-heroku-server/api/user/domain"
 	"log"
 	"net/http"
 )
@@ -21,7 +22,7 @@ func getUserList() responses.IResponse {
 	}
 }
 
-func addUser(userBody User) responses.IResponse {
+func addUser(userBody domain.User) responses.IResponse {
 	if _, err := getUserByUsername(userBody.Username); err != nil {
 		//userBody.decryptPassword()
 		userBody.setRole()
@@ -34,7 +35,7 @@ func addUser(userBody User) responses.IResponse {
 	}
 }
 
-func editUser(updatedUser User) responses.IResponse {
+func editUser(updatedUser domain.User) responses.IResponse {
 	persistedUser, err := getUserByID(updatedUser.ID)
 	if err != nil {
 		log.Printf("User [%d] edit: %s\n", updatedUser.ID, err.Error())
@@ -63,7 +64,7 @@ func getUser(userID interface{}) responses.IResponse {
 //Function verifies user if it exists and has valid login credentials
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 
-	var credentials Credentials
+	var credentials domain.Credentials
 
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		log.Printf("Logging error: %s\n", err)
@@ -92,7 +93,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("User [%d] login: success\n", persistedUser.ID)
 
-	res := responses.CreateResponse(http.StatusOK, &Token{Token: signetToken})
+	res := responses.CreateResponse(http.StatusOK, &domain.Token{Token: signetToken})
 	res.WriteResponse(w)
 	return
 }
