@@ -1,4 +1,4 @@
-package user
+package userServices
 
 import (
 	"go-heroku-server/api/types"
@@ -35,7 +35,7 @@ var guestUser = userDomains.User{
 	},
 }
 
-func InitializeUsers() {
-	_ = addUser(admin)
-	_ = addUser(guestUser)
+func (s UserService) AddDemoUsers() {
+	_ = s.repository.CreateUser(admin)
+	_ = s.repository.CreateUser(guestUser)
 }

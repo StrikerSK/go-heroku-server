@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/location/image"
 	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -20,15 +19,15 @@ func EnrichRouteWithLocation(router *mux.Router) {
 	config.InitializeType("Location", &Location{})
 
 	locationRoute := router.PathPrefix("/location").Subrouter()
-	locationRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods(http.MethodPost)
+	locationRoute.Handle("", handler.VerifyJwtToken(http.HandlerFunc(controllerAddLocation))).Methods(http.MethodPost)
 
 	locationSubRoute := locationRoute.PathPrefix("/{id}").Subrouter()
-	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods(http.MethodPut)
-	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods(http.MethodGet)
-	locationSubRoute.Handle("", user.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods(http.MethodDelete)
+	locationSubRoute.Handle("", handler.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerUpdateLocation)))).Methods(http.MethodPut)
+	locationSubRoute.Handle("", handler.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerGetLocation)))).Methods(http.MethodGet)
+	locationSubRoute.Handle("", handler.VerifyJwtToken(ResolveLocationID(http.HandlerFunc(controllerDeleteLocation)))).Methods(http.MethodDelete)
 
 	locationsRoute := router.PathPrefix("/locations").Subrouter()
-	locationsRoute.Handle("", user.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods(http.MethodGet)
+	locationsRoute.Handle("", handler.VerifyJwtToken(http.HandlerFunc(controllerGetLocations))).Methods(http.MethodGet)
 
 	image.EnrichRouteWithImages(locationSubRoute)
 }
@@ -50,7 +49,7 @@ func ResolveLocationID(next http.Handler) http.Handler {
 func controllerAddLocation(w http.ResponseWriter, r *http.Request) {
 	var res responses.IResponse
 
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return
@@ -71,7 +70,7 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 	var res responses.IResponse
 
 	locationID := resolveLocationContext(r.Context())
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return
@@ -92,7 +91,7 @@ func controllerUpdateLocation(w http.ResponseWriter, r *http.Request) {
 func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
 	var res responses.IResponse
 
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return
@@ -105,7 +104,7 @@ func controllerGetLocation(w http.ResponseWriter, r *http.Request) {
 func controllerDeleteLocation(w http.ResponseWriter, r *http.Request) {
 	var res responses.IResponse
 	locationID := resolveLocationContext(r.Context())
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return
@@ -119,7 +118,7 @@ func controllerDeleteLocation(w http.ResponseWriter, r *http.Request) {
 
 func controllerGetLocations(w http.ResponseWriter, r *http.Request) {
 	var res responses.IResponse
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return

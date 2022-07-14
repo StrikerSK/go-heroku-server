@@ -4,16 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Move files and refactor code">
-      <change afterPath="$PROJECT_DIR$/api/user/domain/userCredentials.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/user/domain/userToken.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Create User's architecture">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/appUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/appUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userEnity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userEnity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/userWithCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/userWithCookies.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/domain/userToken.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/cookieHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/repository/UserRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -206,24 +201,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/user/ports&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/user/ports" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/api/utils" />
       <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/user/service" />
+      <recent name="$PROJECT_DIR$/api/user/handler" />
+      <recent name="$PROJECT_DIR$/api/user/repository" />
       <recent name="$PROJECT_DIR$/api/user/domain" />
       <recent name="$PROJECT_DIR$/static" />
-      <recent name="$PROJECT_DIR$/api/location/restaurant" />
-      <recent name="$PROJECT_DIR$/api/user/auth" />
-      <recent name="$PROJECT_DIR$/api/src/responses" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
@@ -311,7 +308,7 @@
         <item itemvalue="Go Build.Go build" />
         <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
         <item itemvalue="Go Build.Run Application" />
-        <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
+        <item itemvalue="Go Build.Go build" />
       </list>
     </recent_temporary>
   </component>
@@ -357,8 +354,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Apply context and return responses" />
-    <MESSAGE value="File processing with user" />
     <MESSAGE value="Add todos" />
     <MESSAGE value="Add logging to log" />
     <MESSAGE value="User edit and body parsing" />
@@ -382,7 +377,9 @@
     <MESSAGE value="Split Restaurant and Image" />
     <MESSAGE value="Implement Singleton design pattern" />
     <MESSAGE value="Implement Factory pattern and refactor user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement Factory pattern and refactor user" />
+    <MESSAGE value="Initialize User Domain" />
+    <MESSAGE value="Create User's architecture" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create User's architecture" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

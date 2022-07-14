@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -18,12 +17,12 @@ func EnrichRouteWithFile(router *mux.Router) {
 	config.InitializeType("File", &File{})
 
 	fileRoute := router.PathPrefix("/file").Subrouter()
-	fileRoute.Handle("/upload", user.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods(http.MethodPost)
-	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods(http.MethodGet)
-	fileRoute.Handle("/{id}", resolveFileID(user.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods(http.MethodDelete)
+	fileRoute.Handle("/upload", handler.VerifyJwtToken(http.HandlerFunc(controllerUploadFile))).Methods(http.MethodPost)
+	fileRoute.Handle("/{id}", resolveFileID(handler.VerifyJwtToken(http.HandlerFunc(controllerReadFile)))).Methods(http.MethodGet)
+	fileRoute.Handle("/{id}", resolveFileID(handler.VerifyJwtToken(http.HandlerFunc(controllerRemoveFile)))).Methods(http.MethodDelete)
 
 	filesRoute := router.PathPrefix("/files").Subrouter()
-	filesRoute.Handle("/", user.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods(http.MethodGet)
+	filesRoute.Handle("/", handler.VerifyJwtToken(http.HandlerFunc(controllerGetFileList))).Methods(http.MethodGet)
 
 }
 
@@ -42,7 +41,7 @@ func resolveFileID(next http.Handler) http.Handler {
 }
 
 func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
-	userID, res := user.ResolveUserContext(r.Context())
+	userID, res := handler.ResolveUserContext(r.Context())
 	if res != nil {
 		res.WriteResponse(w)
 		return
@@ -73,19 +72,19 @@ func controllerUploadFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func controllerReadFile(w http.ResponseWriter, r *http.Request) {
-	userID, _ := user.ResolveUserContext(r.Context())
+	userID, _ := handler.ResolveUserContext(r.Context())
 	fileID := resolveFileContext(r.Context())
 	readFile(userID, fileID).WriteResponse(w)
 	return
 }
 
 func controllerRemoveFile(w http.ResponseWriter, r *http.Request) {
-	userID, _ := user.ResolveUserContext(r.Context())
+	userID, _ := handler.ResolveUserContext(r.Context())
 	removeFile(userID, resolveFileContext(r.Context())).WriteResponse(w)
 }
 
 func controllerGetFileList(w http.ResponseWriter, r *http.Request) {
-	if userID, res := user.ResolveUserContext(r.Context()); res != nil {
+	if userID, res := handler.ResolveUserContext(r.Context()); res != nil {
 		res.WriteResponse(w)
 	} else {
 		getFileList(userID).WriteResponse(w)

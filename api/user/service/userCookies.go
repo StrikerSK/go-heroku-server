@@ -1,9 +1,10 @@
-package user
+package userServices
 
 import (
 	uuid "github.com/satori/go.uuid"
 	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user/domain"
+	userDomains "go-heroku-server/api/user/domain"
+	userPorts "go-heroku-server/api/user/ports"
 	"go-heroku-server/config"
 	"log"
 	"net/http"
@@ -12,10 +13,20 @@ import (
 
 const tokenName = "session_token"
 
-func loginWithCookies(credentials domain.Credentials) (http.Cookie, responses.IResponse) {
+type CookieService struct {
+	repository userPorts.IUserRepository
+}
+
+func NewCookieService(repository userPorts.IUserRepository) CookieService {
+	return CookieService{
+		repository: repository,
+	}
+}
+
+func (s CookieService) Login(credentials userDomains.Credentials) (http.Cookie, responses.IResponse) {
 	var requestError responses.IResponse
 
-	persistedUser, err := getUserByUsername(credentials.Username)
+	persistedUser, err := s.repository.ReadUserByUsername(credentials.Username)
 	if err != nil {
 		requestError = responses.CreateResponse(http.StatusBadRequest, err)
 		return http.Cookie{}, requestError
@@ -25,7 +36,7 @@ func loginWithCookies(credentials domain.Credentials) (http.Cookie, responses.IR
 	// AND, if it is the same as the password we received, then we can move ahead
 	// if NOT, then we return an "Unauthorized" status
 	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
-	if !persistedUser.validatePassword(credentials.Password) {
+	if !persistedUser.ValidatePassword(credentials.Password) {
 		log.Println("Login with Cookies: password are not matching")
 		requestError = responses.CreateResponse(http.StatusUnauthorized, nil)
 		return http.Cookie{}, requestError

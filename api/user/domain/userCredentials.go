@@ -17,11 +17,11 @@ func NewCredentials(username, password string) Credentials {
 	}
 }
 
-func (c *Credentials) clearPassword() {
+func (c *Credentials) ClearPassword() {
 	c.Password = ""
 }
 
-func (c *Credentials) decryptPassword() {
+func (c *Credentials) DecryptPassword() {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(c.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("decriptPasswrod error: %s\n", err)
@@ -30,7 +30,7 @@ func (c *Credentials) decryptPassword() {
 	c.Password = string(encryptedPassword)
 }
 
-func (c *Credentials) validatePassword(password string) bool {
+func (c *Credentials) ValidatePassword(password string) bool {
 	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 	//	log.Printf("validatePassword error: %s\n", err)
 	//	return false

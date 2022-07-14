@@ -10,13 +10,15 @@ import (
 	"go-heroku-server/api/location/restaurant"
 	"go-heroku-server/api/todo"
 	"go-heroku-server/api/types"
-	"go-heroku-server/api/user/domain"
+	userAuth "go-heroku-server/api/user/auth"
+	userHandlers "go-heroku-server/api/user/handler"
+	userRepositories "go-heroku-server/api/user/repository"
+	userServices "go-heroku-server/api/user/service"
 	"html/template"
 	"net/http"
 	"os"
 
 	"go-heroku-server/api/location"
-	"go-heroku-server/api/user"
 	"go-heroku-server/config"
 )
 
@@ -30,9 +32,8 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&userDomains.User{}, &files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetDatabaseInstance().AutoMigrate(&files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
-	user.InitializeUsers()
 }
 
 //Go application entrypoint
@@ -44,16 +45,23 @@ func main() {
 		port = "5000"
 	}
 
-	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	myRouter.HandleFunc("/", serveMainPage)
+	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
+	userService := userServices.NewUserService(userRepository)
 
-	user.EnrichRouterWithUser(myRouter)
-	files.EnrichRouteWithFile(myRouter)
-	todo.EnrichRouteWithTodo(myRouter)
-	location.EnrichRouteWithLocation(myRouter)
+	userTokenService := userAuth.NewTokenService()
+	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService)
+	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService)
 
-	handler := cors.AllowAll().Handler(myRouter)
+	router := mux.NewRouter().StrictSlash(true)
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	router.HandleFunc("/", serveMainPage)
+
+	userHdl.EnrichRouter(router)
+	files.EnrichRouteWithFile(router)
+	todo.EnrichRouteWithTodo(router)
+	location.EnrichRouteWithLocation(router)
+
+	handler := cors.AllowAll().Handler(router)
 
 	fmt.Println("Listening")
 	fmt.Println(http.ListenAndServe(":"+port, handler))

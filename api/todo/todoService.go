@@ -2,7 +2,6 @@ package todo
 
 import (
 	"go-heroku-server/api/src/responses"
-	"go-heroku-server/api/user"
 	"log"
 	"net/http"
 )
@@ -86,7 +85,7 @@ func editTodo(userID, todoID uint, updatedTodo Todo) responses.IResponse {
 
 func markDone(w http.ResponseWriter, r *http.Request) {
 	todoID := resolveTodoID(r.Context())
-	userID, _ := user.ResolveUserContext(r.Context())
+	userID, _ := handler.ResolveUserContext(r.Context())
 
 	persistedTodo, err := readTodo(todoID)
 	if err != nil {

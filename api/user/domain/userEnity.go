@@ -18,10 +18,6 @@ type User struct {
 	Address   types.Address `json:"address"`
 }
 
-func (u User) GetID() uint {
-	return u.ID
-}
-
 func (u User) GetUsername() string {
 	return u.Username
 }
@@ -30,7 +26,7 @@ func (u User) GetRole() string {
 	return u.Role
 }
 
-func (u *User) setRole() {
+func (u *User) SetRole() {
 	if u.Role == "" {
 		u.Role = UserRole
 	}
