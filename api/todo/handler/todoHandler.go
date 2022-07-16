@@ -128,7 +128,7 @@ func (h TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 	userID, _ := h.userMiddleware.GetUserFromContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(todoDomains.Todo)
 
-	if err := h.todoService.EditTodo(todoID, userID, todo); err != nil {
+	if err := h.todoService.UpdateTodo(todoID, userID, todo); err != nil {
 		log.Printf("Todo [%d] edit: %v\n", todoID, err.Error())
 		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return

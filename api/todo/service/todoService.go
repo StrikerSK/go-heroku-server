@@ -43,7 +43,7 @@ func (s TodoService) ReadTodos(username string) ([]todoDomains.Todo, error) {
 	return s.repository.ReadAll(username)
 }
 
-func (s TodoService) EditTodo(todoID uint, username string, updatedTodo todoDomains.Todo) error {
+func (s TodoService) UpdateTodo(todoID uint, username string, updatedTodo todoDomains.Todo) error {
 	_, err := s.ReadTodo(todoID, username)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {

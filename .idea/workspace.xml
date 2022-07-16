@@ -4,20 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Create User's architecture">
-      <change afterPath="$PROJECT_DIR$/api/todo/handler/todoController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/types/errors/ForbiddenError.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/types/errors/NotFoundError.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoController.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/domain/todoEntity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Modify Todo module">
+      <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -362,7 +352,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add todos" />
     <MESSAGE value="Add logging to log" />
     <MESSAGE value="User edit and body parsing" />
     <MESSAGE value="Add encryption and refactoring" />
@@ -387,7 +376,8 @@
     <MESSAGE value="Implement Factory pattern and refactor user" />
     <MESSAGE value="Initialize User Domain" />
     <MESSAGE value="Create User's architecture" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create User's architecture" />
+    <MESSAGE value="Modify Todo module" />
+    <option name="LAST_COMMIT_MESSAGE" value="Modify Todo module" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

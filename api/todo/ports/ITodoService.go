@@ -5,9 +5,9 @@ import (
 )
 
 type ITodoService interface {
-	ReadTodos(string) ([]todoDomains.Todo, error)
-	ReadTodo(uint, string) (todoDomains.Todo, error)
 	CreateTodo(todoDomains.Todo) error
+	ReadTodo(uint, string) (todoDomains.Todo, error)
+	ReadTodos(string) ([]todoDomains.Todo, error)
+	UpdateTodo(uint, string, todoDomains.Todo) error
 	DeleteTodo(uint, string) error
-	EditTodo(uint, string, todoDomains.Todo) error
 }
