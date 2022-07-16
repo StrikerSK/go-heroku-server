@@ -3,6 +3,7 @@ package userHandlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"go-heroku-server/api/src/responses"
 	customAuth "go-heroku-server/api/user/auth"
 	userDomains "go-heroku-server/api/user/domain"
@@ -52,4 +53,13 @@ func (h UserAuthMiddleware) ResolveUser(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), userBodyContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func (h UserAuthMiddleware) GetUserFromContext(context context.Context) (string, error) {
+	value, ok := context.Value(userIdContextKey).(string)
+	if !ok {
+		return "", errors.New("cannot resolve user from context")
+	}
+
+	return value, nil
 }

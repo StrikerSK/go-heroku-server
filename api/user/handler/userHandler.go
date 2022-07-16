@@ -1,7 +1,6 @@
 package userHandlers
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -41,16 +40,6 @@ func (h UserHandler) EnrichRouter(router *mux.Router) {
 
 	usersRoute := router.PathPrefix("/users").Subrouter()
 	usersRoute.Handle("/", h.middleware.VerifyToken(http.HandlerFunc(h.readUsers))).Methods(http.MethodGet)
-}
-
-func ResolveUserContext(context context.Context) (uint, responses.IResponse) {
-	value, ok := context.Value(userIdContextKey).(uint)
-	if !ok {
-		log.Println("UserID resolve: cannot resolve from context")
-		return 0, responses.CreateResponse(http.StatusInternalServerError, nil)
-	}
-
-	return value, nil
 }
 
 func (h UserHandler) readUsers(w http.ResponseWriter, r *http.Request) {

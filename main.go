@@ -8,7 +8,9 @@ import (
 	"go-heroku-server/api/files"
 	"go-heroku-server/api/location/image"
 	"go-heroku-server/api/location/restaurant"
-	"go-heroku-server/api/todo"
+	todoHandlers "go-heroku-server/api/todo/handler"
+	todoRepositories "go-heroku-server/api/todo/repository"
+	todoServices "go-heroku-server/api/todo/service"
 	"go-heroku-server/api/types"
 	userAuth "go-heroku-server/api/user/auth"
 	userHandlers "go-heroku-server/api/user/handler"
@@ -52,13 +54,17 @@ func main() {
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService)
 
+	todoRepo := todoRepositories.NewTodoRepository(config.GetDatabaseInstance())
+	todoService := todoServices.NewTodoService(todoRepo)
+	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService)
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.HandleFunc("/", serveMainPage)
 
 	userHdl.EnrichRouter(router)
+	todoHdl.EnrichRouter(router)
 	files.EnrichRouteWithFile(router)
-	todo.EnrichRouteWithTodo(router)
 	location.EnrichRouteWithLocation(router)
 
 	handler := cors.AllowAll().Handler(router)

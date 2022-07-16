@@ -5,10 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Create User's architecture">
+      <change afterPath="$PROJECT_DIR$/api/todo/handler/todoController.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/types/errors/ForbiddenError.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/types/errors/NotFoundError.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/domain/userToken.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userCookies.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/cookieHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/repository/UserRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoController.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/domain/todoEntity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -201,26 +209,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/user/ports&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "last_opened_file_path": "/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/types/errors"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/types/errors" />
+      <recent name="$PROJECT_DIR$/api/user/service" />
       <recent name="$PROJECT_DIR$/api/user/ports" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/api/utils" />
-      <recent name="$PROJECT_DIR$/api/user" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/todo/handler" />
+      <recent name="$PROJECT_DIR$/api/todo/service" />
+      <recent name="$PROJECT_DIR$/api/todo/repository" />
+      <recent name="$PROJECT_DIR$/api/todo/domain" />
       <recent name="$PROJECT_DIR$/api/user/service" />
-      <recent name="$PROJECT_DIR$/api/user/handler" />
-      <recent name="$PROJECT_DIR$/api/user/repository" />
-      <recent name="$PROJECT_DIR$/api/user/domain" />
-      <recent name="$PROJECT_DIR$/static" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application">
