@@ -17,7 +17,6 @@ import (
 	todoHandlers "go-heroku-server/api/todo/handler"
 	todoRepositories "go-heroku-server/api/todo/repository"
 	todoServices "go-heroku-server/api/todo/service"
-	"go-heroku-server/api/types"
 	userAuth "go-heroku-server/api/user/auth"
 	userHandlers "go-heroku-server/api/user/handler"
 	userRepositories "go-heroku-server/api/user/repository"
@@ -39,7 +38,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&types.Address{}, &locationDomains.UserLocationEntity{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetDatabaseInstance().AutoMigrate(&locationDomains.UserLocationEntity{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
 }
 

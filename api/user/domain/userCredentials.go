@@ -5,23 +5,23 @@ import (
 	"log"
 )
 
-type Credentials struct {
-	Username string `json:"username"`
+type UserCredentials struct {
+	Username string `json:"username" gorm:"primaryKey"`
 	Password string `json:"password,omitempty"`
 }
 
-func NewCredentials(username, password string) Credentials {
-	return Credentials{
+func NewCredentials(username, password string) UserCredentials {
+	return UserCredentials{
 		Username: username,
 		Password: password,
 	}
 }
 
-func (c *Credentials) ClearPassword() {
+func (c *UserCredentials) ClearPassword() {
 	c.Password = ""
 }
 
-func (c *Credentials) DecryptPassword() {
+func (c *UserCredentials) DecryptPassword() {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(c.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("decriptPasswrod error: %s\n", err)
@@ -30,7 +30,7 @@ func (c *Credentials) DecryptPassword() {
 	c.Password = string(encryptedPassword)
 }
 
-func (c *Credentials) ValidatePassword(password string) bool {
+func (c *UserCredentials) ValidatePassword(password string) bool {
 	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 	//	log.Printf("validatePassword error: %s\n", err)
 	//	return false

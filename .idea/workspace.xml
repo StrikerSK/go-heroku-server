@@ -7,12 +7,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor Location module">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactoring user handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,13 +201,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "last_opened_file_path": "/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/types/errors",
-    "run.code.analysis.last.selected.profile": "pProject Default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/types/errors&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api/types/errors" />
@@ -359,8 +356,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Revert bcrypting" />
-    <MESSAGE value="Implement ErrorRequest to user" />
     <MESSAGE value="Implement ErrorRequest to todos" />
     <MESSAGE value="Implement ErrorRequest to files" />
     <MESSAGE value="Refactoring code and User Context Resolver" />
@@ -384,7 +379,9 @@
     <MESSAGE value="Todo cleanup" />
     <MESSAGE value="Refactor File module" />
     <MESSAGE value="Refactor Location module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor Location module" />
+    <MESSAGE value="Modules cleanup" />
+    <MESSAGE value="Refactoring user handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactoring user handling" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

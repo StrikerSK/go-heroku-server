@@ -23,7 +23,7 @@ func NewCookieService(repository userPorts.IUserRepository) CookieService {
 	}
 }
 
-func (s CookieService) Login(credentials userDomains.Credentials) (http.Cookie, responses.IResponse) {
+func (s CookieService) Login(credentials userDomains.UserCredentials) (http.Cookie, responses.IResponse) {
 	var requestError responses.IResponse
 
 	persistedUser, err := s.repository.ReadUserByUsername(credentials.Username)
@@ -46,7 +46,7 @@ func (s CookieService) Login(credentials userDomains.Credentials) (http.Cookie, 
 	sessionToken := uuid.NewV4().String()
 	// Set the token in the cache, along with the user whom it represents
 	// The token has an expiry time of 120 seconds
-	_, err = config.GetCacheInstance().Do("SETEX", sessionToken, "120", persistedUser.ID)
+	_, err = config.GetCacheInstance().Do("SETEX", sessionToken, "120", persistedUser.Username)
 	if err != nil {
 		// If there is an error in setting the cache, return an internal server error
 		log.Printf("Login with Cookies: %s\n", err.Error())

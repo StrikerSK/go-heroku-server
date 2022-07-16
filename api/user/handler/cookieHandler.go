@@ -22,7 +22,7 @@ func NewUserCookiesHandler(service userServices.CookieService) UserCookiesHandle
 }
 
 func (h UserCookiesHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var credentials userDomains.Credentials
+	var credentials userDomains.UserCredentials
 	// Get the JSON body and decode into credentials
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		log.Printf("Cookie Login: %s\n", err.Error())

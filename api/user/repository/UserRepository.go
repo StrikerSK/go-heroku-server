@@ -10,7 +10,7 @@ type UserRepository struct {
 }
 
 func NewUserRepository(repository *gorm.DB) UserRepository {
-	repository.AutoMigrate(userDomains.User{})
+	repository.AutoMigrate(&userDomains.User{}, &userDomains.Address{})
 	return UserRepository{
 		Repository: repository,
 	}
@@ -28,7 +28,7 @@ func (r UserRepository) ReadUsers() (user []userDomains.User, err error) {
 
 // ReadUserByID - retrieves user and flag if exists can be registered to database
 func (r UserRepository) ReadUserByID(userID string) (user userDomains.User, err error) {
-	err = r.Repository.Preload("Address").Where("id = ?", userID).First(&user).Error
+	err = r.Repository.Preload("Address").Where("username = ?", userID).First(&user).Error
 	return
 }
 
