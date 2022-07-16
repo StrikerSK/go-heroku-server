@@ -8,8 +8,12 @@ import (
 	fileHandlers "go-heroku-server/api/files/handler"
 	fileRepositories "go-heroku-server/api/files/repository"
 	fileServices "go-heroku-server/api/files/service"
+	"go-heroku-server/api/location/domain"
+	locationHandlers "go-heroku-server/api/location/handler"
 	"go-heroku-server/api/location/image"
+	locationRepositories "go-heroku-server/api/location/repository"
 	"go-heroku-server/api/location/restaurant"
+	locationServcices "go-heroku-server/api/location/service"
 	todoHandlers "go-heroku-server/api/todo/handler"
 	todoRepositories "go-heroku-server/api/todo/repository"
 	todoServices "go-heroku-server/api/todo/service"
@@ -22,7 +26,6 @@ import (
 	"net/http"
 	"os"
 
-	"go-heroku-server/api/location"
 	"go-heroku-server/config"
 )
 
@@ -36,7 +39,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetDatabaseInstance().AutoMigrate(&types.Address{}, &locationDomains.UserLocationEntity{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
 }
 
@@ -46,7 +49,7 @@ func main() {
 
 	if port == "" {
 		//log.Fatal("$PORT must be set")
-		port = "5000"
+		port = "4000"
 	}
 
 	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
@@ -64,6 +67,10 @@ func main() {
 	fileSrv := fileServices.NewFileService(fileRepo)
 	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware)
 
+	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
+	locationSrv := locationServcices.NewLocationService(locationRepo)
+	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware)
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.HandleFunc("/", serveMainPage)
@@ -71,7 +78,7 @@ func main() {
 	userHdl.EnrichRouter(router)
 	todoHdl.EnrichRouter(router)
 	fileHdl.EnrichRouter(router)
-	location.EnrichRouteWithLocation(router)
+	locationHdl.EnrichRouter(router)
 
 	handler := cors.AllowAll().Handler(router)
 
