@@ -10,7 +10,7 @@ type TodoRepository struct {
 }
 
 func NewTodoRepository(repository *gorm.DB) TodoRepository {
-	repository.AutoMigrate(todoDomains.Todo{})
+	repository.AutoMigrate(&todoDomains.Todo{})
 	return TodoRepository{
 		repository: repository,
 	}

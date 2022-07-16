@@ -5,7 +5,9 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"go-heroku-server/api/files"
+	fileHandlers "go-heroku-server/api/files/handler"
+	fileRepositories "go-heroku-server/api/files/repository"
+	fileServices "go-heroku-server/api/files/service"
 	"go-heroku-server/api/location/image"
 	"go-heroku-server/api/location/restaurant"
 	todoHandlers "go-heroku-server/api/todo/handler"
@@ -34,7 +36,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&files.File{}, &types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
+	config.GetDatabaseInstance().AutoMigrate(&types.Address{}, &location.UserLocation{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
 }
 
@@ -58,13 +60,17 @@ func main() {
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService)
 
+	fileRepo := fileRepositories.NewFileRepository(config.GetDatabaseInstance())
+	fileSrv := fileServices.NewFileService(fileRepo)
+	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware)
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.HandleFunc("/", serveMainPage)
 
 	userHdl.EnrichRouter(router)
 	todoHdl.EnrichRouter(router)
-	files.EnrichRouteWithFile(router)
+	fileHdl.EnrichRouter(router)
 	location.EnrichRouteWithLocation(router)
 
 	handler := cors.AllowAll().Handler(router)
