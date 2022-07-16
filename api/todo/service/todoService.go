@@ -40,7 +40,7 @@ func (s TodoService) ReadTodo(todoID uint, username string) (todoDomains.Todo, e
 }
 
 func (s TodoService) ReadTodos(username string) ([]todoDomains.Todo, error) {
-	return s.repository.ReadAll(username)
+	return s.repository.ReadTodos(username)
 }
 
 func (s TodoService) UpdateTodo(todoID uint, username string, updatedTodo todoDomains.Todo) error {
@@ -70,7 +70,7 @@ func (s TodoService) DeleteTodo(todoID uint, username string) error {
 		return err
 	}
 
-	if err = s.repository.DeleteTodo(persistedFile.Id); err != nil {
+	if err = s.repository.DeleteTodo(persistedFile); err != nil {
 		return err
 	}
 

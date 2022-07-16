@@ -7,7 +7,7 @@ import (
 type ITodoRepository interface {
 	CreateTodo(todoDomains.Todo) error
 	ReadTodo(uint) (todoDomains.Todo, error)
-	ReadAll(string) ([]todoDomains.Todo, error)
+	ReadTodos(string) ([]todoDomains.Todo, error)
 	UpdateTodo(todoDomains.Todo) error
-	DeleteTodo(uint) (err error)
+	DeleteTodo(todo todoDomains.Todo) (err error)
 }

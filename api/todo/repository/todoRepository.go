@@ -6,37 +6,36 @@ import (
 )
 
 type TodoRepository struct {
-	repository *gorm.DB
+	db *gorm.DB
 }
 
-func NewTodoRepository(repository *gorm.DB) TodoRepository {
-	repository.AutoMigrate(&todoDomains.Todo{})
+func NewTodoRepository(db *gorm.DB) TodoRepository {
+	db.AutoMigrate(&todoDomains.Todo{})
 	return TodoRepository{
-		repository: repository,
+		db: db,
 	}
 }
 
-func (r TodoRepository) CreateTodo(newTodo todoDomains.Todo) error {
-	return r.repository.Create(&newTodo).Error
+func (r TodoRepository) CreateTodo(todo todoDomains.Todo) error {
+	return r.db.Create(&todo).Error
 }
 
 func (r TodoRepository) ReadTodo(todoID uint) (todo todoDomains.Todo, err error) {
-	err = r.repository.Where("id = ?", todoID).Find(&todo).Error
+	err = r.db.Where("id = ?", todoID).Find(&todo).Error
 	return
 }
 
-func (r TodoRepository) ReadAll(username string) (todos []todoDomains.Todo, err error) {
-	err = r.repository.Where("username = ?", username).Find(&todos).Error
+func (r TodoRepository) ReadTodos(username string) (todos []todoDomains.Todo, err error) {
+	err = r.db.Where("username = ?", username).Find(&todos).Error
 	return
 }
 
-func (r TodoRepository) UpdateTodo(updatedTodo todoDomains.Todo) (err error) {
-	err = r.repository.Save(&updatedTodo).Error
+func (r TodoRepository) UpdateTodo(todo todoDomains.Todo) (err error) {
+	err = r.db.Save(&todo).Error
 	return
 }
 
-func (r TodoRepository) DeleteTodo(todoID uint) (err error) {
-	var todo todoDomains.Todo
-	err = r.repository.Where("id = ?", todoID).Delete(&todo).Error
+func (r TodoRepository) DeleteTodo(todo todoDomains.Todo) (err error) {
+	err = r.db.Delete(&todo).Error
 	return
 }

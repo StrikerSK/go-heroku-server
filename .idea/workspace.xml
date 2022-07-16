@@ -7,17 +7,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor File module">
-      <change afterPath="$PROJECT_DIR$/api/location/ports/ILocationRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/location/ports/ILocationService.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor Location module">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationEntity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/domain/locationEntity.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/service/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/restaurant/restaurantType.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/restaurant/restaurantType.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/ports/ITodoRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -364,7 +359,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add encryption and refactoring" />
     <MESSAGE value="Revert bcrypting" />
     <MESSAGE value="Implement ErrorRequest to user" />
     <MESSAGE value="Implement ErrorRequest to todos" />
@@ -389,7 +383,8 @@
     <MESSAGE value="Modify Todo module" />
     <MESSAGE value="Todo cleanup" />
     <MESSAGE value="Refactor File module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor File module" />
+    <MESSAGE value="Refactor Location module" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor Location module" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

@@ -35,14 +35,14 @@ func (h TodoHandler) EnrichRouter(router *mux.Router) {
 	config.InitializeType("Todo", &todoDomains.Todo{})
 
 	todoRoute := router.PathPrefix("/todo").Subrouter()
-	todoRoute.Handle("/add", h.userMiddleware.VerifyToken(ResolveTodo(http.HandlerFunc(h.createTodo)))).Methods(http.MethodPost)
+	todoRoute.Handle("", h.userMiddleware.VerifyToken(ResolveTodo(http.HandlerFunc(h.createTodo)))).Methods(http.MethodPost)
 	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(ResolveTodoID(http.HandlerFunc(h.readTodo)))).Methods(http.MethodGet)
 	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(ResolveTodoID(ResolveTodo(http.HandlerFunc(h.updateTodo))))).Methods(http.MethodPut)
 	todoRoute.Handle("/{id}", ResolveTodoID(h.userMiddleware.VerifyToken(http.HandlerFunc(h.deleteTodo)))).Methods(http.MethodDelete)
 	//todoRoute.Handle("/{id}/done", h.userMiddleware.VerifyToken(ResolveTodoID(http.HandlerFunc(markDone)))).Methods(http.MethodPost, http.MethodGet, http.MethodPut)
 
 	todosRoute := router.PathPrefix("/todos").Subrouter()
-	todosRoute.Handle("/", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readTodos))).Methods(http.MethodGet)
+	todosRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readTodos))).Methods(http.MethodGet)
 }
 
 func ResolveTodoID(next http.Handler) http.Handler {
@@ -144,12 +144,12 @@ func (h TodoHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	userID, _ := h.userMiddleware.GetUserFromContext(r.Context())
 
 	err := h.todoService.DeleteTodo(todoID, userID)
-	if err == nil {
+	if err != nil {
 		log.Printf("Todo [%d] delete: %s\n", todoID, err.Error())
-		responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
+		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
 	} else {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
 		return
 	}
 }
