@@ -6,7 +6,7 @@ import (
 )
 
 type UserCredentials struct {
-	Username string `json:"username" gorm:"primaryKey"`
+	Username string `json:"username"`
 	Password string `json:"password,omitempty"`
 }
 

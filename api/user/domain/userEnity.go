@@ -7,7 +7,7 @@ const (
 
 type User struct {
 	UserCredentials
-	UserID    uint    `json:"-" gorm:"primaryKey"`
+	UserID    uint    `json:"-"`
 	FirstName string  `json:"firstName"`
 	LastName  string  `json:"lastName"`
 	Role      string  `json:"-" gorm:"default:user"`
