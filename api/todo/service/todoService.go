@@ -3,9 +3,9 @@ package todoServices
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	errors2 "go-heroku-server/api/src/errors"
 	"go-heroku-server/api/todo/domain"
 	todoPorts "go-heroku-server/api/todo/ports"
-	"go-heroku-server/api/types/errors"
 	"log"
 )
 
@@ -27,13 +27,13 @@ func (s TodoService) ReadTodo(todoID uint, username string) (todoDomains.Todo, e
 	todo, err := s.repository.ReadTodo(todoID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return todoDomains.Todo{}, errors.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
+			return todoDomains.Todo{}, errors2.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
 		} else {
 			return todoDomains.Todo{}, err
 		}
 	} else {
 		if username != todo.Username {
-			return todoDomains.Todo{}, errors.NewForbiddenError("forbidden access to resource")
+			return todoDomains.Todo{}, errors2.NewForbiddenError("forbidden access to resource")
 		}
 		return s.repository.ReadTodo(todoID)
 	}
@@ -47,7 +47,7 @@ func (s TodoService) UpdateTodo(todoID uint, username string, updatedTodo todoDo
 	_, err := s.ReadTodo(todoID, username)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
-			return errors.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
+			return errors2.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
 		} else {
 			return err
 		}

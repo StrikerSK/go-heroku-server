@@ -14,6 +14,7 @@ import (
 	locationRepositories "go-heroku-server/api/location/repository"
 	"go-heroku-server/api/location/restaurant"
 	locationServcices "go-heroku-server/api/location/service"
+	"go-heroku-server/api/src/responses"
 	todoHandlers "go-heroku-server/api/todo/handler"
 	todoRepositories "go-heroku-server/api/todo/repository"
 	todoServices "go-heroku-server/api/todo/service"
@@ -51,12 +52,14 @@ func main() {
 		port = "4000"
 	}
 
+	responseService := responses.NewResponseService()
+
 	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
 	userService := userServices.NewUserService(userRepository)
 
 	userTokenService := userAuth.NewTokenService()
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService)
-	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService)
+	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
 	todoRepo := todoRepositories.NewTodoRepository(config.GetDatabaseInstance())
 	todoService := todoServices.NewTodoService(todoRepo)

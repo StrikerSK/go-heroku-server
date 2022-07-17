@@ -3,7 +3,7 @@ package userServices
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"go-heroku-server/api/types/errors"
+	"go-heroku-server/api/src/errors"
 	userDomains "go-heroku-server/api/user/domain"
 	userPorts "go-heroku-server/api/user/ports"
 	"log"
@@ -45,7 +45,16 @@ func (s UserService) ReadUser(username string) (userDomains.User, error) {
 }
 
 func (s UserService) ReadUsers() ([]userDomains.User, error) {
-	return s.repository.ReadUsers()
+	users, err := s.repository.ReadUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range users {
+		users[i].ClearPassword()
+	}
+
+	return users, nil
 }
 
 func (s UserService) UpdateUser(updatedUser userDomains.User) error {

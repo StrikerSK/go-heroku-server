@@ -8,10 +8,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Move Address entity">
+      <change afterPath="$PROJECT_DIR$/api/src/errors/UnauthorizedError.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/src/responses/ResponseService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/user/domain/UserWithSecurity.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/domain/address.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/address.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/domain/userCredentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userCredentials.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/domain/userEnity.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userEnity.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/service/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/service/fileService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/service/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/service/locationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/types/errors/ConflictError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/ConflictError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/types/errors/ForbiddenError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/ForbiddenError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/types/errors/NotFoundError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/NotFoundError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/service/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,27 +212,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/types/errors&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "last_opened_file_path": "/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/src/errors",
+    "run.code.analysis.last.selected.profile": "pProject Default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/src/errors" />
       <recent name="$PROJECT_DIR$/api/types/errors" />
       <recent name="$PROJECT_DIR$/api/user/service" />
       <recent name="$PROJECT_DIR$/api/user/ports" />
       <recent name="$PROJECT_DIR$/api/user/auth" />
-      <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/src" />
       <recent name="$PROJECT_DIR$/api/location/handler" />
       <recent name="$PROJECT_DIR$/api/location/service" />
       <recent name="$PROJECT_DIR$/api/location/repository" />
       <recent name="$PROJECT_DIR$/api/location/domain" />
-      <recent name="$PROJECT_DIR$/api/files/handler" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application (1)">
@@ -358,7 +367,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implement ErrorRequest to todos" />
     <MESSAGE value="Implement ErrorRequest to files" />
     <MESSAGE value="Refactoring code and User Context Resolver" />
     <MESSAGE value="Refactor File Package" />
@@ -383,7 +391,8 @@
     <MESSAGE value="Refactor Location module" />
     <MESSAGE value="Modules cleanup" />
     <MESSAGE value="Refactoring user handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring user handling" />
+    <MESSAGE value="Move Address entity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Move Address entity" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

@@ -2,7 +2,9 @@ package userHandlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
+	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	customAuth "go-heroku-server/api/user/auth"
 	userDomains "go-heroku-server/api/user/domain"
@@ -15,16 +17,18 @@ import (
 const userIdContextKey = "user_id"
 
 type UserHandler struct {
-	userService  userPorts.IUserService
-	middleware   UserAuthMiddleware
-	tokenService customAuth.TokenService
+	userService     userPorts.IUserService
+	middleware      UserAuthMiddleware
+	tokenService    customAuth.TokenService
+	responseService responses.ResponseService
 }
 
-func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService customAuth.TokenService) UserHandler {
+func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService customAuth.TokenService, responseService responses.ResponseService) UserHandler {
 	return UserHandler{
-		userService:  userService,
-		middleware:   middleware,
-		tokenService: tokenService,
+		userService:     userService,
+		middleware:      middleware,
+		tokenService:    tokenService,
+		responseService: responseService,
 	}
 }
 
@@ -40,57 +44,19 @@ func (h UserHandler) EnrichRouter(router *mux.Router) {
 	usersRoute.Handle("", h.middleware.VerifyToken(http.HandlerFunc(h.readUsers))).Methods(http.MethodGet)
 }
 
-func (h UserHandler) readUsers(w http.ResponseWriter, r *http.Request) {
-	if users, err := h.userService.ReadUsers(); err != nil {
-		log.Printf("Users read: %s\n", err.Error())
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
-		return
-	} else {
-		for i := range users {
-			users[i].ClearPassword()
-		}
-		responses.CreateResponse(http.StatusOK, users).WriteResponse(w)
-		return
-	}
-}
-
 func (h UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.parseUser(r.Body)
 	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	err = h.userService.CreateUser(user)
 	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		responses.CreateResponse(http.StatusCreated, nil).WriteResponse(w)
-		return
-	}
-}
-
-func (h UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
-	userBody, err := h.parseUser(r.Body)
-	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
-		return
-	}
-
-	username, _ := h.middleware.GetUserFromContext(r.Context())
-	if username != userBody.Username {
-		log.Printf("user cannot update without correct token")
-		responses.CreateResponse(http.StatusForbidden, nil).WriteResponse(w)
-		return
-	}
-
-	err = h.userService.UpdateUser(userBody)
-	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
-		return
-	} else {
-		responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
+		h.responseService.CreateResponse(nil).WriteResponse(w)
 		return
 	}
 }
@@ -99,11 +65,46 @@ func (h UserHandler) readUser(w http.ResponseWriter, r *http.Request) {
 	username := r.Context().Value(userIdContextKey).(string)
 	if requestedUser, err := h.userService.ReadUser(username); err != nil {
 		log.Printf("User [%s] read: %s", username, err.Error())
-		responses.CreateResponse(http.StatusNotFound, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
 		requestedUser.ClearPassword()
-		responses.CreateResponse(http.StatusOK, requestedUser).WriteResponse(w)
+		h.responseService.CreateResponse(requestedUser).WriteResponse(w)
+		return
+	}
+}
+
+func (h UserHandler) readUsers(w http.ResponseWriter, r *http.Request) {
+	if users, err := h.userService.ReadUsers(); err != nil {
+		log.Printf("Users read: %s\n", err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	} else {
+		h.responseService.CreateResponse(users).WriteResponse(w)
+		return
+	}
+}
+
+func (h UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
+	userBody, err := h.parseUser(r.Body)
+	if err != nil {
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	}
+
+	username, _ := h.middleware.GetUserFromContext(r.Context())
+	if username != userBody.Username {
+		log.Printf("user cannot update without correct token")
+		h.responseService.CreateResponse(errors.NewForbiddenError(fmt.Sprintf("username [%s] does not match", username))).WriteResponse(w)
+		return
+	}
+
+	err = h.userService.UpdateUser(userBody)
+	if err != nil {
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	} else {
+		h.responseService.CreateResponse(nil).WriteResponse(w)
 		return
 	}
 }
@@ -114,36 +115,35 @@ func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		log.Printf("Logging error: %s\n", err)
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	persistedUser, err := h.userService.ReadUser(credentials.Username)
 	if err != nil {
 		log.Printf("Logging error: %s\n", err)
-		responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
+		h.responseService.CreateResponse(errors.NewUnauthorizedError("unauthorized access")).WriteResponse(w)
 		return
 	}
 
 	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
 	if !persistedUser.ValidatePassword(credentials.Password) {
-		responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
+		h.responseService.CreateResponse(errors.NewUnauthorizedError("unauthorized access")).WriteResponse(w)
 		return
 	}
 
-	signetToken, err := h.tokenService.CreateToken(persistedUser)
+	signedToken, err := h.tokenService.CreateToken(persistedUser)
 	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	} else {
+		log.Printf("User [%s] login: success\n", persistedUser.Username)
+		h.responseService.CreateResponse(map[string]string{"token": signedToken}).WriteResponse(w)
 		return
 	}
-
-	log.Printf("User [%s] login: success\n", persistedUser.Username)
-
-	responses.CreateResponse(http.StatusOK, map[string]string{"token": signetToken}).WriteResponse(w)
-	return
 }
 
-func (h UserHandler) parseUser(body io.ReadCloser) (userDomains.User, error) {
+func (UserHandler) parseUser(body io.ReadCloser) (userDomains.User, error) {
 	var user userDomains.User
 	decoder := json.NewDecoder(body)
 

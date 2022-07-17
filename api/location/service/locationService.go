@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"go-heroku-server/api/location/domain"
 	locationPorts "go-heroku-server/api/location/ports"
-	"go-heroku-server/api/types/errors"
+	errors2 "go-heroku-server/api/src/errors"
 	"log"
 )
 
@@ -59,7 +59,7 @@ func (s LocationService) GetLocation(locationID uint, username string) (location
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
 			log.Printf("Location [%d] read: %v", locationID, err.Error())
-			return locationDomains.UserLocationEntity{}, errors.NewNotFoundError(fmt.Sprintf("location [%d] not found", locationID))
+			return locationDomains.UserLocationEntity{}, errors2.NewNotFoundError(fmt.Sprintf("location [%d] not found", locationID))
 		} else {
 			log.Printf("Location [%d] read: %v", locationID, err)
 			return locationDomains.UserLocationEntity{}, err
@@ -67,7 +67,7 @@ func (s LocationService) GetLocation(locationID uint, username string) (location
 	} else {
 		if location.Username != username {
 			log.Printf("Location [%d] read: access denied", locationID)
-			return locationDomains.UserLocationEntity{}, errors.NewForbiddenError("access forbidden")
+			return locationDomains.UserLocationEntity{}, errors2.NewForbiddenError("access forbidden")
 		} else {
 			return location, nil
 		}
