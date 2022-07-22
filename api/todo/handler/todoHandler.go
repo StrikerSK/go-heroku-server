@@ -75,7 +75,7 @@ func ResolveTodo(next http.Handler) http.Handler {
 }
 
 func (h TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
-	username, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	username, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(todoDomains.Todo)
 
 	todo.Username = username
@@ -90,7 +90,7 @@ func (h TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) readTodo(w http.ResponseWriter, r *http.Request) {
-	userID, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	userID, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 	todoID := resolveTodoID(r.Context())
 	todo, err := h.todoService.ReadTodo(todoID, userID)
 	if err != nil {
@@ -104,7 +104,7 @@ func (h TodoHandler) readTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) readTodos(w http.ResponseWriter, r *http.Request) {
-	userID, err := h.userMiddleware.GetUserFromContext(r.Context())
+	userID, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("Todos read: %v\n", err)
 		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
@@ -125,7 +125,7 @@ func (h TodoHandler) readTodos(w http.ResponseWriter, r *http.Request) {
 
 func (h TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 	todoID := resolveTodoID(r.Context())
-	userID, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	userID, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 	todo := r.Context().Value(todoBodyContextKey).(todoDomains.Todo)
 
 	if err := h.todoService.UpdateTodo(todoID, userID, todo); err != nil {
@@ -141,7 +141,7 @@ func (h TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 
 func (h TodoHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	todoID := resolveTodoID(r.Context())
-	userID, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	userID, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 
 	err := h.todoService.DeleteTodo(todoID, userID)
 	if err != nil {

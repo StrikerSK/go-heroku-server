@@ -1,4 +1,4 @@
-package userAuth
+package userServices
 
 import (
 	"errors"
@@ -13,16 +13,17 @@ type TokenService struct {
 	tokenExpiration int64
 }
 
-func NewTokenService() TokenService {
+func NewTokenService(tokenEncoding string, tokenExpiry time.Duration) TokenService {
 	return TokenService{
-		tokenEncoding:   []byte("Wow, much safe"),
-		tokenExpiration: time.Now().Local().Add(time.Second * 3600).Unix(),
+		tokenEncoding:   []byte(tokenEncoding),
+		tokenExpiration: time.Now().Local().Add(time.Second * tokenExpiry).Unix(),
 	}
 }
 
 //Function for creating token from verified user from LoginUser function
 func (s TokenService) CreateToken(user userDomains.User) (token string, err error) {
-	claims := UserClaims{
+	claims := userDomains.UserClaims{
+		UserID:   user.UserID,
 		Username: user.Username,
 		Role:     user.Role,
 		StandardClaims: jwt.StandardClaims{
@@ -41,10 +42,10 @@ func (s TokenService) CreateToken(user userDomains.User) (token string, err erro
 }
 
 // ParseToken Method extracts user CustomClaims from token
-func (s TokenService) ParseToken(signedToken string) (claims *UserClaims, err error) {
+func (s TokenService) ParseToken(signedToken string) (claims *userDomains.UserClaims, err error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
-		&UserClaims{},
+		&userDomains.UserClaims{},
 		func(token *jwt.Token) (interface{}, error) {
 			return s.tokenEncoding, nil
 		},
@@ -55,7 +56,7 @@ func (s TokenService) ParseToken(signedToken string) (claims *UserClaims, err er
 		return
 	}
 
-	claims, ok := token.Claims.(*UserClaims)
+	claims, ok := token.Claims.(*userDomains.UserClaims)
 	if !ok {
 		err = errors.New("cannot resolve token claims")
 		log.Printf("Token parse: %s\n", err.Error())

@@ -27,7 +27,7 @@ func (r LocationRepository) ReadLocation(locationID uint) (location locationDoma
 }
 
 func (r LocationRepository) ReadLocations(username string) (locations []locationDomains.UserLocationEntity, err error) {
-	err = r.db.Where("user_id = ?", username).Find(&locations).Error
+	err = r.db.Where("username = ?", username).Find(&locations).Error
 	return
 }
 

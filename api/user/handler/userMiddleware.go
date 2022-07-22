@@ -2,11 +2,16 @@ package userHandlers
 
 import (
 	"context"
-	"errors"
+	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
-	customAuth "go-heroku-server/api/user/auth"
+	customAuth "go-heroku-server/api/user/service"
 	"log"
 	"net/http"
+)
+
+const (
+	usernameContextKey       = "username"
+	identificationContextKey = "id"
 )
 
 type UserAuthMiddleware struct {
@@ -32,16 +37,26 @@ func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
 			return
 		}
-		ctx := context.WithValue(r.Context(), userIdContextKey, userClaim.Username)
+		ctx := context.WithValue(r.Context(), usernameContextKey, userClaim.Username)
 		ctx = context.WithValue(ctx, "roles", userClaim.Role)
+		ctx = context.WithValue(ctx, identificationContextKey, userClaim.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (h UserAuthMiddleware) GetUserFromContext(context context.Context) (string, error) {
-	value, ok := context.Value(userIdContextKey).(string)
+func (h UserAuthMiddleware) GetUserIdentificationFromContext(context context.Context) (uint, error) {
+	value, ok := context.Value(identificationContextKey).(uint)
 	if !ok {
-		return "", errors.New("cannot resolve user from context")
+		return 0, errors.NewParseError("cannot resolve user from context")
+	}
+
+	return value, nil
+}
+
+func (h UserAuthMiddleware) GetUsernameFromContext(context context.Context) (string, error) {
+	value, ok := context.Value(usernameContextKey).(string)
+	if !ok {
+		return "", errors.NewParseError("cannot resolve user from context")
 	}
 
 	return value, nil

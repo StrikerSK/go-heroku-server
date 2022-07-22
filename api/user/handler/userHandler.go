@@ -6,24 +6,22 @@ import (
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
-	customAuth "go-heroku-server/api/user/auth"
 	userDomains "go-heroku-server/api/user/domain"
 	userPorts "go-heroku-server/api/user/ports"
+	userServices "go-heroku-server/api/user/service"
 	"io"
 	"log"
 	"net/http"
 )
 
-const userIdContextKey = "user_id"
-
 type UserHandler struct {
 	userService     userPorts.IUserService
 	middleware      UserAuthMiddleware
-	tokenService    customAuth.TokenService
+	tokenService    userServices.TokenService
 	responseService responses.ResponseService
 }
 
-func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService customAuth.TokenService, responseService responses.ResponseService) UserHandler {
+func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService userServices.TokenService, responseService responses.ResponseService) UserHandler {
 	return UserHandler{
 		userService:     userService,
 		middleware:      middleware,
@@ -62,7 +60,7 @@ func (h UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h UserHandler) readUser(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value(userIdContextKey).(string)
+	username, _ := h.middleware.GetUsernameFromContext(r.Context())
 	if requestedUser, err := h.userService.ReadUser(username); err != nil {
 		log.Printf("User [%s] read: %s", username, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -92,7 +90,7 @@ func (h UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, _ := h.middleware.GetUserFromContext(r.Context())
+	username, _ := h.middleware.GetUsernameFromContext(r.Context())
 	if username != userBody.Username {
 		log.Printf("user cannot update without correct token")
 		h.responseService.CreateResponse(errors.NewForbiddenError(fmt.Sprintf("username [%s] does not match", username))).WriteResponse(w)

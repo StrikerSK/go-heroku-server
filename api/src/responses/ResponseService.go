@@ -2,6 +2,7 @@ package responses
 
 import (
 	"go-heroku-server/api/src/errors"
+	"log"
 	"net/http"
 )
 
@@ -28,7 +29,11 @@ func (ResponseService) CreateResponse(input interface{}) (response IResponse) {
 	case errors.UnauthorizedError:
 		response = NewEmptyResponse(http.StatusUnauthorized)
 		break
+	case errors.ParseError:
+		response = NewEmptyResponse(http.StatusBadRequest)
+		break
 	case error:
+		log.Println(input.(error))
 		response = NewEmptyResponse(http.StatusInternalServerError)
 		break
 	case nil:

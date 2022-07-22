@@ -7,19 +7,19 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Move Address entity">
-      <change afterPath="$PROJECT_DIR$/api/src/errors/UnauthorizedError.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/src/responses/ResponseService.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/user/domain/UserWithSecurity.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Response service">
+      <change afterPath="$PROJECT_DIR$/api/src/errors/ParseError.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/service/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/service/fileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/service/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/service/locationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/types/errors/ConflictError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/ConflictError.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/types/errors/ForbiddenError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/ForbiddenError.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/types/errors/NotFoundError.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/errors/NotFoundError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/handler/fileHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/handler/fileHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/handler/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/auth/tokenClaims.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userClaims.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/auth/tokenService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/tokenService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/cookieHandler.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/service/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/service/userCookies.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -215,6 +215,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
     "last_opened_file_path": "/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/api/src/errors",
     "run.code.analysis.last.selected.profile": "pProject Default"
   }
@@ -228,11 +235,11 @@
       <recent name="$PROJECT_DIR$/api/user/auth" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/user/service" />
+      <recent name="$PROJECT_DIR$/api/user/domain" />
       <recent name="$PROJECT_DIR$/api/src" />
       <recent name="$PROJECT_DIR$/api/location/handler" />
       <recent name="$PROJECT_DIR$/api/location/service" />
-      <recent name="$PROJECT_DIR$/api/location/repository" />
-      <recent name="$PROJECT_DIR$/api/location/domain" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application (1)">

@@ -18,7 +18,6 @@ import (
 	todoHandlers "go-heroku-server/api/todo/handler"
 	todoRepositories "go-heroku-server/api/todo/repository"
 	todoServices "go-heroku-server/api/todo/service"
-	userAuth "go-heroku-server/api/user/auth"
 	userHandlers "go-heroku-server/api/user/handler"
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
@@ -57,7 +56,7 @@ func main() {
 	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
 	userService := userServices.NewUserService(userRepository)
 
-	userTokenService := userAuth.NewTokenService()
+	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 

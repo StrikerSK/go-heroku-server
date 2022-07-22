@@ -55,7 +55,7 @@ func resolveFileID(next http.Handler) http.Handler {
 }
 
 func (h FileHandler) createFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUserFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
 		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
@@ -104,7 +104,7 @@ func (h FileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h FileHandler) readFile(w http.ResponseWriter, r *http.Request) {
-	username, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	username, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 	fileID := resolveFileContext(r.Context())
 
 	var persistedFile, err = h.fileService.ReadFile(fileID, username)
@@ -129,7 +129,7 @@ func (h FileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h FileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
-	username, _ := h.userMiddleware.GetUserFromContext(r.Context())
+	username, _ := h.userMiddleware.GetUsernameFromContext(r.Context())
 	fileID := resolveFileContext(r.Context())
 
 	if err := h.fileService.DeleteFile(fileID, username); err != nil {
@@ -143,7 +143,7 @@ func (h FileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h FileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUserFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
 		return
