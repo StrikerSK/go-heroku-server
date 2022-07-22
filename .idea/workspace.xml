@@ -7,19 +7,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Response service">
-      <change afterPath="$PROJECT_DIR$/api/src/errors/ParseError.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/handler/fileHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/handler/fileHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/handler/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/auth/tokenClaims.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/domain/userClaims.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/auth/tokenService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/tokenService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/cookieHandler.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/service/userCookies.go" beforeDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Cleanup codebase for user">
+      <change beforePath="$PROJECT_DIR$/api/location/handler/locationController.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/ports/ILocationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/ports/ILocationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/ports/ILocationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/ports/ILocationService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/repository/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/service/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/service/locationService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -374,7 +367,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implement ErrorRequest to files" />
     <MESSAGE value="Refactoring code and User Context Resolver" />
     <MESSAGE value="Refactor File Package" />
     <MESSAGE value="Refactoring code to use IResponse interface" />
@@ -399,7 +391,8 @@
     <MESSAGE value="Modules cleanup" />
     <MESSAGE value="Refactoring user handling" />
     <MESSAGE value="Move Address entity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Move Address entity" />
+    <MESSAGE value="Cleanup codebase for user" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleanup codebase for user" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

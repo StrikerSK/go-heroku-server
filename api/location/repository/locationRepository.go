@@ -10,15 +10,15 @@ type LocationRepository struct {
 }
 
 func NewLocationRepository(db *gorm.DB) LocationRepository {
-	db.AutoMigrate(&locationDomains.Location{})
+	db.AutoMigrate(&locationDomains.UserLocationEntity{})
 	return LocationRepository{
 		db: db,
 	}
 }
 
-func (r LocationRepository) CreateLocation(location locationDomains.UserLocationEntity) (err error) {
-	err = r.db.Create(&location).Error
-	return
+func (r LocationRepository) CreateLocation(location locationDomains.UserLocationEntity) (uint, error) {
+	err := r.db.Create(&location).Error
+	return location.Id, err
 }
 
 func (r LocationRepository) ReadLocation(locationID uint) (location locationDomains.UserLocationEntity, err error) {

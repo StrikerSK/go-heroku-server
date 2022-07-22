@@ -3,7 +3,7 @@ package locationPorts
 import locationDomains "go-heroku-server/api/location/domain"
 
 type ILocationRepository interface {
-	CreateLocation(locationDomains.UserLocationEntity) error
+	CreateLocation(locationDomains.UserLocationEntity) (uint, error)
 	ReadLocation(uint) (locationDomains.UserLocationEntity, error)
 	ReadLocations(string) ([]locationDomains.UserLocationEntity, error)
 	UpdateLocation(locationDomains.UserLocationEntity) error

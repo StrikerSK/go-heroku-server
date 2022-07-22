@@ -19,12 +19,12 @@ func NewLocationService(repository locationPorts.ILocationRepository) LocationSe
 	}
 }
 
-func (s LocationService) CreateLocation(location locationDomains.UserLocationEntity) error {
+func (s LocationService) CreateLocation(location locationDomains.UserLocationEntity) (uint, error) {
 	return s.repository.CreateLocation(location)
 }
 
 func (s LocationService) DeleteLocation(locationID uint, username string) error {
-	persistedLocation, err := s.GetLocation(locationID, username)
+	persistedLocation, err := s.ReadLocation(locationID, username)
 	if err != nil {
 		log.Printf("UserLocationEntity [%d] delete: %s", locationID, err.Error())
 		return err
@@ -40,7 +40,7 @@ func (s LocationService) DeleteLocation(locationID uint, username string) error 
 }
 
 func (s LocationService) UpdateLocation(updatedLocation locationDomains.UserLocationEntity) error {
-	_, err := s.GetLocation(updatedLocation.Id, updatedLocation.Username)
+	_, err := s.ReadLocation(updatedLocation.Id, updatedLocation.Username)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (s LocationService) UpdateLocation(updatedLocation locationDomains.UserLoca
 	}
 }
 
-func (s LocationService) GetLocation(locationID uint, username string) (locationDomains.UserLocationEntity, error) {
+func (s LocationService) ReadLocation(locationID uint, username string) (locationDomains.UserLocationEntity, error) {
 	var location, err = s.repository.ReadLocation(locationID)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"go-heroku-server/api/location/domain"
-	"go-heroku-server/api/location/image"
 	locationPorts "go-heroku-server/api/location/ports"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
@@ -17,12 +16,14 @@ import (
 type LocationHandler struct {
 	locationService locationPorts.ILocationService
 	userMiddleware  userHandlers.UserAuthMiddleware
+	responseService responses.ResponseService
 }
 
-func NewLocationHandler(locationService locationPorts.ILocationService, userMiddleware userHandlers.UserAuthMiddleware) LocationHandler {
+func NewLocationHandler(locationService locationPorts.ILocationService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseService) LocationHandler {
 	return LocationHandler{
 		locationService: locationService,
 		userMiddleware:  userMiddleware,
+		responseService: responseService,
 	}
 }
 
@@ -37,34 +38,32 @@ func (h LocationHandler) EnrichRouter(router *mux.Router) {
 
 	locationsRoute := router.PathPrefix("/locations").Subrouter()
 	locationsRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readLocations))).Methods(http.MethodGet)
-
-	image.EnrichRouteWithImages(locationSubRoute)
 }
 
 func (h LocationHandler) createLocation(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("Controller location add: %v\n", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	var location locationDomains.UserLocationEntity
 	if err = json.NewDecoder(r.Body).Decode(&location); err != nil {
 		log.Printf("Controller location add: %v\n", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	location.Username = username
 
-	err = h.locationService.CreateLocation(location)
+	id, err := h.locationService.CreateLocation(location)
 	if err != nil {
 		log.Printf("Controller location add: %v\n", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
+		h.responseService.CreateResponse(map[string]interface{}{"data": id}).WriteResponse(w)
 		return
 	}
 }
@@ -73,43 +72,43 @@ func (h LocationHandler) readLocation(w http.ResponseWriter, r *http.Request) {
 	locationID, err := h.resolveLocationContext(r)
 	if err != nil {
 		log.Printf("Location delete: %v", err)
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("Read location error: %v\n", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	location, err := h.locationService.GetLocation(locationID, username)
+	location, err := h.locationService.ReadLocation(locationID, username)
 	if err != nil {
 		log.Printf("Location [%d] read: %s", locationID, err.Error())
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	responses.CreateResponse(http.StatusOK, location).WriteResponse(w)
+	h.responseService.CreateResponse(location).WriteResponse(w)
 	return
 }
 
 func (h LocationHandler) readLocations(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
-
 	if err != nil {
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		log.Printf("Locations read: %s\n", err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	locations, err := h.locationService.ReadLocations(username)
 	if err != nil {
-		log.Printf("Locations reading: %s", err.Error())
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
+		log.Printf("Locations read: %s\n", err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		responses.CreateResponse(http.StatusOK, locations).WriteResponse(w)
+		h.responseService.CreateResponse(locations).WriteResponse(w)
 		return
 	}
 }
@@ -117,22 +116,22 @@ func (h LocationHandler) readLocations(w http.ResponseWriter, r *http.Request) {
 func (h LocationHandler) updateLocation(w http.ResponseWriter, r *http.Request) {
 	locationID, err := h.resolveLocationContext(r)
 	if err != nil {
-		log.Printf("Location delete: %v", err)
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
+		log.Printf("Location [%d] update: %s\n", locationID, err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
-		log.Printf("Controller location add: %v\n", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		log.Printf("Location [%d] update: %s\n", locationID, err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	var location locationDomains.UserLocationEntity
 	if err = json.NewDecoder(r.Body).Decode(&location); err != nil {
-		log.Printf("Location [%d] edit: %s\n", locationID, err.Error())
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		log.Printf("Location [%d] update: %s\n", locationID, err.Error())
+		h.responseService.CreateResponse(errors.NewParseError(err.Error())).WriteResponse(w)
 		return
 	}
 
@@ -141,11 +140,11 @@ func (h LocationHandler) updateLocation(w http.ResponseWriter, r *http.Request) 
 
 	err = h.locationService.UpdateLocation(location)
 	if err != nil {
-		log.Printf("Location [%d] edit: %s\n", locationID, err.Error())
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		log.Printf("Location [%d] update: %s\n", locationID, err.Error())
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
+		h.responseService.CreateResponse(nil).WriteResponse(w)
 		return
 	}
 }
@@ -153,26 +152,26 @@ func (h LocationHandler) updateLocation(w http.ResponseWriter, r *http.Request) 
 func (h LocationHandler) deleteLocation(w http.ResponseWriter, r *http.Request) {
 	locationID, err := h.resolveLocationContext(r)
 	if err != nil {
-		log.Printf("Location delete: %v", err)
-		responses.CreateResponse(http.StatusBadRequest, nil).WriteResponse(w)
+		log.Printf("Location [%d] delete: %v", locationID, err)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
-		log.Printf("Location delete: %v", err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		log.Printf("Location [%d] delete: %v", locationID, err)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
 	err = h.locationService.DeleteLocation(locationID, username)
 	if err != nil {
 		log.Printf("Location [%d] delete: %v", locationID, err)
-		responses.CreateResponse(http.StatusInternalServerError, nil).WriteResponse(w)
+		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	responses.CreateResponse(http.StatusOK, nil).WriteResponse(w)
+	h.responseService.CreateResponse(nil).WriteResponse(w)
 	return
 }
 

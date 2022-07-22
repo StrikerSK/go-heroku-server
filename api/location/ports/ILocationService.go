@@ -5,9 +5,9 @@ import (
 )
 
 type ILocationService interface {
-	CreateLocation(locationDomains.UserLocationEntity) error
+	CreateLocation(locationDomains.UserLocationEntity) (uint, error)
+	ReadLocation(uint, string) (locationDomains.UserLocationEntity, error)
 	ReadLocations(string) ([]locationDomains.UserLocationEntity, error)
-	GetLocation(uint, string) (locationDomains.UserLocationEntity, error)
 	UpdateLocation(locationDomains.UserLocationEntity) error
-	DeleteLocation(locationID uint, userID string) error
+	DeleteLocation(uint, string) error
 }

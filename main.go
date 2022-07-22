@@ -8,12 +8,9 @@ import (
 	fileHandlers "go-heroku-server/api/files/handler"
 	fileRepositories "go-heroku-server/api/files/repository"
 	fileServices "go-heroku-server/api/files/service"
-	"go-heroku-server/api/location/domain"
 	locationHandlers "go-heroku-server/api/location/handler"
-	"go-heroku-server/api/location/image"
 	locationRepositories "go-heroku-server/api/location/repository"
-	"go-heroku-server/api/location/restaurant"
-	locationServcices "go-heroku-server/api/location/service"
+	locationServices "go-heroku-server/api/location/service"
 	"go-heroku-server/api/src/responses"
 	todoHandlers "go-heroku-server/api/todo/handler"
 	todoRepositories "go-heroku-server/api/todo/repository"
@@ -38,7 +35,6 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.GetDatabaseInstance().AutoMigrate(&locationDomains.UserLocationEntity{}, &image.LocationImage{}, &restaurant.RestaurantLocation{})
 	config.GetCacheInstance()
 }
 
@@ -69,8 +65,8 @@ func main() {
 	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware)
 
 	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
-	locationSrv := locationServcices.NewLocationService(locationRepo)
-	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware)
+	locationSrv := locationServices.NewLocationService(locationRepo)
+	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
