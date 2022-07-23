@@ -62,7 +62,7 @@ func main() {
 
 	fileRepo := fileRepositories.NewFileRepository(config.GetDatabaseInstance())
 	fileSrv := fileServices.NewFileService(fileRepo)
-	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware)
+	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware, responseService)
 
 	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
 	locationSrv := locationServices.NewLocationService(locationRepo)

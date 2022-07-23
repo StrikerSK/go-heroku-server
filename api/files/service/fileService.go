@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	fileDomains "go-heroku-server/api/files/domain"
 	filePorts "go-heroku-server/api/files/ports"
-	errors2 "go-heroku-server/api/src/errors"
+	"go-heroku-server/api/src/errors"
 	"log"
 	"strings"
 )
@@ -21,31 +21,32 @@ func NewFileService(repository filePorts.IFileRepository) FileService {
 }
 
 //Function stores files received from the Front-End
-func (s FileService) UploadFile(fileEntity fileDomains.FileEntity) error {
-	_ = s.repository.CreateFile(fileEntity)
-	//log.Printf("File create: success\n")
-	return nil
+func (s FileService) CreateFile(fileEntity fileDomains.FileEntity) (uint, error) {
+	if err := s.repository.CreateFile(&fileEntity); err != nil {
+		return 0, err
+	}
+	return fileEntity.Id, nil
 }
 
 //Function provides requested file to the client
 func (s FileService) ReadFile(fileID uint, username string) (fileDomains.FileEntity, error) {
-	file, err := s.repository.GetFile(fileID)
+	file, err := s.repository.ReadFile(fileID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return fileDomains.FileEntity{}, errors2.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
+			return fileDomains.FileEntity{}, errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
 		} else {
 			return fileDomains.FileEntity{}, err
 		}
 	} else {
 		if file.Username != username {
-			return fileDomains.FileEntity{}, errors2.NewForbiddenError("forbidden access")
+			return fileDomains.FileEntity{}, errors.NewForbiddenError("forbidden access")
 		}
 		return file, nil
 	}
 }
 
 func (s FileService) ReadFiles(username string) ([]fileDomains.FileEntity, error) {
-	files, err := s.repository.GetAll(username)
+	files, err := s.repository.ReadFiles(username)
 	if err != nil {
 		return nil, err
 	} else {

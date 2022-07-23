@@ -5,8 +5,8 @@ import (
 )
 
 type IFileRepository interface {
-	CreateFile(fileDomains.FileEntity) error
-	GetAll(string) ([]fileDomains.FileEntity, error)
-	GetFile(uint) (fileDomains.FileEntity, error)
+	CreateFile(*fileDomains.FileEntity) error
+	ReadFile(uint) (fileDomains.FileEntity, error)
+	ReadFiles(string) ([]fileDomains.FileEntity, error)
 	DeleteFile(uint) error
 }

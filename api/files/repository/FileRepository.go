@@ -16,16 +16,16 @@ func NewFileRepository(db *gorm.DB) FileRepository {
 	}
 }
 
-func (r FileRepository) CreateFile(file fileDomains.FileEntity) error {
+func (r FileRepository) CreateFile(file *fileDomains.FileEntity) error {
 	return r.db.Create(&file).Error
 }
 
-func (r FileRepository) GetAll(username string) (files []fileDomains.FileEntity, err error) {
+func (r FileRepository) ReadFiles(username string) (files []fileDomains.FileEntity, err error) {
 	err = r.db.Where("username = ?", username).Find(&files).Error
 	return
 }
 
-func (r FileRepository) GetFile(fileId uint) (file fileDomains.FileEntity, err error) {
+func (r FileRepository) ReadFile(fileId uint) (file fileDomains.FileEntity, err error) {
 	err = r.db.Where("id = ?", fileId).Find(&file).Error
 	return
 }
