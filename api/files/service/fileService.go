@@ -1,8 +1,6 @@
 package fileServices
 
 import (
-	"fmt"
-	"github.com/jinzhu/gorm"
 	fileDomains "go-heroku-server/api/files/domain"
 	filePorts "go-heroku-server/api/files/ports"
 	"go-heroku-server/api/src/errors"
@@ -32,11 +30,7 @@ func (s FileService) CreateFile(fileEntity fileDomains.FileEntity) (uint, error)
 func (s FileService) ReadFile(fileID uint, username string) (fileDomains.FileEntity, error) {
 	file, err := s.repository.ReadFile(fileID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return fileDomains.FileEntity{}, errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
-		} else {
-			return fileDomains.FileEntity{}, err
-		}
+		return fileDomains.FileEntity{}, err
 	} else {
 		if file.Username != username {
 			return fileDomains.FileEntity{}, errors.NewForbiddenError("forbidden access")

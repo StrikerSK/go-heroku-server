@@ -29,7 +29,7 @@ func (ResponseService) CreateResponse(input interface{}) (response IResponse) {
 	case errors.UnauthorizedError:
 		response = NewEmptyResponse(http.StatusUnauthorized)
 		break
-	case errors.ParseError:
+	case errors.ParseError, errors.DatabaseError:
 		response = NewEmptyResponse(http.StatusBadRequest)
 		break
 	case error:

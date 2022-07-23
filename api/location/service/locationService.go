@@ -1,11 +1,9 @@
 package locationServcices
 
 import (
-	"fmt"
-	"github.com/jinzhu/gorm"
 	"go-heroku-server/api/location/domain"
 	locationPorts "go-heroku-server/api/location/ports"
-	errors2 "go-heroku-server/api/src/errors"
+	"go-heroku-server/api/src/errors"
 	"log"
 )
 
@@ -20,7 +18,11 @@ func NewLocationService(repository locationPorts.ILocationRepository) LocationSe
 }
 
 func (s LocationService) CreateLocation(location locationDomains.UserLocationEntity) (uint, error) {
-	return s.repository.CreateLocation(location)
+	if err := s.repository.CreateLocation(&location); err != nil {
+		return 0, err
+	} else {
+		return location.Id, nil
+	}
 }
 
 func (s LocationService) DeleteLocation(locationID uint, username string) error {
@@ -55,19 +57,13 @@ func (s LocationService) UpdateLocation(updatedLocation locationDomains.UserLoca
 }
 
 func (s LocationService) ReadLocation(locationID uint, username string) (locationDomains.UserLocationEntity, error) {
-	var location, err = s.repository.ReadLocation(locationID)
+	location, err := s.repository.ReadLocation(locationID)
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			log.Printf("Location [%d] read: %v", locationID, err.Error())
-			return locationDomains.UserLocationEntity{}, errors2.NewNotFoundError(fmt.Sprintf("location [%d] not found", locationID))
-		} else {
-			log.Printf("Location [%d] read: %v", locationID, err)
-			return locationDomains.UserLocationEntity{}, err
-		}
+		return location, err
 	} else {
 		if location.Username != username {
 			log.Printf("Location [%d] read: access denied", locationID)
-			return locationDomains.UserLocationEntity{}, errors2.NewForbiddenError("access forbidden")
+			return locationDomains.UserLocationEntity{}, errors.NewForbiddenError("access denied")
 		} else {
 			return location, nil
 		}

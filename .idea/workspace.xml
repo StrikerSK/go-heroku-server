@@ -7,15 +7,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Cleanup codebase for Locations">
-      <change afterPath="$PROJECT_DIR$/api/src/errors/DatabaseError.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Introduce Database Error">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/handler/fileHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/handler/fileHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/ports/IFileRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/ports/IFileRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/ports/IFileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/ports/IFileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/repository/FileRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/repository/FileRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/service/fileService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/service/fileService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/ports/ILocationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/ports/ILocationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/repository/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/service/locationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/service/locationService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -369,8 +365,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor File Package" />
-    <MESSAGE value="Refactoring code to use IResponse interface" />
     <MESSAGE value="Add Updating to Location" />
     <MESSAGE value="User response refactor" />
     <MESSAGE value="Refactor error responses" />
@@ -394,7 +388,9 @@
     <MESSAGE value="Move Address entity" />
     <MESSAGE value="Cleanup codebase for user" />
     <MESSAGE value="Cleanup codebase for Locations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleanup codebase for Locations" />
+    <MESSAGE value="Cleanup codebase for Files" />
+    <MESSAGE value="Introduce Database Error" />
+    <option name="LAST_COMMIT_MESSAGE" value="Introduce Database Error" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
