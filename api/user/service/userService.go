@@ -1,7 +1,6 @@
 package userServices
 
 import (
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"go-heroku-server/api/src/errors"
 	userDomains "go-heroku-server/api/user/domain"
@@ -21,7 +20,8 @@ func NewUserService(repository userPorts.IUserRepository) UserService {
 
 func (s UserService) CreateUser(user userDomains.User) error {
 	if _, err := s.ReadUser(user.Username); err != nil {
-		if err == gorm.ErrRecordNotFound {
+		_, notFoundErr := err.(errors.NotFoundError)
+		if notFoundErr {
 			user.SetRole()
 			if err = s.repository.CreateUser(user); err != nil {
 				log.Printf("User repository create error: %v\n", err)
@@ -59,7 +59,8 @@ func (s UserService) ReadUsers() ([]userDomains.User, error) {
 
 func (s UserService) UpdateUser(updatedUser userDomains.User) error {
 	if err := s.repository.UpdateUser(updatedUser); err != nil {
-		if err == gorm.ErrRecordNotFound {
+		_, notFoundErr := err.(errors.NotFoundError)
+		if notFoundErr {
 			log.Printf("User [%s] edit: user not found\n", updatedUser.Username)
 			return err
 		} else {

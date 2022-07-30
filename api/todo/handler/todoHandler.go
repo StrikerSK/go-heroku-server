@@ -8,7 +8,6 @@ import (
 	"go-heroku-server/api/todo/domain"
 	todoPorts "go-heroku-server/api/todo/ports"
 	userHandlers "go-heroku-server/api/user/handler"
-	"go-heroku-server/config"
 	"log"
 	"net/http"
 	"strconv"
@@ -32,8 +31,6 @@ func NewTodoHandler(userMiddleware userHandlers.UserAuthMiddleware, todoService 
 }
 
 func (h TodoHandler) EnrichRouter(router *mux.Router) {
-	config.InitializeType("Todo", &todoDomains.Todo{})
-
 	todoRoute := router.PathPrefix("/todo").Subrouter()
 	todoRoute.Handle("", h.userMiddleware.VerifyToken(ResolveTodo(http.HandlerFunc(h.createTodo)))).Methods(http.MethodPost)
 	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(ResolveTodoID(http.HandlerFunc(h.readTodo)))).Methods(http.MethodGet)

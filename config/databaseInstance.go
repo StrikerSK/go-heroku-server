@@ -39,8 +39,3 @@ func GetDatabaseInstance() *gorm.DB {
 
 	return databaseConnection
 }
-
-func InitializeType(typeName string, item interface{}) {
-	GetDatabaseInstance().AutoMigrate(item)
-	log.Printf("Initialized [%s] type\n", typeName)
-}
