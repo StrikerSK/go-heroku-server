@@ -47,18 +47,18 @@ func main() {
 		port = "4000"
 	}
 
-	responseService := responses.NewResponseService()
+	responseService := responses.NewResponseFactory()
 
 	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
 	userService := userServices.NewUserService(userRepository)
 
 	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
-	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService)
+	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
 	todoRepo := todoRepositories.NewTodoRepository(config.GetDatabaseInstance())
 	todoService := todoServices.NewTodoService(todoRepo)
-	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService)
+	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
 	fileRepo := fileRepositories.NewFileRepository(config.GetDatabaseInstance())
 	fileSrv := fileServices.NewFileService(fileRepo)

@@ -12,15 +12,18 @@ import (
 const (
 	usernameContextKey       = "username"
 	identificationContextKey = "id"
+	rolesContextKey          = "roles"
 )
 
 type UserAuthMiddleware struct {
-	tokenService customAuth.TokenService
+	tokenService    customAuth.TokenService
+	responseService responses.ResponseFactory
 }
 
-func NewUserAuthMiddleware(tokenService customAuth.TokenService) UserAuthMiddleware {
+func NewUserAuthMiddleware(tokenService customAuth.TokenService, responseService responses.ResponseFactory) UserAuthMiddleware {
 	return UserAuthMiddleware{
-		tokenService: tokenService,
+		tokenService:    tokenService,
+		responseService: responseService,
 	}
 }
 
@@ -29,16 +32,18 @@ func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 		token := r.Header.Get("Authorization")
 		if token == "" {
 			log.Println("Verify JWT Token: Cannot find header")
-			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
+			h.responseService.CreateResponse(errors.NewUnauthorizedError("")).WriteResponse(w)
 			return
 		}
+
 		userClaim, err := h.tokenService.ParseToken(token)
 		if err != nil {
-			responses.CreateResponse(http.StatusUnauthorized, nil).WriteResponse(w)
+			h.responseService.CreateResponse(err).WriteResponse(w)
 			return
 		}
+
 		ctx := context.WithValue(r.Context(), usernameContextKey, userClaim.Username)
-		ctx = context.WithValue(ctx, "roles", userClaim.Role)
+		ctx = context.WithValue(ctx, rolesContextKey, userClaim.Role)
 		ctx = context.WithValue(ctx, identificationContextKey, userClaim.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

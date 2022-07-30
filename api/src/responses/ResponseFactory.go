@@ -6,13 +6,13 @@ import (
 	"net/http"
 )
 
-type ResponseService struct{}
+type ResponseFactory struct{}
 
-func NewResponseService() ResponseService {
-	return ResponseService{}
+func NewResponseFactory() ResponseFactory {
+	return ResponseFactory{}
 }
 
-func (ResponseService) CreateResponse(input interface{}) (response IResponse) {
+func (ResponseFactory) CreateResponse(input interface{}) (response IResponse) {
 	switch input.(type) {
 	case []byte:
 		response = NewFileResponse(input.([]byte))

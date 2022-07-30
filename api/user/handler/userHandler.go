@@ -18,10 +18,10 @@ type UserHandler struct {
 	userService     userPorts.IUserService
 	middleware      UserAuthMiddleware
 	tokenService    userServices.TokenService
-	responseService responses.ResponseService
+	responseService responses.ResponseFactory
 }
 
-func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService userServices.TokenService, responseService responses.ResponseService) UserHandler {
+func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddleware, tokenService userServices.TokenService, responseService responses.ResponseFactory) UserHandler {
 	return UserHandler{
 		userService:     userService,
 		middleware:      middleware,

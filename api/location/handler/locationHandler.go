@@ -16,10 +16,10 @@ import (
 type LocationHandler struct {
 	locationService locationPorts.ILocationService
 	userMiddleware  userHandlers.UserAuthMiddleware
-	responseService responses.ResponseService
+	responseService responses.ResponseFactory
 }
 
-func NewLocationHandler(locationService locationPorts.ILocationService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseService) LocationHandler {
+func NewLocationHandler(locationService locationPorts.ILocationService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) LocationHandler {
 	return LocationHandler{
 		locationService: locationService,
 		userMiddleware:  userMiddleware,

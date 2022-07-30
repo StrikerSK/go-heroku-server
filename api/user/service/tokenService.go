@@ -1,8 +1,8 @@
 package userServices
 
 import (
-	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"go-heroku-server/api/src/errors"
 	userDomains "go-heroku-server/api/user/domain"
 	"log"
 	"time"
@@ -53,19 +53,20 @@ func (s TokenService) ParseToken(signedToken string) (claims *userDomains.UserCl
 
 	if err != nil {
 		log.Printf("Token parse: %s\n", err.Error())
+		err = errors.NewUnauthorizedError(err.Error())
 		return
 	}
 
 	claims, ok := token.Claims.(*userDomains.UserClaims)
 	if !ok {
-		err = errors.New("cannot resolve token claims")
 		log.Printf("Token parse: %s\n", err.Error())
+		err = errors.NewUnauthorizedError("cannot resolve token claims")
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		err = errors.New("JWT token has expired")
 		log.Printf("Token parse: %s\n", err.Error())
+		err = errors.NewUnauthorizedError("JWT token has expired")
 		return
 	}
 

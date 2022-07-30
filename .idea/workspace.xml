@@ -8,9 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Handle User Not Found case">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/handler/fileHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/handler/fileHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/handler/locationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/responses/IResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/IResponse.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseImpl.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseImpl.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseFactory.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/user/service/tokenService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/tokenService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

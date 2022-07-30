@@ -18,10 +18,10 @@ import (
 type FileHandler struct {
 	fileService     filePorts.IFileService
 	userMiddleware  userHandlers.UserAuthMiddleware
-	responseService responses.ResponseService
+	responseService responses.ResponseFactory
 }
 
-func NewFileHandler(service filePorts.IFileService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseService) FileHandler {
+func NewFileHandler(service filePorts.IFileService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) FileHandler {
 	return FileHandler{
 		fileService:     service,
 		userMiddleware:  userMiddleware,
@@ -120,10 +120,9 @@ func (h FileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 		"Content-Type":                  persistedFile.FileType,
 	}
 
-	res := responses.CreateResponse(http.StatusOK, persistedFile.FileData)
+	res := h.responseService.CreateResponse(persistedFile.FileData)
 	res.SetHeaders(responseMap)
 	res.WriteResponse(w)
-
 	return
 }
 
@@ -136,6 +135,7 @@ func (h FileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 
 	fileID, err := h.resolveFileIdentificationContext(r)
 	if err != nil {
+		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
