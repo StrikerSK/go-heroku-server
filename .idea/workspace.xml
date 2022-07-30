@@ -7,17 +7,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Handle User Not Found case">
-      <change beforePath="$PROJECT_DIR$/api/files/handler/fileHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/handler/fileHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/handler/locationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/handler/locationHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/responses/IResponse.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/IResponse.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseImpl.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseImpl.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/responses/ResponseService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/responses/ResponseFactory.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="File handling and Response Factory name">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/handler/todoHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/handler/userMiddleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/service/tokenService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/service/tokenService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/ports/ITodoService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/repository/todoRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/todo/service/todoService.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/todo/service/todoService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -371,7 +366,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="User response refactor" />
     <MESSAGE value="Refactor error responses" />
     <MESSAGE value="Refactor getting user list" />
     <MESSAGE value="Refactor file endpoint" />
@@ -396,7 +390,8 @@
     <MESSAGE value="Cleanup codebase for Files" />
     <MESSAGE value="Introduce Database Error" />
     <MESSAGE value="Handle User Not Found case" />
-    <option name="LAST_COMMIT_MESSAGE" value="Handle User Not Found case" />
+    <MESSAGE value="File handling and Response Factory name" />
+    <option name="LAST_COMMIT_MESSAGE" value="File handling and Response Factory name" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

@@ -140,7 +140,9 @@ func (h TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.todoService.UpdateTodo(todoID, userID, todo)
+	todo.Id = todoID
+
+	err = h.todoService.UpdateTodo(userID, todo)
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return

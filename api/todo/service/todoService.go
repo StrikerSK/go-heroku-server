@@ -1,9 +1,7 @@
 package todoServices
 
 import (
-	"fmt"
-	"github.com/jinzhu/gorm"
-	errors2 "go-heroku-server/api/src/errors"
+	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/todo/domain"
 	todoPorts "go-heroku-server/api/todo/ports"
 	"log"
@@ -26,51 +24,42 @@ func (s TodoService) CreateTodo(todo todoDomains.Todo) error {
 func (s TodoService) ReadTodo(todoID uint, username string) (todoDomains.Todo, error) {
 	todo, err := s.repository.ReadTodo(todoID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return todoDomains.Todo{}, errors2.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
-		} else {
-			return todoDomains.Todo{}, err
-		}
-	} else {
-		if username != todo.Username {
-			return todoDomains.Todo{}, errors2.NewForbiddenError("forbidden access to resource")
-		}
-		return s.repository.ReadTodo(todoID)
+		return todoDomains.Todo{}, err
 	}
+
+	if username != todo.Username {
+		return todoDomains.Todo{}, errors.NewForbiddenError("forbidden access to resource")
+	}
+
+	return todo, err
 }
 
 func (s TodoService) ReadTodos(username string) ([]todoDomains.Todo, error) {
 	return s.repository.ReadTodos(username)
 }
 
-func (s TodoService) UpdateTodo(todoID uint, username string, updatedTodo todoDomains.Todo) error {
-	_, err := s.ReadTodo(todoID, username)
-	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return errors2.NewNotFoundError(fmt.Sprintf("todo [%d] not found", todoID))
-		} else {
-			return err
-		}
-	} else {
-		updatedTodo.Username = username
-		updatedTodo.Id = todoID
-
-		if err = s.repository.UpdateTodo(updatedTodo); err != nil {
-			log.Printf("Todo [%s] edit: %v\n", username, err)
-			return err
-		}
-
-		return nil
+func (s TodoService) UpdateTodo(username string, updatedTodo todoDomains.Todo) error {
+	if _, err := s.ReadTodo(updatedTodo.Id, username); err != nil {
+		return err
 	}
+
+	updatedTodo.Username = username
+
+	if err := s.repository.UpdateTodo(updatedTodo); err != nil {
+		log.Printf("Todo [%s] edit: %v\n", username, err)
+		return err
+	}
+
+	return nil
 }
 
 func (s TodoService) DeleteTodo(todoID uint, username string) error {
-	persistedFile, err := s.ReadTodo(todoID, username)
+	persistedTodo, err := s.ReadTodo(todoID, username)
 	if err != nil {
 		return err
 	}
 
-	if err = s.repository.DeleteTodo(persistedFile); err != nil {
+	if err = s.repository.DeleteTodo(persistedTodo); err != nil {
 		return err
 	}
 
