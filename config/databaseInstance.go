@@ -22,6 +22,7 @@ func GetDatabaseInstance() *gorm.DB {
 			log.Println("Creating Database instance")
 
 			//DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name}?sslmode=disable
+			//DATABASE_URL=postgres://postgres:Password@localhost:5432/postgres?sslmode=disable
 			db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
 			if err != nil {
 				log.Printf("Database initialization: %s\n", err.Error())
@@ -37,9 +38,4 @@ func GetDatabaseInstance() *gorm.DB {
 	}
 
 	return databaseConnection
-}
-
-func InitializeType(typeName string, item interface{}) {
-	GetDatabaseInstance().AutoMigrate(item)
-	log.Printf("Initialized [%s] type\n", typeName)
 }
