@@ -79,6 +79,6 @@ func main() {
 
 	handler := cors.AllowAll().Handler(router)
 
-	fmt.Println("Listening")
+	fmt.Println("Listening on port ", port)
 	fmt.Println(http.ListenAndServe(":"+port, handler))
 }

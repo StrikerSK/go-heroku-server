@@ -18,7 +18,6 @@ require (
 	github.com/lib/pq v1.0.1-0.20181016162627-9eb73efc1fcc // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/rs/cors v1.7.0
-	github.com/satori/go.uuid v1.2.0
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
 )
