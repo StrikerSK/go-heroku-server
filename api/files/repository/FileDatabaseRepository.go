@@ -12,7 +12,7 @@ type FileDatabaseRepository struct {
 }
 
 func NewFileDatabaseRepository(db *gorm.DB) FileDatabaseRepository {
-	_ = db.AutoMigrate(&fileDomains.FileEntity{})
+	_ = db.AutoMigrate(&fileDomains.FileMetadata{})
 	return FileDatabaseRepository{
 		db: db,
 	}

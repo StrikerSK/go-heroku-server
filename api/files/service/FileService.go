@@ -7,21 +7,28 @@ import (
 )
 
 type FileService struct {
-	repository filePorts.IFileRepository
+	repository         filePorts.IFileRepository
+	metadataRepository filePorts.IFileMetadataRepository
 }
 
-func NewFileService(repository filePorts.IFileRepository) FileService {
+func NewFileService(repository filePorts.IFileRepository, metadataRepository filePorts.IFileMetadataRepository) FileService {
 	return FileService{
-		repository: repository,
+		repository:         repository,
+		metadataRepository: metadataRepository,
 	}
 }
 
 // Function stores files received from the Front-End
-func (s FileService) CreateFile(fileEntity fileDomains.FileEntity) (uint, error) {
-	if err := s.repository.CreateFile(&fileEntity); err != nil {
+func (s FileService) CreateFile(fileContent fileDomains.FileEntity, fileMetadata fileDomains.FileMetadata) (uint, error) {
+	if err := s.metadataRepository.CreateMetadata(&fileMetadata); err != nil {
 		return 0, err
 	}
-	return fileEntity.Id, nil
+
+	if err := s.repository.CreateFile(&fileContent); err != nil {
+		return 0, err
+	}
+
+	return fileContent.Id, nil
 }
 
 // Function provides requested file to the client
@@ -37,8 +44,8 @@ func (s FileService) ReadFile(fileID uint, username string) (fileDomains.FileEnt
 	}
 }
 
-func (s FileService) ReadFiles(username string) ([]fileDomains.FileEntity, error) {
-	files, err := s.repository.ReadFiles(username)
+func (s FileService) ReadFiles(username string) ([]fileDomains.FileMetadata, error) {
+	files, err := s.metadataRepository.ReadAll(username)
 	if err != nil {
 		return nil, err
 	} else {
