@@ -38,7 +38,7 @@ func init() {
 	config.GetCacheInstance()
 }
 
-//Go application entrypoint
+// Go application entrypoint
 func main() {
 	port := os.Getenv("PORT")
 
@@ -60,9 +60,9 @@ func main() {
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileRepository(config.GetDatabaseInstance())
+	fileRepo := fileRepositories.NewFileDatabaseRepository(config.GetDatabaseInstance())
 	fileSrv := fileServices.NewFileService(fileRepo)
-	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware, responseService)
+	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
 	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
 	locationSrv := locationServices.NewLocationService(locationRepo)
