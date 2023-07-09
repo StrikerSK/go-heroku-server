@@ -44,27 +44,28 @@ func main() {
 
 	if port == "" {
 		//log.Fatal("$PORT must be set")
-		port = "4000"
+		port = "8080"
 	}
 
 	responseService := responses.NewResponseFactory()
+	databaseInstance := config.GetDatabaseInstance()
 
-	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
+	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
 
 	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
-	todoRepo := todoRepositories.NewTodoRepository(config.GetDatabaseInstance())
+	todoRepo := todoRepositories.NewTodoRepository(databaseInstance)
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileDatabaseRepository(config.GetDatabaseInstance())
+	fileRepo := fileRepositories.NewFileDatabaseRepository(databaseInstance)
 	fileSrv := fileServices.NewFileService(fileRepo)
 	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
-	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
+	locationRepo := locationRepositories.NewLocationRepository(databaseInstance)
 	locationSrv := locationServices.NewLocationService(locationRepo)
 	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 

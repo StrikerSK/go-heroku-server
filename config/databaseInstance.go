@@ -1,7 +1,9 @@
 package config
 
 import (
-	"github.com/jinzhu/gorm"
+	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"sync"
@@ -23,7 +25,8 @@ func GetDatabaseInstance() *gorm.DB {
 
 			//DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name}?sslmode=disable
 			//DATABASE_URL=postgres://postgres:Password@localhost:5432/postgres?sslmode=disable
-			db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
+			args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", "localhost", "5432", "postgres", "postgres", "postgres", "disable")
+			db, err := gorm.Open(postgres.Open(args), nil)
 			if err != nil {
 				log.Printf("Database initialization: %s\n", err.Error())
 				os.Exit(1)

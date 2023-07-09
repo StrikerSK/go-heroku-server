@@ -2,9 +2,9 @@ package fileRepositories
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	fileDomains "go-heroku-server/api/files/domain"
 	"go-heroku-server/api/src/errors"
+	"gorm.io/gorm"
 )
 
 type FileDatabaseRepository struct {
@@ -12,7 +12,7 @@ type FileDatabaseRepository struct {
 }
 
 func NewFileDatabaseRepository(db *gorm.DB) FileDatabaseRepository {
-	db.AutoMigrate(&fileDomains.FileEntity{})
+	_ = db.AutoMigrate(&fileDomains.FileEntity{})
 	return FileDatabaseRepository{
 		db: db,
 	}
