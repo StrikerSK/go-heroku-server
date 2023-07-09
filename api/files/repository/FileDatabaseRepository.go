@@ -43,14 +43,9 @@ func (r FileDatabaseRepository) ReadFile(fileID uint) (file fileDomains.FileEnti
 	return
 }
 
-func (r FileDatabaseRepository) DeleteFile(fileID uint) (err error) {
-	var file fileDomains.FileEntity
-	if err = r.db.Where("id = ?", fileID).Delete(&file).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
-		} else {
-			return errors.NewDatabaseError(err.Error())
-		}
+func (r FileDatabaseRepository) DeleteFile(file fileDomains.FileEntity) (err error) {
+	if err = r.db.Delete(&file).Error; err != nil {
+		return errors.NewDatabaseError(err.Error())
 	}
 	return
 }
