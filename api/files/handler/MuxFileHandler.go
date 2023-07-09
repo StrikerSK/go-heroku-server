@@ -8,7 +8,7 @@ import (
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userHandlers "go-heroku-server/api/user/handler"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -42,41 +42,42 @@ func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
 
 func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	file, fileHeader, err := r.FormFile("file")
-	if err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
+	attachmentName := r.URL.Query().Get("name")
+	if attachmentName == "" {
+		err := errors.NewBadRequestError("Attachment's name not provided")
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	//Processing of received file metadata
-	if err = r.ParseForm(); err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
-		h.responseService.CreateResponse(err).WriteResponse(w)
-		return
-	}
-
-	fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("File add: %s\n", err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	contentType := fileHeader.Header.Get("Content-Type")
+	fileSize := int64(len(fileBytes))
+	if fileSize <= 0 {
+		err := errors.NewBadRequestError("Attachment should not be empty")
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	}
+
+	contentType := http.DetectContentType(fileBytes)
 
 	resolvedFile := fileDomains.FileEntity{
 		Username:   username,
-		FileName:   fileHeader.Filename,
+		FileName:   attachmentName,
 		FileType:   contentType,
 		FileData:   fileBytes,
-		FileSize:   fileUtils.GetFileSize(fileHeader.Size),
+		FileSize:   fileUtils.GetFileSize(fileSize),
 		CreateDate: time.Now(),
 	}
 
@@ -85,8 +86,8 @@ func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		log.Printf("File create: success\n")
-		h.responseService.CreateResponse(map[string]interface{}{"id": id}).WriteResponse(w)
+		response := map[string]interface{}{"id": id}
+		h.responseService.CreateResponse(response).WriteResponse(w)
 		return
 	}
 }
