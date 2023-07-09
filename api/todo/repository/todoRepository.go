@@ -2,9 +2,9 @@ package todoRepositories
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/todo/domain"
+	"gorm.io/gorm"
 )
 
 type TodoRepository struct {
@@ -12,7 +12,7 @@ type TodoRepository struct {
 }
 
 func NewTodoRepository(db *gorm.DB) TodoRepository {
-	db.AutoMigrate(&todoDomains.Todo{})
+	_ = db.AutoMigrate(&todoDomains.Todo{})
 	return TodoRepository{
 		db: db,
 	}
