@@ -1,10 +1,10 @@
-package fileHandlers
+package handler
 
 import (
 	"github.com/gorilla/mux"
-	fileDomains "go-heroku-server/api/files/domain"
-	filePorts "go-heroku-server/api/files/ports"
 	fileUtils "go-heroku-server/api/files/utils"
+	fileDomains "go-heroku-server/api/files/v1/domain"
+	filePorts "go-heroku-server/api/files/v1/port"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userHandlers "go-heroku-server/api/user/handler"

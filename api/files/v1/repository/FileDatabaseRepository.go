@@ -1,8 +1,8 @@
-package fileRepositories
+package repository
 
 import (
 	"fmt"
-	fileDomains "go-heroku-server/api/files/domain"
+	fileDomains "go-heroku-server/api/files/v1/domain"
 	"go-heroku-server/api/src/errors"
 	"gorm.io/gorm"
 )

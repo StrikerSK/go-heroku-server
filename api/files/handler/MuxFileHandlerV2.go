@@ -72,7 +72,7 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 
 	contentType := http.DetectContentType(fileBytes)
 
-	metadata := fileDomains.FileMetadata{
+	metadata := fileDomains.FileMetadataV2{
 		Username:   username,
 		FileName:   attachmentName,
 		FileType:   contentType,
@@ -84,9 +84,9 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 		FileData: fileBytes,
 	}
 
-	fileObject := fileDomains.FileObject{
-		FileEntityV2: fileData,
-		FileMetadata: metadata,
+	fileObject := fileDomains.FileObjectV2{
+		FileEntityV2:   fileData,
+		FileMetadataV2: metadata,
 	}
 
 	id, err := h.fileService.CreateFile(fileObject)

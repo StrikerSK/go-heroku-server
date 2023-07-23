@@ -1,8 +1,8 @@
-package fileServices
+package service
 
 import (
-	fileDomains "go-heroku-server/api/files/domain"
-	filePorts "go-heroku-server/api/files/ports"
+	fileDomains "go-heroku-server/api/files/v1/domain"
+	filePorts "go-heroku-server/api/files/v1/port"
 	"go-heroku-server/api/src/errors"
 	"strings"
 )
