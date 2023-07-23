@@ -3,15 +3,14 @@ package fileHandlers
 import (
 	"github.com/gorilla/mux"
 	fileUtils "go-heroku-server/api/files/utils"
-	fileDomains2 "go-heroku-server/api/files/v2/domain"
-	"go-heroku-server/api/files/v2/ports"
+	fileDomains "go-heroku-server/api/files/v2/domain"
+	filePorts "go-heroku-server/api/files/v2/ports"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userHandlers "go-heroku-server/api/user/handler"
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -21,7 +20,7 @@ type MuxFileHandlerV2 struct {
 	responseService responses.ResponseFactory
 }
 
-func NewMuxFileHandlerV2(service filePorts.IFileServiceV2, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) MuxFileHandlerV2 {
+func NewMuxFileHandler(service filePorts.IFileServiceV2, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) MuxFileHandlerV2 {
 	return MuxFileHandlerV2{
 		fileService:     service,
 		userMiddleware:  userMiddleware,
@@ -32,12 +31,12 @@ func NewMuxFileHandlerV2(service filePorts.IFileServiceV2, userMiddleware userHa
 func (h MuxFileHandlerV2) EnrichRouter(router *mux.Router) {
 	fileRoute := router.PathPrefix("/file").Subrouter()
 	fileRoute.Handle("/upload", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createFile))).Methods(http.MethodPost)
-	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFile))).Methods(http.MethodGet)
+	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.downloadFile))).Methods(http.MethodGet)
 	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.deleteFile))).Methods(http.MethodDelete)
 
-	filesRoute := router.PathPrefix("/files").Subrouter()
-	filesRoute.Handle("/", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFiles))).Methods(http.MethodGet)
-
+	headerRoute := router.PathPrefix("/header").Subrouter()
+	headerRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readMetadata))).Methods(http.MethodGet)
+	headerRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFiles))).Methods(http.MethodGet)
 }
 
 func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +71,7 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 
 	contentType := http.DetectContentType(fileBytes)
 
-	metadata := fileDomains2.FileMetadataV2{
+	metadata := fileDomains.FileMetadataV2{
 		Username:   username,
 		FileName:   attachmentName,
 		FileType:   contentType,
@@ -80,11 +79,11 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 		CreateDate: time.Now(),
 	}
 
-	fileData := fileDomains2.FileEntityV2{
+	fileData := fileDomains.FileEntityV2{
 		FileData: fileBytes,
 	}
 
-	fileObject := fileDomains2.FileObjectV2{
+	fileObject := fileDomains.FileObjectV2{
 		FileEntityV2:   fileData,
 		FileMetadataV2: metadata,
 	}
@@ -100,7 +99,7 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h MuxFileHandlerV2) readFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandlerV2) downloadFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
@@ -108,14 +107,8 @@ func (h MuxFileHandlerV2) readFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileID, err := h.resolveFileIdentificationContext(r)
-	if err != nil {
-		log.Printf("File [%d] read: %v\n", fileID, err)
-		h.responseService.CreateResponse(err).WriteResponse(w)
-		return
-	}
-
-	persistedFile, err := h.fileService.ReadMetadata(fileID, username)
+	fileID := h.resolveFileIdentificationContext(r)
+	persistedFile, err := h.fileService.DownloadFile(fileID, username)
 	if err != nil {
 		log.Printf("File [%d] read: %v\n", fileID, err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -129,8 +122,29 @@ func (h MuxFileHandlerV2) readFile(w http.ResponseWriter, r *http.Request) {
 		"Content-Type":                  persistedFile.FileType,
 	}
 
-	res := h.responseService.CreateResponse(persistedFile)
+	res := h.responseService.CreateResponse(persistedFile.FileEntityV2.FileData)
 	res.SetHeaders(responseMap)
+	res.WriteResponse(w)
+	return
+}
+
+func (h MuxFileHandlerV2) readMetadata(w http.ResponseWriter, r *http.Request) {
+	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	if err != nil {
+		log.Printf("File read: %v\n", err)
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	}
+
+	fileID := h.resolveFileIdentificationContext(r)
+	persistedFile, err := h.fileService.ReadMetadata(fileID, username)
+	if err != nil {
+		log.Printf("File [%d] read: %v\n", fileID, err)
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	}
+
+	res := h.responseService.CreateResponse(persistedFile)
 	res.WriteResponse(w)
 	return
 }
@@ -142,12 +156,7 @@ func (h MuxFileHandlerV2) deleteFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileID, err := h.resolveFileIdentificationContext(r)
-	if err != nil {
-		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
-		h.responseService.CreateResponse(err).WriteResponse(w)
-		return
-	}
+	fileID := h.resolveFileIdentificationContext(r)
 
 	if err = h.fileService.RemoveFile(fileID, username); err != nil {
 		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
@@ -177,11 +186,6 @@ func (h MuxFileHandlerV2) readFiles(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (MuxFileHandlerV2) resolveFileIdentificationContext(r *http.Request) (uint, error) {
-	tmpVar := mux.Vars(r)["id"]
-	uri, err := strconv.ParseUint(tmpVar, 10, 64)
-	if err != nil {
-		return 0, errors.NewParseError(err.Error())
-	}
-	return uint(uri), err
+func (MuxFileHandlerV2) resolveFileIdentificationContext(r *http.Request) string {
+	return mux.Vars(r)["id"]
 }

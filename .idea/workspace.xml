@@ -7,7 +7,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 Repository and Service" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 File Database Repository">
+      <change beforePath="$PROJECT_DIR$/api/files/v2/handler/MuxFileHandlerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/handler/MuxFileHandlerV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,12 +95,12 @@
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
       <RewordedCommitMessageMapping>
-        <option name="originalMessage" value="New file handling" />
-        <option name="rewordedMessage" value="New file handling" />
+        <option name="originalMessage" value="Implementing V2 Repository and Service" />
+        <option name="rewordedMessage" value="Implementing V2 File Service" />
       </RewordedCommitMessageMapping>
     </option>
     <option name="currentCommit" value="1" />
-    <option name="onto" value="16b1cb03a09804cded6715ecfdc82ea253561836" />
+    <option name="onto" value="b04267fd492bf40d7ce6f5ed7702de42e9a21675" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -210,17 +213,17 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "add-filesystem",
     "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/Users/kristianhanus/Development/Go/go-heroku-server/api/files/service",
+    "last_opened_file_path": "/Users/kristianhanus/Development/Go/go-heroku-server/api/files/v2/repository",
     "run.code.analysis.last.selected.profile": "pProject Default"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api/files/v2/repository" />
       <recent name="$PROJECT_DIR$/api/files/service" />
       <recent name="$PROJECT_DIR$/api/files/ports" />
       <recent name="$PROJECT_DIR$/api/files/v1" />
       <recent name="$PROJECT_DIR$/api/files/handler" />
-      <recent name="$PROJECT_DIR$/docker" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api/files/v2" />
@@ -370,8 +373,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implement Factory pattern and refactor user" />
-    <MESSAGE value="Initialize User Domain" />
     <MESSAGE value="Create User's architecture" />
     <MESSAGE value="Modify Todo module" />
     <MESSAGE value="Todo cleanup" />
@@ -395,7 +396,9 @@
     <MESSAGE value="Move V1 File files" />
     <MESSAGE value="Move V2 File files" />
     <MESSAGE value="Implementing V2 Repository and Service" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 Repository and Service" />
+    <MESSAGE value="Implementing V2 File Handler" />
+    <MESSAGE value="Implementing V2 File Database Repository" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 File Database Repository" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

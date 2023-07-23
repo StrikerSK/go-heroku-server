@@ -81,15 +81,25 @@ func (s FileService) RemoveFile(fileID, username string) error {
 	return nil
 }
 
-func (s FileService) DownloadFile(fileID, username string) (fileDomains.FileEntityV2, error) {
+func (s FileService) DownloadFile(fileID, username string) (fileDomains.FileObjectV2, error) {
 	metadata, err := s.metadataRepository.ReadMetadata(fileID)
 	if err != nil {
-		return fileDomains.FileEntityV2{}, err
+		return fileDomains.FileObjectV2{}, err
 	}
 
 	if metadata.Username != username {
-		return fileDomains.FileEntityV2{}, errors.NewForbiddenError("forbidden access")
+		return fileDomains.FileObjectV2{}, errors.NewForbiddenError("forbidden access")
 	}
 
-	return s.fileRepository.ReadFile(fileID)
+	file, err := s.fileRepository.ReadFile(fileID)
+	if err != nil {
+		return fileDomains.FileObjectV2{}, err
+	}
+
+	fileObject := fileDomains.FileObjectV2{
+		FileEntityV2:   file,
+		FileMetadataV2: metadata,
+	}
+
+	return fileObject, nil
 }

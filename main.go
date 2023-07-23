@@ -5,9 +5,9 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	fileHandlers "go-heroku-server/api/files/v1/handler"
-	fileRepositories "go-heroku-server/api/files/v1/repository"
-	fileServices "go-heroku-server/api/files/v1/service"
+	fileHandlers "go-heroku-server/api/files/v2/handler"
+	fileRepositories "go-heroku-server/api/files/v2/repository"
+	fileServices "go-heroku-server/api/files/v2/service"
 	locationHandlers "go-heroku-server/api/location/handler"
 	locationRepositories "go-heroku-server/api/location/repository"
 	locationServices "go-heroku-server/api/location/service"
@@ -62,7 +62,8 @@ func main() {
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
 	fileRepo := fileRepositories.NewFileDatabaseRepository(databaseInstance)
-	fileSrv := fileServices.NewFileService(fileRepo)
+	fileMetadataRepo := fileRepositories.NewFileMetadataRepository(databaseInstance)
+	fileSrv := fileServices.NewFileService(fileMetadataRepo, fileRepo)
 	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
 	locationRepo := locationRepositories.NewLocationRepository(databaseInstance)

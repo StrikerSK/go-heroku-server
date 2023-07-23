@@ -8,6 +8,6 @@ type IFileServiceV2 interface {
 	CreateFile(fileDomains.FileObjectV2) (string, error)
 	ReadFiles(string) ([]fileDomains.FileMetadataV2, error)
 	ReadMetadata(string, string) (fileDomains.FileMetadataV2, error)
-	DownloadFile(string, string) (fileDomains.FileEntityV2, error)
+	DownloadFile(string, string) (fileDomains.FileObjectV2, error)
 	RemoveFile(string, string) error
 }
