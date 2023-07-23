@@ -5,8 +5,8 @@ import (
 )
 
 type IFileService interface {
-	CreateFile(fileDomains.FileObject) (uint, error)
-	ReadFile(uint, string) (fileDomains.FileObject, error)
-	ReadFiles(string) ([]fileDomains.FileObject, error)
+	CreateFile(fileDomains.FileEntity) (uint, error)
+	ReadFile(uint, string) (fileDomains.FileEntity, error)
+	ReadFiles(string) ([]fileDomains.FileEntity, error)
 	DeleteFile(uint, string) error
 }
