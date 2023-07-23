@@ -15,21 +15,21 @@ import (
 	"time"
 )
 
-type MuxFileHandler struct {
-	fileService     filePorts.IFileService
+type MuxFileHandlerV2 struct {
+	fileService     filePorts.IFileServiceV2
 	userMiddleware  userHandlers.UserAuthMiddleware
 	responseService responses.ResponseFactory
 }
 
-func NewMuxFileHandler(service filePorts.IFileService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) MuxFileHandler {
-	return MuxFileHandler{
+func NewMuxFileHandlerV2(service filePorts.IFileServiceV2, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) MuxFileHandlerV2 {
+	return MuxFileHandlerV2{
 		fileService:     service,
 		userMiddleware:  userMiddleware,
 		responseService: responseService,
 	}
 }
 
-func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
+func (h MuxFileHandlerV2) EnrichRouter(router *mux.Router) {
 	fileRoute := router.PathPrefix("/file").Subrouter()
 	fileRoute.Handle("/upload", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createFile))).Methods(http.MethodPost)
 	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFile))).Methods(http.MethodGet)
@@ -40,7 +40,7 @@ func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
 
 }
 
-func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 
 	if err != nil {
@@ -72,16 +72,24 @@ func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 
 	contentType := http.DetectContentType(fileBytes)
 
-	resolvedFile := fileDomains.FileEntity{
+	metadata := fileDomains.FileMetadata{
 		Username:   username,
 		FileName:   attachmentName,
 		FileType:   contentType,
-		FileData:   fileBytes,
 		FileSize:   fileUtils.GetFileSize(fileSize),
 		CreateDate: time.Now(),
 	}
 
-	id, err := h.fileService.CreateFile(resolvedFile)
+	fileData := fileDomains.FileEntityV2{
+		FileData: fileBytes,
+	}
+
+	fileObject := fileDomains.FileObject{
+		FileEntityV2: fileData,
+		FileMetadata: metadata,
+	}
+
+	id, err := h.fileService.CreateFile(fileObject)
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -92,7 +100,7 @@ func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandlerV2) readFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
@@ -107,7 +115,7 @@ func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	persistedFile, err := h.fileService.ReadFile(fileID, username)
+	persistedFile, err := h.fileService.ReadMetadata(fileID, username)
 	if err != nil {
 		log.Printf("File [%d] read: %v\n", fileID, err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -121,13 +129,13 @@ func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 		"Content-Type":                  persistedFile.FileType,
 	}
 
-	res := h.responseService.CreateResponse(persistedFile.FileData)
+	res := h.responseService.CreateResponse(persistedFile)
 	res.SetHeaders(responseMap)
 	res.WriteResponse(w)
 	return
 }
 
-func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandlerV2) deleteFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -141,7 +149,7 @@ func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = h.fileService.DeleteFile(fileID, username); err != nil {
+	if err = h.fileService.RemoveFile(fileID, username); err != nil {
 		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -151,7 +159,7 @@ func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h MuxFileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandlerV2) readFiles(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -169,7 +177,7 @@ func (h MuxFileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (MuxFileHandler) resolveFileIdentificationContext(r *http.Request) (uint, error) {
+func (MuxFileHandlerV2) resolveFileIdentificationContext(r *http.Request) (uint, error) {
 	tmpVar := mux.Vars(r)["id"]
 	uri, err := strconv.ParseUint(tmpVar, 10, 64)
 	if err != nil {
