@@ -4,6 +4,7 @@ import (
 	"fmt"
 	locationDomains "go-heroku-server/api/location/domain"
 	"go-heroku-server/api/src/errors"
+	"go-heroku-server/config"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +12,8 @@ type LocationRepository struct {
 	db *gorm.DB
 }
 
-func NewLocationRepository(db *gorm.DB) LocationRepository {
+func NewLocationRepository() LocationRepository {
+	db := config.GetDatabaseInstance()
 	_ = db.AutoMigrate(&locationDomains.UserLocationEntity{})
 	return LocationRepository{
 		db: db,

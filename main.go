@@ -35,6 +35,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+	config.InitializeDefaultPostgresDatabase()
 	config.GetCacheInstance()
 }
 
@@ -61,12 +62,12 @@ func main() {
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileDatabaseRepository(databaseInstance)
-	fileMetadataRepo := fileRepositories.NewFileMetadataRepository(databaseInstance)
+	fileRepo := fileRepositories.NewFileDatabaseRepository()
+	fileMetadataRepo := fileRepositories.NewFileMetadataRepository()
 	fileSrv := fileServices.NewFileService(fileMetadataRepo, fileRepo)
 	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
-	locationRepo := locationRepositories.NewLocationRepository(databaseInstance)
+	locationRepo := locationRepositories.NewLocationRepository()
 	locationSrv := locationServices.NewLocationService(locationRepo)
 	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 

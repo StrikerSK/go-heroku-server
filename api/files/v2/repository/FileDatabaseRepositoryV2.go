@@ -4,6 +4,7 @@ import (
 	"fmt"
 	fileDomains "go-heroku-server/api/files/v2/domain"
 	"go-heroku-server/api/src/errors"
+	"go-heroku-server/config"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +12,8 @@ type FileDatabaseRepository struct {
 	db *gorm.DB
 }
 
-func NewFileDatabaseRepository(db *gorm.DB) FileDatabaseRepository {
+func NewFileDatabaseRepository() FileDatabaseRepository {
+	db := config.GetDatabaseInstance()
 	_ = db.AutoMigrate(&fileDomains.FileEntityV2{})
 	return FileDatabaseRepository{
 		db: db,

@@ -7,8 +7,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 File Database Repository">
-      <change beforePath="$PROJECT_DIR$/api/files/v2/handler/MuxFileHandlerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/handler/MuxFileHandlerV2.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 File - File System Repository">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/repository/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -201,22 +208,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Project.color": "4f510f",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "add-filesystem",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/Users/kristianhanus/Development/Go/go-heroku-server/api/files/v2/repository",
-    "run.code.analysis.last.selected.profile": "pProject Default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Project.color&quot;: &quot;4f510f&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;add-filesystem&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/Development/Go/go-heroku-server/api/files/v2/repository&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api/files/v2/repository" />
@@ -373,7 +380,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Create User's architecture" />
     <MESSAGE value="Modify Todo module" />
     <MESSAGE value="Todo cleanup" />
     <MESSAGE value="Refactor File module" />
@@ -398,7 +404,8 @@
     <MESSAGE value="Implementing V2 Repository and Service" />
     <MESSAGE value="Implementing V2 File Handler" />
     <MESSAGE value="Implementing V2 File Database Repository" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 File Database Repository" />
+    <MESSAGE value="Implementing V2 File - File System Repository" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 File - File System Repository" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

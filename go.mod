@@ -14,9 +14,9 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.3-0.20181213130451-5ad6f621e6f5
 	github.com/lib/pq v1.0.1-0.20181016162627-9eb73efc1fcc // indirect
-	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/rs/cors v1.7.0
 	golang.org/x/crypto v0.11.0
 	gorm.io/driver/postgres v1.5.2
+	gorm.io/driver/sqlite v1.5.2 // indirect
 	gorm.io/gorm v1.25.2
 )
