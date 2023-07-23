@@ -6,5 +6,6 @@ import (
 
 type IFileRepositoryV2 interface {
 	CreateFile(fileDomains.FileEntityV2) error
-	DeleteFile(uint) error
+	ReadFile(string) (fileDomains.FileEntityV2, error)
+	DeleteFile(string) error
 }

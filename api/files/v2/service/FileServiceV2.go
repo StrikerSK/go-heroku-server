@@ -1,63 +1,95 @@
 package service
 
 import (
-	fileDomains "go-heroku-server/api/files/v1/domain"
-	filePorts "go-heroku-server/api/files/v1/port"
+	"github.com/google/uuid"
+	fileDomains "go-heroku-server/api/files/v2/domain"
+	filePorts "go-heroku-server/api/files/v2/ports"
 	"go-heroku-server/api/src/errors"
-	"strings"
 )
 
 type FileService struct {
-	repository filePorts.IFileRepository
+	metadataRepository filePorts.IFileMetadataRepositoryV2
+	fileRepository     filePorts.IFileRepositoryV2
 }
 
-func NewFileService(repository filePorts.IFileRepository) FileService {
+func NewFileService(metadataRepository filePorts.IFileMetadataRepositoryV2, fileRepository filePorts.IFileRepositoryV2) FileService {
 	return FileService{
-		repository: repository,
+		metadataRepository: metadataRepository,
+		fileRepository:     fileRepository,
 	}
 }
 
 // Function stores files received from the Front-End
-func (s FileService) CreateFile(fileEntity fileDomains.FileEntity) (uint, error) {
-	if err := s.repository.CreateFile(&fileEntity); err != nil {
-		return 0, err
+func (s FileService) CreateFile(file fileDomains.FileObjectV2) (string, error) {
+	id := uuid.New().String()
+	file.SetID(id)
+
+	if err := s.metadataRepository.CreateMetadata(file.FileMetadataV2); err != nil {
+		return "", err
 	}
-	return fileEntity.Id, nil
+
+	if err := s.fileRepository.CreateFile(file.FileEntityV2); err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
 
 // Function provides requested file to the client
-func (s FileService) ReadFile(fileID uint, username string) (fileDomains.FileEntity, error) {
-	file, err := s.repository.ReadFile(fileID)
+func (s FileService) ReadMetadata(fileID, username string) (fileDomains.FileMetadataV2, error) {
+	file, err := s.metadataRepository.ReadMetadata(fileID)
 	if err != nil {
-		return fileDomains.FileEntity{}, err
+		return fileDomains.FileMetadataV2{}, err
 	} else {
 		if file.Username != username {
-			return fileDomains.FileEntity{}, errors.NewForbiddenError("forbidden access")
+			return fileDomains.FileMetadataV2{}, errors.NewForbiddenError("forbidden access")
 		}
 		return file, nil
 	}
 }
 
-func (s FileService) ReadFiles(username string) ([]fileDomains.FileEntity, error) {
-	files, err := s.repository.ReadFiles(username)
+func (s FileService) ReadFiles(username string) ([]fileDomains.FileMetadataV2, error) {
+	files, err := s.metadataRepository.ReadAllMetadata(username)
 	if err != nil {
 		return nil, err
 	} else {
-		for index := range files {
-			fileName := files[index].FileName
-			fileName = fileName[:strings.IndexByte(fileName, '.')]
-			files[index].FileName = fileName
-		}
 		return files, nil
 	}
 }
 
 // Deletion of file base on userID
-func (s FileService) DeleteFile(fileID uint, username string) error {
-	_, err := s.ReadFile(fileID, username)
+func (s FileService) RemoveFile(fileID, username string) error {
+	metadata, err := s.metadataRepository.ReadMetadata(fileID)
 	if err != nil {
 		return err
 	}
 
-	return s.repository.DeleteFile(fileID)
+	if metadata.Username != username {
+		return errors.NewForbiddenError("forbidden access")
+	}
+
+	err = s.metadataRepository.DeleteMetadata(fileID)
+	if err != nil {
+		return err
+	}
+
+	err = s.fileRepository.DeleteFile(fileID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s FileService) DownloadFile(fileID, username string) (fileDomains.FileEntityV2, error) {
+	metadata, err := s.metadataRepository.ReadMetadata(fileID)
+	if err != nil {
+		return fileDomains.FileEntityV2{}, err
+	}
+
+	if metadata.Username != username {
+		return fileDomains.FileEntityV2{}, errors.NewForbiddenError("forbidden access")
+	}
+
+	return s.fileRepository.ReadFile(fileID)
 }

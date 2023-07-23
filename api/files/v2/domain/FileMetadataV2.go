@@ -3,7 +3,7 @@ package fileDomains
 import "time"
 
 type FileMetadataV2 struct {
-	Id         uint      `json:"id"`
+	Id         string    `json:"id"`
 	Username   string    `json:"-"`
 	FileName   string    `json:"fileName"`
 	FileType   string    `json:"fileType"`

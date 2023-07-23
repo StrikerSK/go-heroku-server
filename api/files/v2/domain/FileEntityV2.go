@@ -1,6 +1,6 @@
 package fileDomains
 
 type FileEntityV2 struct {
-	Id       uint   `json:"-"`
+	Id       string `json:"-"`
 	FileData []byte `json:"-"`
 }
