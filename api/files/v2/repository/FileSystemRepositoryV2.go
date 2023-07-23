@@ -1,4 +1,4 @@
-package fileRepositories
+package repository
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 )
 
-type FileSystemRepository struct {
+type FileSystemRepositoryV2 struct {
 	directory string
 }
 
-func NewFileSystemRepository() FileSystemRepository {
+func NewFileSystemRepositoryV2() FileSystemRepositoryV2 {
 	// Get the user's home directory
 	usr, err := user.Current()
 	if err != nil {
@@ -28,7 +28,7 @@ func NewFileSystemRepository() FileSystemRepository {
 		os.Exit(1)
 	}
 
-	return FileSystemRepository{
+	return FileSystemRepositoryV2{
 		directory: directory,
 	}
 }
