@@ -1,6 +1,8 @@
 package filePorts
 
-import fileDomains "go-heroku-server/api/files/domain"
+import (
+	"go-heroku-server/api/files/v2/domain"
+)
 
 type IFileMetadataRepositoryV2 interface {
 	CreateMetadata(fileDomains.FileMetadataV2) error

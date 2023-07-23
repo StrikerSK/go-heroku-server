@@ -2,9 +2,9 @@ package fileHandlers
 
 import (
 	"github.com/gorilla/mux"
-	fileDomains "go-heroku-server/api/files/domain"
-	filePorts "go-heroku-server/api/files/ports"
 	fileUtils "go-heroku-server/api/files/utils"
+	fileDomains2 "go-heroku-server/api/files/v2/domain"
+	"go-heroku-server/api/files/v2/ports"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userHandlers "go-heroku-server/api/user/handler"
@@ -72,7 +72,7 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 
 	contentType := http.DetectContentType(fileBytes)
 
-	metadata := fileDomains.FileMetadataV2{
+	metadata := fileDomains2.FileMetadataV2{
 		Username:   username,
 		FileName:   attachmentName,
 		FileType:   contentType,
@@ -80,11 +80,11 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 		CreateDate: time.Now(),
 	}
 
-	fileData := fileDomains.FileEntityV2{
+	fileData := fileDomains2.FileEntityV2{
 		FileData: fileBytes,
 	}
 
-	fileObject := fileDomains.FileObjectV2{
+	fileObject := fileDomains2.FileObjectV2{
 		FileEntityV2:   fileData,
 		FileMetadataV2: metadata,
 	}
