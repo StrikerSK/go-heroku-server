@@ -1,6 +1,6 @@
 package fileDomains
 
 type FileObject struct {
-	FileEntity
+	FileEntityV2
 	FileMetadata
 }
