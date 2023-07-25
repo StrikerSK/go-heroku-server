@@ -32,7 +32,7 @@ func (r UserClient) loginUser() (string, error) {
 	}
 
 	// Make the POST request
-	url := "http://localhost:8080/user/login" // Replace this with the actual API endpoint URL
+	url := "http://localhost:8080/user/login"
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println("Error making POST request:", err)
@@ -47,5 +47,12 @@ func (r UserClient) loginUser() (string, error) {
 		return "", err
 	}
 
-	return string(responseData), nil
+	var mapStruct map[string]string
+	err = json.Unmarshal(responseData, &mapStruct)
+	if err != nil {
+		fmt.Println("Error unmarshalling data:", err)
+		return "", err
+	}
+
+	return mapStruct["token"], nil
 }
