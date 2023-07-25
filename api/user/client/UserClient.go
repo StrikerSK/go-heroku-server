@@ -13,15 +13,20 @@ type UserClient struct {
 }
 
 func NewUserClient() UserClient {
+	token, err := loginUser("admin", "admin")
+	if err != nil {
+		panic(err)
+	}
+
 	return UserClient{
-		token: "localhost:8080",
+		token: token,
 	}
 }
 
-func (r UserClient) loginUser() (string, error) {
+func loginUser(username, password string) (string, error) {
 	loginCredentials := map[string]string{
-		"username": "admin",
-		"password": "admin",
+		"username": username,
+		"password": password,
 	}
 
 	// Marshal the struct into a JSON byte slice
