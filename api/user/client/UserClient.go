@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -27,32 +28,24 @@ func (r UserClient) loginUser() (string, error) {
 	jsonData, err := json.Marshal(loginCredentials)
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
-		return "", nil
-	}
-
-	// Create the HTTP request with the file content in the body
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:8080/user/login", bytes.NewReader(jsonData))
-	if err != nil {
-		fmt.Println("Creating request:", err)
 		return "", err
 	}
 
-	// Make the request to upload the file
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	// Make the POST request
+	url := "http://localhost:8080/user/login" // Replace this with the actual API endpoint URL
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		fmt.Println("Sending request:", err)
+		fmt.Println("Error making POST request:", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
-	// Check the response status
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("upload failed with status code: %d", resp.StatusCode)
+	// Read the response body as a string
+	responseData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response data:", err)
+		return "", err
 	}
 
-	var response []byte
-	_, _ = resp.Body.Read(response)
-
-	return string(response), nil
+	return string(responseData), nil
 }
