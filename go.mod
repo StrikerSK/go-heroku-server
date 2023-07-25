@@ -15,6 +15,7 @@ require (
 	github.com/jinzhu/gorm v1.9.3-0.20181213130451-5ad6f621e6f5
 	github.com/lib/pq v1.0.1-0.20181016162627-9eb73efc1fcc // indirect
 	github.com/rs/cors v1.7.0
+	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/crypto v0.11.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2 // indirect
