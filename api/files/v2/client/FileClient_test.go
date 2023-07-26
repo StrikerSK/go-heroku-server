@@ -2,21 +2,59 @@ package fileClient
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
 )
 
+var testClient = NewFileClient()
+
 func Test_UploadingFile(t *testing.T) {
-	client := NewFileClient()
 	// Open the file
 	file, _ := os.Open("./Test.json")
-	id, err := client.uploadAttachment(file)
+	attachmentID, err := testClient.uploadAttachment(file)
 	assert.Nil(t, err, "There should be no error during attachment upload")
-	assert.NotEmpty(t, id, "attachment should have id assigned")
+	assert.NotEmpty(t, attachmentID, "attachment should have id assigned")
 }
 
-func Test_DeletingFile(t *testing.T) {
-	client := NewFileClient()
-	err := client.deleteAttachment("409c4410-4db6-477a-9cec-06a25c466775")
-	assert.Nil(t, err, "There should be no error during attachment upload")
+type DeletingSuite struct {
+	suite.Suite
+	FileClient   FileClient
+	AttachmentID string
+}
+
+func (suite *DeletingSuite) SetupTest() {
+	suite.FileClient = NewFileClient()
+	file, _ := os.Open("./Test.json")
+	id, _ := suite.FileClient.uploadAttachment(file)
+	suite.AttachmentID = id
+}
+
+func (suite *DeletingSuite) TestAttachmentDeletion() {
+	err := suite.FileClient.deleteAttachment(suite.AttachmentID)
+	suite.Nil(err, "There should be no error during attachment upload")
+}
+
+type ReadingSuite struct {
+	suite.Suite
+	FileClient   FileClient
+	AttachmentID string
+}
+
+func (suite *ReadingSuite) SetupTest() {
+	suite.FileClient = NewFileClient()
+	file, _ := os.Open("./Test.json")
+	id, _ := suite.FileClient.uploadAttachment(file)
+	suite.AttachmentID = id
+}
+
+func (suite *ReadingSuite) TestAttachmentReading() {
+	attachment, err := suite.FileClient.readAttachment(suite.AttachmentID)
+	suite.Nil(err, "There should be no error during attachment upload")
+	suite.NotEmpty(attachment, "attachment should not be empty")
+}
+
+func TestFileSuite(t *testing.T) {
+	suite.Run(t, new(DeletingSuite))
+	suite.Run(t, new(ReadingSuite))
 }

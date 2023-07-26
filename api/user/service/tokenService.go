@@ -20,7 +20,7 @@ func NewTokenService(tokenEncoding string, tokenExpiry time.Duration) TokenServi
 	}
 }
 
-//Function for creating token from verified user from LoginUser function
+// Function for creating token from verified user from LoginUser function
 func (s TokenService) CreateToken(user userDomains.User) (token string, err error) {
 	claims := userDomains.UserClaims{
 		UserID:   user.UserID,
@@ -28,6 +28,7 @@ func (s TokenService) CreateToken(user userDomains.User) (token string, err erro
 		Role:     user.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: s.tokenExpiration,
+			IssuedAt:  time.Now().Unix(),
 		},
 	}
 
