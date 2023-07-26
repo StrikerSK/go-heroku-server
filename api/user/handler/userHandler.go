@@ -124,8 +124,7 @@ func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
-	if !persistedUser.ValidatePassword(credentials.Password) {
+	if err = persistedUser.ValidatePassword(credentials.Password); err != nil {
 		h.responseService.CreateResponse(errors.NewUnauthorizedError("unauthorized access")).WriteResponse(w)
 		return
 	}

@@ -23,6 +23,7 @@ func (s UserService) CreateUser(user userDomains.User) error {
 		_, notFoundErr := err.(errors.NotFoundError)
 		if notFoundErr {
 			user.SetRole()
+			user.EncryptPassword()
 			if err = s.repository.CreateUser(user); err != nil {
 				log.Printf("User repository create error: %v\n", err)
 				return err
@@ -58,6 +59,7 @@ func (s UserService) ReadUsers() ([]userDomains.User, error) {
 }
 
 func (s UserService) UpdateUser(updatedUser userDomains.User) error {
+	updatedUser.EncryptPassword()
 	if err := s.repository.UpdateUser(updatedUser); err != nil {
 		_, notFoundErr := err.(errors.NotFoundError)
 		if notFoundErr {

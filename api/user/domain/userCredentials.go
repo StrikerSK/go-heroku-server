@@ -21,7 +21,7 @@ func (c *UserCredentials) ClearPassword() {
 	c.Password = ""
 }
 
-func (c *UserCredentials) DecryptPassword() {
+func (c *UserCredentials) EncryptPassword() {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(c.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("decriptPasswrod error: %s\n", err)
@@ -30,10 +30,6 @@ func (c *UserCredentials) DecryptPassword() {
 	c.Password = string(encryptedPassword)
 }
 
-func (c *UserCredentials) ValidatePassword(password string) bool {
-	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-	//	log.Printf("validatePassword error: %s\n", err)
-	//	return false
-	//}
-	return c.Password == password
+func (c *UserCredentials) ValidatePassword(inputPassword string) error {
+	return bcrypt.CompareHashAndPassword([]byte(c.Password), []byte(inputPassword))
 }
