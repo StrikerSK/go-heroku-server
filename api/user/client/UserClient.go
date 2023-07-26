@@ -9,7 +9,7 @@ import (
 )
 
 type UserClient struct {
-	token string
+	Token string
 }
 
 func NewUserClient() UserClient {
@@ -19,7 +19,7 @@ func NewUserClient() UserClient {
 	}
 
 	return UserClient{
-		token: token,
+		Token: token,
 	}
 }
 
@@ -44,6 +44,10 @@ func loginUser(username, password string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusUnauthorized {
+		return "", fmt.Errorf("user cannot be logged")
+	}
 
 	// Read the response body as a string
 	responseData, err := io.ReadAll(resp.Body)
