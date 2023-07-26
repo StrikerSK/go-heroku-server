@@ -73,3 +73,31 @@ func (r FileClient) uploadAttachment(attachment io.Reader) (string, error) {
 
 	return mapStruct["id"], nil
 }
+
+func (r FileClient) deleteAttachment(attachmentID string) error {
+	uploadUrl := r.baseURL + "/file/" + attachmentID
+
+	// Create the HTTP request with the file content in the body
+	req, err := http.NewRequest(http.MethodDelete, uploadUrl, nil)
+	if err != nil {
+		fmt.Println("error creating request: ", err)
+		return err
+	}
+	req.Header.Set("Authorization", r.Token)
+
+	// Make the request to upload the file
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("error calling request: ", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Check the response status
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("upload failed with status code: %d", resp.StatusCode)
+	}
+
+	return nil
+}

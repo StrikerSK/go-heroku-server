@@ -14,3 +14,9 @@ func Test_UploadingFile(t *testing.T) {
 	assert.Nil(t, err, "There should be no error during attachment upload")
 	assert.NotEmpty(t, id, "attachment should have id assigned")
 }
+
+func Test_DeletingFile(t *testing.T) {
+	client := NewFileClient()
+	err := client.deleteAttachment("409c4410-4db6-477a-9cec-06a25c466775")
+	assert.Nil(t, err, "There should be no error during attachment upload")
+}
