@@ -32,7 +32,7 @@ func (suite *DeletingSuite) SetupTest() {
 
 func (suite *DeletingSuite) TestAttachmentDeletion() {
 	err := suite.FileClient.deleteAttachment(suite.AttachmentID)
-	suite.Nil(err, "There should be no error during attachment upload")
+	suite.Nil(err, "There should be no error during attachment delete")
 }
 
 type ReadingSuite struct {
@@ -50,7 +50,7 @@ func (suite *ReadingSuite) SetupTest() {
 
 func (suite *ReadingSuite) TestAttachmentReading() {
 	attachment, err := suite.FileClient.readAttachment(suite.AttachmentID)
-	suite.Nil(err, "There should be no error during attachment upload")
+	suite.Nil(err, "There should be no error during attachment read")
 	suite.NotEmpty(attachment, "attachment should not be empty")
 }
 

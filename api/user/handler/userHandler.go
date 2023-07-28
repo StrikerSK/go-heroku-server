@@ -136,7 +136,8 @@ func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("User [%s] login: success\n", persistedUser.Username)
-	h.responseService.CreateResponse(map[string]string{"token": signedToken}).WriteResponse(w)
+	w.Header().Set("Authorization", signedToken)
+	h.responseService.CreateResponse(nil).WriteResponse(w)
 	return
 }
 

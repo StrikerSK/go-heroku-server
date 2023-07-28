@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -49,19 +48,6 @@ func loginUser(username, password string) (string, error) {
 		return "", fmt.Errorf("user cannot be logged")
 	}
 
-	// Read the response body as a string
-	responseData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading response data:", err)
-		return "", err
-	}
-
-	var mapStruct map[string]string
-	err = json.Unmarshal(responseData, &mapStruct)
-	if err != nil {
-		fmt.Println("Error unmarshalling data:", err)
-		return "", err
-	}
-
-	return mapStruct["token"], nil
+	token := resp.Header.Get("Authorization")
+	return token, nil
 }

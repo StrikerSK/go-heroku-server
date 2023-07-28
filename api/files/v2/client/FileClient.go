@@ -4,19 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go-heroku-server/api/user/client"
+	userClient "go-heroku-server/api/user/client"
 	"io"
 	"net/http"
 )
 
 type FileClient struct {
-	client.UserClient
+	userClient.UserClient
 	baseURL string
 }
 
 func NewFileClient() FileClient {
 	return FileClient{
-		UserClient: client.NewUserClient(),
+		UserClient: userClient.NewUserClient(),
 		baseURL:    "http://localhost:8080",
 	}
 }
@@ -52,16 +52,16 @@ func (r FileClient) uploadAttachment(attachment io.Reader) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// Check the response status
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("upload failed with status code: %d", resp.StatusCode)
-	}
-
 	// Read the response body as a string
 	responseData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response data:", err)
 		return "", err
+	}
+
+	// Check the response status
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("upload failed with status code: %d", resp.StatusCode)
 	}
 
 	var mapStruct map[string]string
@@ -122,25 +122,16 @@ func (r FileClient) readAttachment(attachmentID string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	// Check the response status
-	if resp.StatusCode != http.StatusOK {
-		// Read the response body as a string
-		responseData, err := io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("Error reading response data:", err)
-			return nil, err
-		}
-
-		return nil, fmt.Errorf("upload failed with status code: %d and response %s", resp.StatusCode, responseData)
-	} else if resp.StatusCode == http.StatusNotFound {
-		return nil, fmt.Errorf("attachment or endpoint could not be found")
-	}
-
 	// Read the response body as a string
 	responseData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response data:", err)
 		return nil, err
+	}
+
+	// Check the response status
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("attachment read error: %s", responseData)
 	}
 
 	return responseData, nil
