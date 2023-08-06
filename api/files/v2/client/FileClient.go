@@ -15,9 +15,11 @@ type FileClient struct {
 }
 
 func NewFileClient() FileClient {
+	baseURL := "http://localhost:8080"
+
 	return FileClient{
 		UserClient: userClient.NewUserClient(),
-		baseURL:    "http://localhost:8080",
+		baseURL:    baseURL,
 	}
 }
 

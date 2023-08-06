@@ -4,25 +4,33 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
 type UserClient struct {
-	Token string
+	BaserURL string
+	Token    string
 }
 
 func NewUserClient() UserClient {
-	token, err := loginUser("admin", "admin")
-	if err != nil {
-		panic(err)
+	userClient := UserClient{
+		BaserURL: "http://localhost:8080",
 	}
-
-	return UserClient{
-		Token: token,
-	}
+	userClient.fetchToken()
+	return userClient
 }
 
-func loginUser(username, password string) (string, error) {
+func (c *UserClient) fetchToken() {
+	token, err := loginUser(c.BaserURL, "admin", "admin")
+	if err != nil {
+		log.Fatalf("error signing user: %v", err)
+	}
+
+	c.Token = token
+}
+
+func loginUser(baseURL, username, password string) (string, error) {
 	loginCredentials := map[string]string{
 		"username": username,
 		"password": password,
@@ -31,15 +39,15 @@ func loginUser(username, password string) (string, error) {
 	// Marshal the struct into a JSON byte slice
 	jsonData, err := json.Marshal(loginCredentials)
 	if err != nil {
-		fmt.Println("Error marshaling JSON:", err)
+		log.Println("Error marshaling JSON:", err)
 		return "", err
 	}
 
 	// Make the POST request
-	url := "http://localhost:8080/user/login"
+	url := baseURL + "/user/login"
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		fmt.Println("Error making POST request:", err)
+		log.Println("Error making POST request:", err)
 		return "", err
 	}
 	defer resp.Body.Close()
