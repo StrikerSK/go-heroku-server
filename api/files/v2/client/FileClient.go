@@ -18,7 +18,7 @@ func NewFileClient() FileClient {
 	baseURL := "http://localhost:8080"
 
 	return FileClient{
-		UserClient: userClient.NewUserClient(),
+		UserClient: userClient.NewDefaultUserClient(),
 		baseURL:    baseURL,
 	}
 }

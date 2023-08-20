@@ -1,6 +1,7 @@
 package fileClient
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -52,6 +53,10 @@ func (suite *ReadingSuite) TestAttachmentReading() {
 	attachment, err := suite.FileClient.readAttachment(suite.AttachmentID)
 	suite.Nil(err, "There should be no error during attachment read")
 	suite.NotEmpty(attachment, "attachment should not be empty")
+
+	var testMap map[string]string
+	_ = json.Unmarshal(attachment, &testMap)
+	suite.Equal("tester", testMap["firstName"])
 }
 
 func TestFileSuite(t *testing.T) {
