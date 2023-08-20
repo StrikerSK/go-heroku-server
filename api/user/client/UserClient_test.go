@@ -25,9 +25,20 @@ func Test_RetrievingWrongUserToken(t *testing.T) {
 }
 
 func Test_InitializingUserClient(t *testing.T) {
-	token := NewUserClient()
+	token := NewUserClient(baseURL, "admin", "admin")
 	assert.NotEmpty(t, token.Token, "Token should be returned")
 	assert.NotEmpty(t, token.BaserURL, "URL should not be empty")
+}
+
+func Test_InitializingUserClient_WrongCredentials(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic, but no panic occurred")
+		} else if r != "user cannot be logged" {
+			t.Errorf("Expected panic message 'user cannot be logged', but got: %v", r)
+		}
+	}()
+	NewUserClient(baseURL, "admin", "wrong")
 }
 
 func Test_RepeatingUserLogin(t *testing.T) {

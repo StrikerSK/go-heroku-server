@@ -12,25 +12,17 @@ type UserClient struct {
 	Token    string
 }
 
-func NewUserClient() UserClient {
-	baseURL := "http://localhost:8080"
-
+func NewUserClient(baseURL, username, password string) UserClient {
 	userClient := UserClient{
 		BaserURL: baseURL,
-		Token:    loginUser(baseURL, "admin", "admin"),
+		Token:    loginUser(baseURL, username, password),
 	}
-	//userClient.fetchToken()
 	return userClient
 }
 
-//func (c *UserClient) fetchToken() {
-//	token, err := loginUser(c.BaserURL, "admin", "admin")
-//	if err != nil {
-//		log.Fatalf("error signing user: %v", err)
-//	}
-//
-//	c.Token = token
-//}
+func NewDefaultUserClient() UserClient {
+	return NewUserClient("http://localhost:8080", "admin", "admin")
+}
 
 func loginUser(baseURL, username, password string) string {
 	loginCredentials := map[string]string{
