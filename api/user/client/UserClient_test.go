@@ -6,32 +6,36 @@ import (
 	"time"
 )
 
+var baseURL = "http://localhost:8080"
+
 func Test_RetrievingUserToken(t *testing.T) {
-	token, err := loginUser("admin", "admin")
-	assert.Nil(t, err, "There should be no error during token retrieval")
+	token := loginUser(baseURL, "admin", "admin")
 	assert.NotEmpty(t, token, "Token should be returned")
 }
 
 func Test_RetrievingWrongUserToken(t *testing.T) {
-	_, err := loginUser("tester", "tester")
-	assert.Error(t, err, "There should be error logging in")
-	assert.EqualError(t, err, "user cannot be logged", "There should be error logging in")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic, but no panic occurred")
+		} else if r != "user cannot be logged" {
+			t.Errorf("Expected panic message 'user cannot be logged', but got: %v", r)
+		}
+	}()
+	loginUser(baseURL, "admin", "wrong")
 }
 
 func Test_InitializingUserClient(t *testing.T) {
 	token := NewUserClient()
 	assert.NotEmpty(t, token.Token, "Token should be returned")
+	assert.NotEmpty(t, token.BaserURL, "URL should not be empty")
 }
 
 func Test_RepeatingUserLogin(t *testing.T) {
-	firstToken, err := loginUser("admin", "admin")
-	assert.Nil(t, err, "There should be no error during token retrieval")
+	firstToken := loginUser(baseURL, "admin", "admin")
 	assert.NotEmpty(t, firstToken, "Token should be returned")
 
 	time.Sleep(1 * time.Second)
-
-	secondToken, err := loginUser("admin", "admin")
-	assert.Nil(t, err, "There should be no error during token retrieval")
+	secondToken := loginUser(baseURL, "admin", "admin")
 	assert.NotEmpty(t, secondToken, "Token should be returned")
 	assert.NotEqualf(t, secondToken, firstToken, "tokens should not match: expected %s to not match actual %s", firstToken, secondToken)
 }
