@@ -2,9 +2,9 @@ package userRepositories
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"go-heroku-server/api/src/errors"
 	userDomains "go-heroku-server/api/user/domain"
+	"gorm.io/gorm"
 )
 
 type UserRepository struct {
@@ -12,7 +12,7 @@ type UserRepository struct {
 }
 
 func NewUserRepository(repository *gorm.DB) UserRepository {
-	repository.AutoMigrate(&userDomains.User{}, &userDomains.Address{})
+	_ = repository.AutoMigrate(&userDomains.User{}, &userDomains.Address{})
 	return UserRepository{
 		Repository: repository,
 	}
@@ -58,7 +58,7 @@ func (r UserRepository) ReadUserByUsername(username string) (user userDomains.Us
 }
 
 func (r UserRepository) UpdateUser(updatedUser userDomains.User) (err error) {
-	if err = r.Repository.Model(&userDomains.User{}).Where("username = ?", updatedUser.Username).Update(&updatedUser).Error; err != nil {
+	if err = r.Repository.Model(&userDomains.User{}).Where("username = ?", updatedUser.Username).Updates(&updatedUser).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", updatedUser.Username))
 		} else {

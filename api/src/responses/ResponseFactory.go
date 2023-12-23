@@ -32,6 +32,9 @@ func (ResponseFactory) CreateResponse(input interface{}) (response IResponse) {
 	case errors.ParseError, errors.DatabaseError:
 		response = NewEmptyResponse(http.StatusBadRequest)
 		break
+	case errors.BadRequestError:
+		response = NewBodyResponse(input)
+		break
 	case error:
 		log.Println(input.(error))
 		response = NewEmptyResponse(http.StatusInternalServerError)

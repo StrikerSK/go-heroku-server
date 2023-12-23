@@ -107,7 +107,7 @@ func (h UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Function verifies user if it exists and has valid login credentials
+// Function verifies user if it exists and has valid login credentials
 func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 	var credentials userDomains.UserCredentials
 
@@ -124,8 +124,7 @@ func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//if err = persistedUser.validatePassword(credentials.Password); err != nil {
-	if !persistedUser.ValidatePassword(credentials.Password) {
+	if err = persistedUser.ValidatePassword(credentials.Password); err != nil {
 		h.responseService.CreateResponse(errors.NewUnauthorizedError("unauthorized access")).WriteResponse(w)
 		return
 	}
@@ -134,11 +133,12 @@ func (h UserHandler) login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
-	} else {
-		log.Printf("User [%s] login: success\n", persistedUser.Username)
-		h.responseService.CreateResponse(map[string]string{"token": signedToken}).WriteResponse(w)
-		return
 	}
+
+	log.Printf("User [%s] login: success\n", persistedUser.Username)
+	w.Header().Set("Authorization", signedToken)
+	h.responseService.CreateResponse(nil).WriteResponse(w)
+	return
 }
 
 func (UserHandler) parseUser(body io.ReadCloser) (userDomains.User, error) {
@@ -149,6 +149,7 @@ func (UserHandler) parseUser(body io.ReadCloser) (userDomains.User, error) {
 		log.Printf("User parsing error: %v\n", err)
 		return userDomains.User{}, err
 	}
+	defer body.Close()
 
 	return user, nil
 }

@@ -1,41 +1,65 @@
 package config
 
 import (
-	"github.com/jinzhu/gorm"
+	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"sync"
 )
 
-var databaseLock = &sync.Mutex{}
-var databaseConnection *gorm.DB
+var (
+	databaseLock       sync.Mutex
+	databaseConnection *gorm.DB
+)
 
-func GetDatabaseInstance() *gorm.DB {
-	//To prevent expensive lock operations
-	//This means that the databaseConnection field is already populated
-	if databaseConnection == nil {
-		databaseLock.Lock()
-		defer databaseLock.Unlock()
+func InitializeSQLiteDatabase() {
+	databaseLock.Lock()
+	defer databaseLock.Unlock()
 
-		//Only one goroutine can create the singleton instance.
-		if databaseConnection == nil {
-			log.Println("Creating Database instance")
-
-			//DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name}?sslmode=disable
-			//DATABASE_URL=postgres://postgres:Password@localhost:5432/postgres?sslmode=disable
-			db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
-			if err != nil {
-				log.Printf("Database initialization: %s\n", err.Error())
-				os.Exit(1)
-			}
-
-			databaseConnection = db
-		} else {
-			log.Println("Application Database instance already created.")
-		}
-	} else {
-		//log.Println("Application Database instance already created.")
+	// Check if the database connection is already created
+	if databaseConnection != nil {
+		log.Println("Application Database instance already created.")
+		return
 	}
 
+	log.Println("Creating Database instance")
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	if err != nil {
+		log.Printf("Database initialization: %s\n", err.Error())
+		os.Exit(1)
+	}
+
+	databaseConnection = db
+}
+
+func InitializeDefaultPostgresDatabase() {
+	InitializePostgresDatabase("localhost", "5432", "postgres", "postgres", "postgres", "disable")
+}
+
+func InitializePostgresDatabase(host, port, dbname, user, password, sslmode string) {
+	databaseLock.Lock()
+	defer databaseLock.Unlock()
+
+	// Check if the database connection is already created
+	if databaseConnection != nil {
+		log.Println("Application Database instance already created.")
+		return
+	}
+
+	log.Println("Creating Database instance")
+	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbname, user, password, sslmode)
+	db, err := gorm.Open(postgres.Open(args), &gorm.Config{})
+	if err != nil {
+		log.Printf("Database initialization: %s\n", err.Error())
+		os.Exit(1)
+	}
+
+	databaseConnection = db
+}
+
+func GetDatabaseInstance() *gorm.DB {
 	return databaseConnection
 }

@@ -7,10 +7,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Todo persisting">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 File - File System Repository">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker-compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/location/repository/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,12 +102,12 @@
   <component name="GitRewordedCommitMessages">
     <option name="commitMessagesMapping">
       <RewordedCommitMessageMapping>
-        <option name="originalMessage" value="Refactoring response to accept headers" />
-        <option name="rewordedMessage" value="Extend response interface and implementation" />
+        <option name="originalMessage" value="Implementing V2 Repository and Service" />
+        <option name="rewordedMessage" value="Implementing V2 File Service" />
       </RewordedCommitMessageMapping>
     </option>
     <option name="currentCommit" value="1" />
-    <option name="onto" value="0cc8c829831fbdb0f0e89da08c3508b5eebd0b99" />
+    <option name="onto" value="b04267fd492bf40d7ce6f5ed7702de42e9a21675" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -203,35 +208,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Project.color": "4f510f",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/Users/kristianhanus/go/src/github.com/strikersk/go-heroku-server/docker",
-    "run.code.analysis.last.selected.profile": "pProject Default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Project.color&quot;: &quot;4f510f&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;add-filesystem&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/Development/Go/go-heroku-server/api/files/v2/repository&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/docker" />
-      <recent name="$PROJECT_DIR$/api/src/errors" />
+      <recent name="$PROJECT_DIR$/api/files/v2/repository" />
       <recent name="$PROJECT_DIR$/api/files/service" />
-      <recent name="$PROJECT_DIR$/api/types/errors" />
-      <recent name="$PROJECT_DIR$/api/user/service" />
+      <recent name="$PROJECT_DIR$/api/files/ports" />
+      <recent name="$PROJECT_DIR$/api/files/v1" />
+      <recent name="$PROJECT_DIR$/api/files/handler" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/docker" />
-      <recent name="$PROJECT_DIR$/api/user/service" />
-      <recent name="$PROJECT_DIR$/api/user/domain" />
-      <recent name="$PROJECT_DIR$/api/src" />
+      <recent name="$PROJECT_DIR$/api/files/v2" />
+      <recent name="$PROJECT_DIR$/api/files/v1/service" />
+      <recent name="$PROJECT_DIR$/api/files/v1/repository" />
+      <recent name="$PROJECT_DIR$/api/files/v1/port" />
+      <recent name="$PROJECT_DIR$/api/files/v1/handler" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application (1)">
@@ -374,17 +380,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor getting user list" />
-    <MESSAGE value="Refactor file endpoint" />
-    <MESSAGE value="Refactor error response type" />
-    <MESSAGE value="Refactoring codebase" />
-    <MESSAGE value="Refactoring response to accept headers" />
-    <MESSAGE value="Extend response interface and implementation" />
-    <MESSAGE value="Split Restaurant and Image" />
-    <MESSAGE value="Implement Singleton design pattern" />
-    <MESSAGE value="Implement Factory pattern and refactor user" />
-    <MESSAGE value="Initialize User Domain" />
-    <MESSAGE value="Create User's architecture" />
     <MESSAGE value="Modify Todo module" />
     <MESSAGE value="Todo cleanup" />
     <MESSAGE value="Refactor File module" />
@@ -399,7 +394,18 @@
     <MESSAGE value="Handle User Not Found case" />
     <MESSAGE value="File handling and Response Factory name" />
     <MESSAGE value="Todo persisting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Todo persisting" />
+    <MESSAGE value="Cleanup Git files" />
+    <MESSAGE value="File Service V2" />
+    <MESSAGE value="File Entity V2" />
+    <MESSAGE value="File Handler V2" />
+    <MESSAGE value="File Repository V2" />
+    <MESSAGE value="Move V1 File files" />
+    <MESSAGE value="Move V2 File files" />
+    <MESSAGE value="Implementing V2 Repository and Service" />
+    <MESSAGE value="Implementing V2 File Handler" />
+    <MESSAGE value="Implementing V2 File Database Repository" />
+    <MESSAGE value="Implementing V2 File - File System Repository" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 File - File System Repository" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

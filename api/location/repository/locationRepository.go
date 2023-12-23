@@ -2,17 +2,19 @@ package locationRepositories
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	locationDomains "go-heroku-server/api/location/domain"
 	"go-heroku-server/api/src/errors"
+	"go-heroku-server/config"
+	"gorm.io/gorm"
 )
 
 type LocationRepository struct {
 	db *gorm.DB
 }
 
-func NewLocationRepository(db *gorm.DB) LocationRepository {
-	db.AutoMigrate(&locationDomains.UserLocationEntity{})
+func NewLocationRepository() LocationRepository {
+	db := config.GetDatabaseInstance()
+	_ = db.AutoMigrate(&locationDomains.UserLocationEntity{})
 	return LocationRepository{
 		db: db,
 	}

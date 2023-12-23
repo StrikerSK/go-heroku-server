@@ -1,7 +1,7 @@
-package filePorts
+package port
 
 import (
-	fileDomains "go-heroku-server/api/files/domain"
+	fileDomains "go-heroku-server/api/files/v1/domain"
 )
 
 type IFileRepository interface {

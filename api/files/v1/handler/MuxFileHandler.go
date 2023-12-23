@@ -1,35 +1,35 @@
-package fileHandlers
+package handler
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
-	fileDomains "go-heroku-server/api/files/domain"
-	filePorts "go-heroku-server/api/files/ports"
+	fileUtils "go-heroku-server/api/files/utils"
+	fileDomains "go-heroku-server/api/files/v1/domain"
+	filePorts "go-heroku-server/api/files/v1/port"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userHandlers "go-heroku-server/api/user/handler"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
 
-type FileHandler struct {
+type MuxFileHandler struct {
 	fileService     filePorts.IFileService
 	userMiddleware  userHandlers.UserAuthMiddleware
 	responseService responses.ResponseFactory
 }
 
-func NewFileHandler(service filePorts.IFileService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) FileHandler {
-	return FileHandler{
+func NewMuxFileHandler(service filePorts.IFileService, userMiddleware userHandlers.UserAuthMiddleware, responseService responses.ResponseFactory) MuxFileHandler {
+	return MuxFileHandler{
 		fileService:     service,
 		userMiddleware:  userMiddleware,
 		responseService: responseService,
 	}
 }
 
-func (h FileHandler) EnrichRouter(router *mux.Router) {
+func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
 	fileRoute := router.PathPrefix("/file").Subrouter()
 	fileRoute.Handle("/upload", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createFile))).Methods(http.MethodPost)
 	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFile))).Methods(http.MethodGet)
@@ -40,43 +40,44 @@ func (h FileHandler) EnrichRouter(router *mux.Router) {
 
 }
 
-func (h FileHandler) createFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	file, fileHeader, err := r.FormFile("file")
-	if err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
+	attachmentName := r.URL.Query().Get("name")
+	if attachmentName == "" {
+		err := errors.NewBadRequestError("Attachment's name not provided")
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	//Processing of received file metadata
-	if err = r.ParseForm(); err != nil {
-		log.Printf("Controller file upload: %s\n", err.Error())
-		h.responseService.CreateResponse(err).WriteResponse(w)
-		return
-	}
-
-	fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("File add: %s\n", err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
 
-	contentType := fileHeader.Header.Get("Content-Type")
+	fileSize := int64(len(fileBytes))
+	if fileSize <= 0 {
+		err := errors.NewBadRequestError("Attachment should not be empty")
+		h.responseService.CreateResponse(err).WriteResponse(w)
+		return
+	}
+
+	contentType := http.DetectContentType(fileBytes)
 
 	resolvedFile := fileDomains.FileEntity{
 		Username:   username,
-		FileName:   fileHeader.Filename,
+		FileName:   attachmentName,
 		FileType:   contentType,
 		FileData:   fileBytes,
-		FileSize:   h.getFileSize(fileHeader.Size),
+		FileSize:   fileUtils.GetFileSize(fileSize),
 		CreateDate: time.Now(),
 	}
 
@@ -85,13 +86,13 @@ func (h FileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	} else {
-		log.Printf("File create: success\n")
-		h.responseService.CreateResponse(map[string]interface{}{"id": id}).WriteResponse(w)
+		response := map[string]interface{}{"id": id}
+		h.responseService.CreateResponse(response).WriteResponse(w)
 		return
 	}
 }
 
-func (h FileHandler) readFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
@@ -126,7 +127,7 @@ func (h FileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h FileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -150,7 +151,7 @@ func (h FileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h FileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
+func (h MuxFileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
 	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -168,29 +169,11 @@ func (h FileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (FileHandler) resolveFileIdentificationContext(r *http.Request) (uint, error) {
+func (MuxFileHandler) resolveFileIdentificationContext(r *http.Request) (uint, error) {
 	tmpVar := mux.Vars(r)["id"]
 	uri, err := strconv.ParseUint(tmpVar, 10, 64)
 	if err != nil {
 		return 0, errors.NewParseError(err.Error())
 	}
 	return uint(uri), err
-}
-
-//Resolve ideal file size up to MegaBytes
-func (FileHandler) getFileSize(fileSize int64) (outputSize string) {
-	switch {
-	case fileSize < 1024:
-		outputSize = fmt.Sprintf("%d B", fileSize)
-		break
-	case fileSize < 1048576:
-		fileSize = fileSize / 1024
-		outputSize = fmt.Sprintf("%d kB", fileSize)
-		break
-	default:
-		fileSize = fileSize / 1048576
-		outputSize = fmt.Sprintf("%d MB", fileSize)
-		break
-	}
-	return
 }

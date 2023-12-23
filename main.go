@@ -5,9 +5,9 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	fileHandlers "go-heroku-server/api/files/handler"
-	fileRepositories "go-heroku-server/api/files/repository"
-	fileServices "go-heroku-server/api/files/service"
+	fileHandlers "go-heroku-server/api/files/v2/handler"
+	fileRepositories "go-heroku-server/api/files/v2/repository"
+	fileServices "go-heroku-server/api/files/v2/service"
 	locationHandlers "go-heroku-server/api/location/handler"
 	locationRepositories "go-heroku-server/api/location/repository"
 	locationServices "go-heroku-server/api/location/service"
@@ -35,36 +35,39 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+	config.InitializeDefaultPostgresDatabase()
 	config.GetCacheInstance()
 }
 
-//Go application entrypoint
+// Go application entrypoint
 func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
 		//log.Fatal("$PORT must be set")
-		port = "4000"
+		port = "8080"
 	}
 
 	responseService := responses.NewResponseFactory()
+	databaseInstance := config.GetDatabaseInstance()
 
-	userRepository := userRepositories.NewUserRepository(config.GetDatabaseInstance())
+	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
 
 	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
-	todoRepo := todoRepositories.NewTodoRepository(config.GetDatabaseInstance())
+	todoRepo := todoRepositories.NewTodoRepository(databaseInstance)
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileRepository(config.GetDatabaseInstance())
-	fileSrv := fileServices.NewFileService(fileRepo)
-	fileHdl := fileHandlers.NewFileHandler(fileSrv, userMiddleware, responseService)
+	fileRepo := fileRepositories.NewFileDatabaseRepository()
+	fileMetadataRepo := fileRepositories.NewFileMetadataRepository()
+	fileSrv := fileServices.NewFileService(fileMetadataRepo, fileRepo)
+	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
-	locationRepo := locationRepositories.NewLocationRepository(config.GetDatabaseInstance())
+	locationRepo := locationRepositories.NewLocationRepository()
 	locationSrv := locationServices.NewLocationService(locationRepo)
 	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 
