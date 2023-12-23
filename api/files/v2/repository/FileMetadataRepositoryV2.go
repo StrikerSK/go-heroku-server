@@ -30,7 +30,7 @@ func (r FileMetadataRepository) CreateMetadata(file fileDomains.FileMetadataV2) 
 func (r FileMetadataRepository) ReadMetadata(fileID string) (metadata fileDomains.FileMetadataV2, err error) {
 	if err = r.db.Where("id = ?", fileID).Find(&metadata).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return fileDomains.FileMetadataV2{}, errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
+			return fileDomains.FileMetadataV2{}, errors.NewNotFoundError(fmt.Sprintf("file [%s] not found", fileID))
 		} else {
 			return fileDomains.FileMetadataV2{}, errors.NewDatabaseError(err.Error())
 		}

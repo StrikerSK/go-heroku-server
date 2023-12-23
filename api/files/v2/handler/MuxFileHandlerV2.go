@@ -110,7 +110,7 @@ func (h MuxFileHandlerV2) downloadFile(w http.ResponseWriter, r *http.Request) {
 	fileID := h.resolveFileIdentificationContext(r)
 	persistedFile, err := h.fileService.DownloadFile(fileID, username)
 	if err != nil {
-		log.Printf("File [%d] read: %v\n", fileID, err)
+		log.Printf("File [%s] read: %v\n", fileID, err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
@@ -139,7 +139,7 @@ func (h MuxFileHandlerV2) readMetadata(w http.ResponseWriter, r *http.Request) {
 	fileID := h.resolveFileIdentificationContext(r)
 	persistedFile, err := h.fileService.ReadMetadata(fileID, username)
 	if err != nil {
-		log.Printf("File [%d] read: %v\n", fileID, err)
+		log.Printf("File [%s] read: %v\n", fileID, err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}
@@ -159,7 +159,7 @@ func (h MuxFileHandlerV2) deleteFile(w http.ResponseWriter, r *http.Request) {
 	fileID := h.resolveFileIdentificationContext(r)
 
 	if err = h.fileService.RemoveFile(fileID, username); err != nil {
-		log.Printf("File [%d] delete: %s\n", fileID, err.Error())
+		log.Printf("File [%s] delete: %s\n", fileID, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
 	}

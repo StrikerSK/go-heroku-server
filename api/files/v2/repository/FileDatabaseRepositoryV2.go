@@ -30,7 +30,7 @@ func (r FileDatabaseRepository) CreateFile(file fileDomains.FileEntityV2) (err e
 func (r FileDatabaseRepository) ReadFile(fileID string) (file fileDomains.FileEntityV2, err error) {
 	if err = r.db.Where("id = ?", fileID).Find(&file).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return fileDomains.FileEntityV2{}, errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
+			return fileDomains.FileEntityV2{}, errors.NewNotFoundError(fmt.Sprintf("file [%s] not found", fileID))
 		} else {
 			return fileDomains.FileEntityV2{}, errors.NewDatabaseError(err.Error())
 		}
@@ -42,7 +42,7 @@ func (r FileDatabaseRepository) DeleteFile(fileID string) (err error) {
 	var file fileDomains.FileEntityV2
 	if err = r.db.Where("id = ?", fileID).Delete(&file).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return errors.NewNotFoundError(fmt.Sprintf("file [%d] not found", fileID))
+			return errors.NewNotFoundError(fmt.Sprintf("file [%s] not found", fileID))
 		} else {
 			return errors.NewDatabaseError(err.Error())
 		}
