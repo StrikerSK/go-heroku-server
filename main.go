@@ -62,12 +62,12 @@ func main() {
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileDatabaseRepository()
-	fileMetadataRepo := fileRepositories.NewFileMetadataRepository()
+	fileRepo := fileRepositories.NewFileDatabaseRepository(databaseInstance)
+	fileMetadataRepo := fileRepositories.NewFileMetadataRepository(databaseInstance)
 	fileSrv := fileServices.NewFileService(fileMetadataRepo, fileRepo)
 	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
-	locationRepo := locationRepositories.NewLocationRepository()
+	locationRepo := locationRepositories.NewLocationRepository(databaseInstance)
 	locationSrv := locationServices.NewLocationService(locationRepo)
 	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 
