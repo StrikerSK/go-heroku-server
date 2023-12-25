@@ -9,21 +9,19 @@ import (
 	"os"
 )
 
-func CreateDefaultSQLiteDatabase() *gorm.DB {
-	return CreateSQLiteDatabase("file::memory:?cache=shared")
-}
-
-func CreateSQLiteDatabase(dsn string) *gorm.DB {
-	dialector := sqlite.Open(dsn)
+func CreateSQLiteDatabase(configuration DatabaseConfiguration) *gorm.DB {
+	dialector := sqlite.Open(configuration.databaseHost)
 	return createDatabase(dialector)
 }
+func CreatePostgresDatabase(configuration DatabaseConfiguration) *gorm.DB {
+	host := configuration.databaseHost
+	port := configuration.databasePort
+	dbName := configuration.databaseName
+	username := configuration.databaseUsername
+	password := configuration.databasePassword
+	sslMode := "disable"
 
-func CreateDefaultPostgresDatabase() *gorm.DB {
-	return CreatePostgresDatabase("localhost", "5432", "postgres", "postgres", "postgres", "disable")
-}
-
-func CreatePostgresDatabase(host, port, dbname, user, password, sslMode string) *gorm.DB {
-	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbname, user, password, sslMode)
+	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbName, username, password, sslMode)
 	return createDatabase(postgres.Open(args))
 }
 
@@ -38,16 +36,36 @@ func createDatabase(dialector gorm.Dialector) *gorm.DB {
 	return db
 }
 
-func CreateDB(configuration PostgresDatabaseConfiguration) *gorm.DB {
+func CreateDB(configuration DatabaseConfiguration) *gorm.DB {
 	switch configuration.databaseType {
 	case "sqlite":
-		host := configuration.databaseHost
-
-		if host == "" {
+		if configuration.databaseHost == "" {
 			panic("database host not provided")
 		}
 
-		return CreateSQLiteDatabase(host)
+		return CreateSQLiteDatabase(configuration)
+	case "postgres":
+		if configuration.databaseHost == "" {
+			panic("database host not provided")
+		}
+
+		if configuration.databasePort == "" {
+			panic("database port not provided")
+		}
+
+		if configuration.databaseName == "" {
+			panic("database name not provided")
+		}
+
+		if configuration.databaseUsername == "" {
+			panic("database username not provided")
+		}
+
+		if configuration.databasePassword == "" {
+			panic("database password not provided")
+		}
+
+		return CreatePostgresDatabase(configuration)
 	default:
 		panic("database type not recognized")
 	}
