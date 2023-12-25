@@ -7,11 +7,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add creation method for Postgres">
-      <change afterPath="$PROJECT_DIR$/constants/DatabaseConstants.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database/databaseConfiguration.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/database/databaseConfiguration.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/database/databaseInstance.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add Viper configuration option - Nesting of configurations">
+      <change beforePath="$PROJECT_DIR$/config/ViperConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/ViperConfig.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -229,29 +226,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Project.color&quot;: &quot;4f510f&quot;,
-    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;add-filesystem&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kristianhanus/Development/Go/go-heroku-server/api/files/v2/repository&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go Build.Run Application (1).executor": "Debug",
+    "Project.color": "4f510f",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "add-filesystem",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "/Users/kristianhanus/Development/Go/go-heroku-server/config",
+    "run.code.analysis.last.selected.profile": "pProject Default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/config" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/api/files/v2/repository" />
       <recent name="$PROJECT_DIR$/api/files/service" />
       <recent name="$PROJECT_DIR$/api/files/ports" />
-      <recent name="$PROJECT_DIR$/api/files/v1" />
-      <recent name="$PROJECT_DIR$/api/files/handler" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/config/database" />
@@ -401,9 +399,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modules cleanup" />
-    <MESSAGE value="Refactoring user handling" />
-    <MESSAGE value="Move Address entity" />
     <MESSAGE value="Cleanup codebase for user" />
     <MESSAGE value="Cleanup codebase for Locations" />
     <MESSAGE value="Cleanup codebase for Files" />
@@ -426,7 +421,10 @@
     <MESSAGE value="Refactor database configuration" />
     <MESSAGE value="Add creation method for SQLite" />
     <MESSAGE value="Add creation method for Postgres" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add creation method for Postgres" />
+    <MESSAGE value="Calling new configurations in main" />
+    <MESSAGE value="Add Viper configuration option" />
+    <MESSAGE value="Add Viper configuration option - Nesting of configurations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Viper configuration option - Nesting of configurations" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -448,6 +446,11 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/main.go</url>
+          <line>56</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

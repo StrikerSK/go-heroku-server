@@ -1,0 +1,5 @@
+Application:
+    Port: 8080
+Database:
+    Type: sqlite
+    Host: file::memory:?cache=shared

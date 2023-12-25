@@ -19,7 +19,6 @@ import (
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
 	"go-heroku-server/config/database"
-	"go-heroku-server/constants"
 	"html/template"
 	"net/http"
 	"os"
@@ -49,13 +48,17 @@ func main() {
 		port = "8080"
 	}
 
-	databaseConfiguration := database.DatabaseConfiguration{
-		DatabaseType: constants.SQLiteDatabase,
-		DatabaseHost: "file::memory:?cache=shared",
-	}
+	//databaseConfiguration := database.DatabaseConfiguration{
+	//	DatabaseType: constants.SQLiteDatabase,
+	//	DatabaseHost: "file::memory:?cache=shared",
+	//}
+
+	viperConf := config.ReadConfiguration()
+	databaseConfigurationViper := viperConf.Database
+	fmt.Println(databaseConfigurationViper)
 
 	responseService := responses.NewResponseFactory()
-	databaseInstance := database.CreateDB(databaseConfiguration)
+	databaseInstance := database.CreateDB(databaseConfigurationViper)
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
