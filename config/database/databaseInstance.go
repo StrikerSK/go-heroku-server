@@ -1,4 +1,4 @@
-package config
+package database
 
 import (
 	"fmt"
@@ -36,4 +36,19 @@ func createDatabase(dialector gorm.Dialector) *gorm.DB {
 	}
 
 	return db
+}
+
+func CreateDB(configuration PostgresDatabaseConfiguration) *gorm.DB {
+	switch configuration.databaseType {
+	case "sqlite":
+		host := configuration.databaseHost
+
+		if host == "" {
+			panic("database host not provided")
+		}
+
+		return CreateSQLiteDatabase(host)
+	default:
+		panic("database type not recognized")
+	}
 }

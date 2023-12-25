@@ -18,6 +18,7 @@ import (
 	userHandlers "go-heroku-server/api/user/handler"
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
+	"go-heroku-server/config/database"
 	"html/template"
 	"net/http"
 	"os"
@@ -48,7 +49,7 @@ func main() {
 	}
 
 	responseService := responses.NewResponseFactory()
-	databaseInstance := config.CreateDefaultSQLiteDatabase()
+	databaseInstance := database.CreateDefaultSQLiteDatabase()
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
