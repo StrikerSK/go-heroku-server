@@ -7,9 +7,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add Viper configuration option - Nesting of configurations">
-      <change beforePath="$PROJECT_DIR$/config/ViperConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/ViperConfig.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Defaulting configurations and authorization tokens">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -399,7 +398,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Cleanup codebase for user" />
     <MESSAGE value="Cleanup codebase for Locations" />
     <MESSAGE value="Cleanup codebase for Files" />
     <MESSAGE value="Introduce Database Error" />
@@ -424,7 +422,8 @@
     <MESSAGE value="Calling new configurations in main" />
     <MESSAGE value="Add Viper configuration option" />
     <MESSAGE value="Add Viper configuration option - Nesting of configurations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Viper configuration option - Nesting of configurations" />
+    <MESSAGE value="Defaulting configurations and authorization tokens" />
+    <option name="LAST_COMMIT_MESSAGE" value="Defaulting configurations and authorization tokens" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -448,9 +447,9 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/main.go</url>
-          <line>56</line>
-          <option name="timeStamp" value="10" />
+          <url>file://$PROJECT_DIR$/api/user/service/tokenService.go</url>
+          <line>17</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
