@@ -7,42 +7,27 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"sync"
 )
 
-var (
-	databaseLock       sync.Mutex
-	databaseConnection *gorm.DB
-)
-
-func InitializeDefaultSQLiteDatabase() {
-	InitializeSQLiteDatabase("file::memory:?cache=shared")
+func CreateDefaultSQLiteDatabase() *gorm.DB {
+	return CreateSQLiteDatabase("file::memory:?cache=shared")
 }
 
-func InitializeSQLiteDatabase(dsn string) {
+func CreateSQLiteDatabase(dsn string) *gorm.DB {
 	dialector := sqlite.Open(dsn)
-	InitializeDatabase(dialector)
+	return createDatabase(dialector)
 }
 
-func InitializeDefaultPostgresDatabase() {
-	InitializePostgresDatabase("localhost", "5432", "postgres", "postgres", "postgres", "disable")
+func CreateDefaultPostgresDatabase() *gorm.DB {
+	return CreatePostgresDatabase("localhost", "5432", "postgres", "postgres", "postgres", "disable")
 }
 
-func InitializePostgresDatabase(host, port, dbname, user, password, sslMode string) {
+func CreatePostgresDatabase(host, port, dbname, user, password, sslMode string) *gorm.DB {
 	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbname, user, password, sslMode)
-	InitializeDatabase(postgres.Open(args))
+	return createDatabase(postgres.Open(args))
 }
 
-func InitializeDatabase(dialector gorm.Dialector) {
-	databaseLock.Lock()
-	defer databaseLock.Unlock()
-
-	// Check if the database connection is already created
-	if databaseConnection != nil {
-		log.Println("Application Database instance already created.")
-		return
-	}
-
+func createDatabase(dialector gorm.Dialector) *gorm.DB {
 	log.Println("Creating Database instance")
 	db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
@@ -50,9 +35,5 @@ func InitializeDatabase(dialector gorm.Dialector) {
 		os.Exit(1)
 	}
 
-	databaseConnection = db
-}
-
-func GetDatabaseInstance() *gorm.DB {
-	return databaseConnection
+	return db
 }

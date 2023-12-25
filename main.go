@@ -35,7 +35,6 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	config.InitializeDefaultPostgresDatabase()
 	config.GetCacheInstance()
 }
 
@@ -49,7 +48,7 @@ func main() {
 	}
 
 	responseService := responses.NewResponseFactory()
-	databaseInstance := config.GetDatabaseInstance()
+	databaseInstance := config.CreateDefaultSQLiteDatabase()
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)

@@ -8,14 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Implementing V2 File - File System Repository">
+      <change afterPath="$PROJECT_DIR$/config/databaseConfiguration.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileDatabaseRepositoryV2.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/repository/FileMetadataRepositoryV2.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/files/v2/service/FileServiceV2.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/location/repository/locationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/location/repository/locationRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/databaseInstance.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -380,7 +375,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modify Todo module" />
     <MESSAGE value="Todo cleanup" />
     <MESSAGE value="Refactor File module" />
     <MESSAGE value="Refactor Location module" />
@@ -405,7 +399,8 @@
     <MESSAGE value="Implementing V2 File Handler" />
     <MESSAGE value="Implementing V2 File Database Repository" />
     <MESSAGE value="Implementing V2 File - File System Repository" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementing V2 File - File System Repository" />
+    <MESSAGE value="Use constructor injection" />
+    <option name="LAST_COMMIT_MESSAGE" value="Use constructor injection" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
