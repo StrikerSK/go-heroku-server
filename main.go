@@ -18,11 +18,10 @@ import (
 	userHandlers "go-heroku-server/api/user/handler"
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
+	"go-heroku-server/config"
+	"go-heroku-server/config/database"
 	"html/template"
 	"net/http"
-	"os"
-
-	"go-heroku-server/config"
 )
 
 func serveMainPage(w http.ResponseWriter, r *http.Request) {
@@ -34,26 +33,19 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func init() {
-	config.GetCacheInstance()
-}
-
 // Go application entrypoint
 func main() {
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		//log.Fatal("$PORT must be set")
-		port = "8080"
-	}
+	viperConfiguration := config.ReadConfiguration()
+	applicationPort := viperConfiguration.Application.Port
+	databaseConfiguration := viperConfiguration.Database
 
 	responseService := responses.NewResponseFactory()
-	databaseInstance := config.CreateDefaultSQLiteDatabase()
+	databaseInstance := database.CreateDB(databaseConfiguration)
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
 
-	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
+	userTokenService := userServices.NewTokenService(viperConfiguration.Authorization)
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
@@ -81,6 +73,6 @@ func main() {
 
 	handler := cors.AllowAll().Handler(router)
 
-	fmt.Println("Listening on port ", port)
-	fmt.Println(http.ListenAndServe(":"+port, handler))
+	fmt.Println("Listening on port ", applicationPort)
+	fmt.Println(http.ListenAndServe(":"+applicationPort, handler))
 }
