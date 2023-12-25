@@ -8,18 +8,18 @@ import (
 )
 
 type UserRepository struct {
-	Repository *gorm.DB
+	db *gorm.DB
 }
 
-func NewUserRepository(repository *gorm.DB) UserRepository {
-	_ = repository.AutoMigrate(&userDomains.User{}, &userDomains.Address{})
+func NewUserRepository(db *gorm.DB) UserRepository {
+	_ = db.AutoMigrate(&userDomains.User{}, &userDomains.Address{})
 	return UserRepository{
-		Repository: repository,
+		db: db,
 	}
 }
 
 func (r UserRepository) CreateUser(user userDomains.User) (err error) {
-	if err = r.Repository.Create(&user).Error; err != nil {
+	if err = r.db.Create(&user).Error; err != nil {
 		err = errors.NewDatabaseError(err.Error())
 	}
 	return
@@ -27,7 +27,7 @@ func (r UserRepository) CreateUser(user userDomains.User) (err error) {
 
 // ReadUsers - retrieves user and flag if exists can be registered to database
 func (r UserRepository) ReadUsers() (user []userDomains.User, err error) {
-	if err = r.Repository.Preload("Address").Find(&user).Error; err != nil {
+	if err = r.db.Preload("Address").Find(&user).Error; err != nil {
 		err = errors.NewDatabaseError(err.Error())
 	}
 	return
@@ -35,7 +35,7 @@ func (r UserRepository) ReadUsers() (user []userDomains.User, err error) {
 
 // ReadUserByID - retrieves user and flag if exists can be registered to database
 func (r UserRepository) ReadUserByID(userID string) (user userDomains.User, err error) {
-	if err = r.Repository.Preload("Address").Where("user_id = ?", userID).First(&user).Error; err != nil {
+	if err = r.db.Preload("Address").Where("user_id = ?", userID).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", userID))
 		} else {
@@ -47,7 +47,7 @@ func (r UserRepository) ReadUserByID(userID string) (user userDomains.User, err 
 
 // ReadUserByUsername - retrieves user and flag if exists can be registered to database
 func (r UserRepository) ReadUserByUsername(username string) (user userDomains.User, err error) {
-	if err = r.Repository.Preload("Address").Where("username = ?", username).First(&user).Error; err != nil {
+	if err = r.db.Preload("Address").Where("username = ?", username).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", username))
 		} else {
@@ -58,7 +58,7 @@ func (r UserRepository) ReadUserByUsername(username string) (user userDomains.Us
 }
 
 func (r UserRepository) UpdateUser(updatedUser userDomains.User) (err error) {
-	if err = r.Repository.Model(&userDomains.User{}).Where("username = ?", updatedUser.Username).Updates(&updatedUser).Error; err != nil {
+	if err = r.db.Model(&userDomains.User{}).Where("username = ?", updatedUser.Username).Updates(&updatedUser).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", updatedUser.Username))
 		} else {

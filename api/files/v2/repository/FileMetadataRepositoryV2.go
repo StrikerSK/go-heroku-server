@@ -4,7 +4,6 @@ import (
 	"fmt"
 	fileDomains "go-heroku-server/api/files/v2/domain"
 	"go-heroku-server/api/src/errors"
-	"go-heroku-server/config"
 	"gorm.io/gorm"
 )
 
@@ -12,8 +11,7 @@ type FileMetadataRepository struct {
 	db *gorm.DB
 }
 
-func NewFileMetadataRepository() FileMetadataRepository {
-	db := config.GetDatabaseInstance()
+func NewFileMetadataRepository(db *gorm.DB) FileMetadataRepository {
 	_ = db.AutoMigrate(&fileDomains.FileMetadataV2{})
 	return FileMetadataRepository{
 		db: db,

@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"go-heroku-server/api/src/errors"
 	userDomains "go-heroku-server/api/user/domain"
+	"go-heroku-server/config"
 	"log"
 	"time"
 )
@@ -13,10 +14,10 @@ type TokenService struct {
 	tokenExpiration time.Duration
 }
 
-func NewTokenService(tokenEncoding string, tokenExpiry time.Duration) TokenService {
+func NewTokenService(configuration config.Authorization) TokenService {
 	return TokenService{
-		tokenEncoding:   []byte(tokenEncoding),
-		tokenExpiration: tokenExpiry,
+		tokenEncoding:   []byte(configuration.Encoding),
+		tokenExpiration: time.Duration(configuration.Expiration),
 	}
 }
 

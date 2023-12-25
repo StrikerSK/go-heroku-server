@@ -18,11 +18,10 @@ import (
 	userHandlers "go-heroku-server/api/user/handler"
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
+	"go-heroku-server/config"
+	"go-heroku-server/config/database"
 	"html/template"
 	"net/http"
-	"os"
-
-	"go-heroku-server/config"
 )
 
 func serveMainPage(w http.ResponseWriter, r *http.Request) {
@@ -34,27 +33,19 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func init() {
-	config.InitializeDefaultPostgresDatabase()
-	config.GetCacheInstance()
-}
-
 // Go application entrypoint
 func main() {
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		//log.Fatal("$PORT must be set")
-		port = "8080"
-	}
+	viperConfiguration := config.ReadConfiguration()
+	applicationPort := viperConfiguration.Application.Port
+	databaseConfiguration := viperConfiguration.Database
 
 	responseService := responses.NewResponseFactory()
-	databaseInstance := config.GetDatabaseInstance()
+	databaseInstance := database.CreateDB(databaseConfiguration)
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
 
-	userTokenService := userServices.NewTokenService("Wow, much safe", 3600)
+	userTokenService := userServices.NewTokenService(viperConfiguration.Authorization)
 	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
@@ -62,12 +53,12 @@ func main() {
 	todoService := todoServices.NewTodoService(todoRepo)
 	todoHdl := todoHandlers.NewTodoHandler(userMiddleware, todoService, responseService)
 
-	fileRepo := fileRepositories.NewFileDatabaseRepository()
-	fileMetadataRepo := fileRepositories.NewFileMetadataRepository()
+	fileRepo := fileRepositories.NewFileDatabaseRepository(databaseInstance)
+	fileMetadataRepo := fileRepositories.NewFileMetadataRepository(databaseInstance)
 	fileSrv := fileServices.NewFileService(fileMetadataRepo, fileRepo)
 	fileHdl := fileHandlers.NewMuxFileHandler(fileSrv, userMiddleware, responseService)
 
-	locationRepo := locationRepositories.NewLocationRepository()
+	locationRepo := locationRepositories.NewLocationRepository(databaseInstance)
 	locationSrv := locationServices.NewLocationService(locationRepo)
 	locationHdl := locationHandlers.NewLocationHandler(locationSrv, userMiddleware, responseService)
 
@@ -82,6 +73,6 @@ func main() {
 
 	handler := cors.AllowAll().Handler(router)
 
-	fmt.Println("Listening on port ", port)
-	fmt.Println(http.ListenAndServe(":"+port, handler))
+	fmt.Println("Listening on port ", applicationPort)
+	fmt.Println(http.ListenAndServe(":"+applicationPort, handler))
 }
