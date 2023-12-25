@@ -19,6 +19,7 @@ import (
 	userRepositories "go-heroku-server/api/user/repository"
 	userServices "go-heroku-server/api/user/service"
 	"go-heroku-server/config/database"
+	"go-heroku-server/constants"
 	"html/template"
 	"net/http"
 	"os"
@@ -48,8 +49,13 @@ func main() {
 		port = "8080"
 	}
 
+	databaseConfiguration := database.DatabaseConfiguration{
+		DatabaseType: constants.SQLiteDatabase,
+		DatabaseHost: "file::memory:?cache=shared",
+	}
+
 	responseService := responses.NewResponseFactory()
-	databaseInstance := database.CreateDefaultSQLiteDatabase()
+	databaseInstance := database.CreateDB(databaseConfiguration)
 
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)

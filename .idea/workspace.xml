@@ -7,9 +7,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Refactor database configuration">
-      <change afterPath="$PROJECT_DIR$/config/database/databaseConfiguration.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/database/databaseInstance.go" afterDir="false" />
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Add creation method for Postgres">
+      <change afterPath="$PROJECT_DIR$/constants/DatabaseConstants.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/database/databaseConfiguration.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/database/databaseConfiguration.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/database/databaseInstance.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/database/databaseInstance.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -399,8 +401,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor File module" />
-    <MESSAGE value="Refactor Location module" />
     <MESSAGE value="Modules cleanup" />
     <MESSAGE value="Refactoring user handling" />
     <MESSAGE value="Move Address entity" />
@@ -424,7 +424,9 @@
     <MESSAGE value="Implementing V2 File - File System Repository" />
     <MESSAGE value="Use constructor injection" />
     <MESSAGE value="Refactor database configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor database configuration" />
+    <MESSAGE value="Add creation method for SQLite" />
+    <MESSAGE value="Add creation method for Postgres" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add creation method for Postgres" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

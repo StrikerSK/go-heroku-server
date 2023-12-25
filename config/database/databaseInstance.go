@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"go-heroku-server/constants"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -9,16 +10,16 @@ import (
 	"os"
 )
 
-func CreateSQLiteDatabase(configuration DatabaseConfiguration) *gorm.DB {
-	dialector := sqlite.Open(configuration.databaseHost)
+func createSQLiteDatabase(configuration DatabaseConfiguration) *gorm.DB {
+	dialector := sqlite.Open(configuration.DatabaseHost)
 	return createDatabase(dialector)
 }
-func CreatePostgresDatabase(configuration DatabaseConfiguration) *gorm.DB {
-	host := configuration.databaseHost
-	port := configuration.databasePort
-	dbName := configuration.databaseName
-	username := configuration.databaseUsername
-	password := configuration.databasePassword
+func createPostgresDatabase(configuration DatabaseConfiguration) *gorm.DB {
+	host := configuration.DatabaseHost
+	port := configuration.DatabasePort
+	dbName := configuration.DatabaseName
+	username := configuration.DatabaseUsername
+	password := configuration.DatabasePassword
 	sslMode := "disable"
 
 	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbName, username, password, sslMode)
@@ -37,35 +38,35 @@ func createDatabase(dialector gorm.Dialector) *gorm.DB {
 }
 
 func CreateDB(configuration DatabaseConfiguration) *gorm.DB {
-	switch configuration.databaseType {
-	case "sqlite":
-		if configuration.databaseHost == "" {
+	switch configuration.DatabaseType {
+	case constants.SQLiteDatabase:
+		if configuration.DatabaseHost == "" {
 			panic("database host not provided")
 		}
 
-		return CreateSQLiteDatabase(configuration)
-	case "postgres":
-		if configuration.databaseHost == "" {
+		return createSQLiteDatabase(configuration)
+	case constants.PostgresDatabase:
+		if configuration.DatabaseHost == "" {
 			panic("database host not provided")
 		}
 
-		if configuration.databasePort == "" {
+		if configuration.DatabasePort == "" {
 			panic("database port not provided")
 		}
 
-		if configuration.databaseName == "" {
+		if configuration.DatabaseName == "" {
 			panic("database name not provided")
 		}
 
-		if configuration.databaseUsername == "" {
+		if configuration.DatabaseUsername == "" {
 			panic("database username not provided")
 		}
 
-		if configuration.databasePassword == "" {
+		if configuration.DatabasePassword == "" {
 			panic("database password not provided")
 		}
 
-		return CreatePostgresDatabase(configuration)
+		return createPostgresDatabase(configuration)
 	default:
 		panic("database type not recognized")
 	}
