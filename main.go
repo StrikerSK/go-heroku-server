@@ -33,10 +33,6 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func init() {
-	config.GetCacheInstance()
-}
-
 // Go application entrypoint
 func main() {
 	viperConfiguration := config.ReadConfiguration()

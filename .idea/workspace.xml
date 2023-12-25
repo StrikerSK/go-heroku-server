@@ -7,8 +7,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Defaulting configurations and authorization tokens">
+    <list default="true" id="f11d5856-85b8-476f-b8ed-47058472ed50" name="Default Changelist" comment="Remove caching instance">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,11 +253,11 @@
       <recent name="$PROJECT_DIR$/api/files/ports" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/config/cache" />
       <recent name="$PROJECT_DIR$/config/database" />
       <recent name="$PROJECT_DIR$/api/files/v2" />
       <recent name="$PROJECT_DIR$/api/files/v1/service" />
       <recent name="$PROJECT_DIR$/api/files/v1/repository" />
-      <recent name="$PROJECT_DIR$/api/files/v1/port" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Run Application (1)">
@@ -398,8 +400,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Cleanup codebase for Locations" />
-    <MESSAGE value="Cleanup codebase for Files" />
     <MESSAGE value="Introduce Database Error" />
     <MESSAGE value="Handle User Not Found case" />
     <MESSAGE value="File handling and Response Factory name" />
@@ -423,7 +423,9 @@
     <MESSAGE value="Add Viper configuration option" />
     <MESSAGE value="Add Viper configuration option - Nesting of configurations" />
     <MESSAGE value="Defaulting configurations and authorization tokens" />
-    <option name="LAST_COMMIT_MESSAGE" value="Defaulting configurations and authorization tokens" />
+    <MESSAGE value="Considering caching" />
+    <MESSAGE value="Remove caching instance" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove caching instance" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -445,11 +447,6 @@
           <url>file://$USER_HOME$/sdk/go1.16/src/runtime/panic.go</url>
           <line>1189</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/api/user/service/tokenService.go</url>
-          <line>17</line>
-          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
