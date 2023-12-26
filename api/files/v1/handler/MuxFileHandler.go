@@ -42,7 +42,7 @@ func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
 }
 
 func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
@@ -94,7 +94,7 @@ func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -129,7 +129,7 @@ func (h MuxFileHandler) readFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -153,7 +153,7 @@ func (h MuxFileHandler) deleteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandler) readFiles(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return

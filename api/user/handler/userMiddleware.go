@@ -7,6 +7,7 @@ import (
 	userPorts "go-heroku-server/api/user/ports"
 	"log"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -30,6 +31,15 @@ func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService
 func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
+		excludedPaths := []string{"/user/register", "/user/login"}
+
+		for _, path := range excludedPaths {
+			if strings.HasPrefix(r.URL.Path, path) {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+
 		if token == "" {
 			log.Println("Verify JWT Token: Cannot find header")
 			h.responseService.CreateResponse(errors.NewUnauthorizedError("")).WriteResponse(w)
@@ -50,7 +60,7 @@ func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 	})
 }
 
-func (h UserAuthMiddleware) GetUserIdentificationFromContext(context context.Context) (uint, error) {
+func (h UserAuthMiddleware) GetUserID(context context.Context) (uint, error) {
 	value, ok := context.Value(identificationContextKey).(uint)
 	if !ok {
 		return 0, errors.NewParseError("cannot resolve user from context")
@@ -59,8 +69,17 @@ func (h UserAuthMiddleware) GetUserIdentificationFromContext(context context.Con
 	return value, nil
 }
 
-func (h UserAuthMiddleware) GetUsernameFromContext(context context.Context) (string, error) {
+func (h UserAuthMiddleware) GetUsername(context context.Context) (string, error) {
 	value, ok := context.Value(usernameContextKey).(string)
+	if !ok {
+		return "", errors.NewParseError("cannot resolve user from context")
+	}
+
+	return value, nil
+}
+
+func (h UserAuthMiddleware) GetRole(context context.Context) (string, error) {
+	value, ok := context.Value(rolesContextKey).(string)
 	if !ok {
 		return "", errors.NewParseError("cannot resolve user from context")
 	}

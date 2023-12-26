@@ -32,14 +32,15 @@ func NewUserHandler(userService userPorts.IUserService, middleware UserAuthMiddl
 
 func (h UserHandler) EnrichRouter(router *mux.Router) {
 	userRoute := router.PathPrefix("/user").Subrouter()
+	userRoute.Use(h.middleware.VerifyToken)
 	userRoute.Handle("/register", http.HandlerFunc(h.createUser)).Methods(http.MethodPost)
 	userRoute.Handle("/login", http.HandlerFunc(h.login)).Methods(http.MethodPost)
-
-	userRoute.Handle("", h.middleware.VerifyToken(http.HandlerFunc(h.updateUser))).Methods(http.MethodPut)
-	userRoute.Handle("", h.middleware.VerifyToken(http.HandlerFunc(h.readUser))).Methods(http.MethodGet)
+	userRoute.Handle("", http.HandlerFunc(h.updateUser)).Methods(http.MethodPut)
+	userRoute.Handle("", http.HandlerFunc(h.readUser)).Methods(http.MethodGet)
 
 	usersRoute := router.PathPrefix("/users").Subrouter()
-	usersRoute.Handle("", h.middleware.VerifyToken(http.HandlerFunc(h.readUsers))).Methods(http.MethodGet)
+	usersRoute.Use(h.middleware.VerifyToken)
+	usersRoute.Handle("", http.HandlerFunc(h.readUsers)).Methods(http.MethodGet)
 }
 
 func (h UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +61,7 @@ func (h UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h UserHandler) readUser(w http.ResponseWriter, r *http.Request) {
-	username, _ := h.middleware.GetUsernameFromContext(r.Context())
+	username, _ := h.middleware.GetUsername(r.Context())
 	if requestedUser, err := h.userService.ReadUser(username); err != nil {
 		log.Printf("User [%s] read: %s", username, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -90,7 +91,7 @@ func (h UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, _ := h.middleware.GetUsernameFromContext(r.Context())
+	username, _ := h.middleware.GetUsername(r.Context())
 	if username != userBody.Username {
 		log.Printf("user cannot update without correct token")
 		h.responseService.CreateResponse(errors.NewForbiddenError(fmt.Sprintf("username [%s] does not match", username))).WriteResponse(w)

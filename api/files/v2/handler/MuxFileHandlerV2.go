@@ -42,7 +42,7 @@ func (h MuxFileHandlerV2) EnrichRouter(router *mux.Router) {
 }
 
 func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 
 	if err != nil {
 		log.Printf("Controller file upload: %s\n", err.Error())
@@ -102,7 +102,7 @@ func (h MuxFileHandlerV2) createFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandlerV2) downloadFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -131,7 +131,7 @@ func (h MuxFileHandlerV2) downloadFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandlerV2) readMetadata(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("File read: %v\n", err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -152,7 +152,7 @@ func (h MuxFileHandlerV2) readMetadata(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandlerV2) deleteFile(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -171,7 +171,7 @@ func (h MuxFileHandlerV2) deleteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h MuxFileHandlerV2) readFiles(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return

@@ -44,7 +44,7 @@ func (h LocationHandler) EnrichRouter(router *mux.Router) {
 }
 
 func (h LocationHandler) createLocation(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("Controller location add: %v\n", err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -79,7 +79,7 @@ func (h LocationHandler) readLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("Read location error: %v\n", err)
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -98,7 +98,7 @@ func (h LocationHandler) readLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h LocationHandler) readLocations(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("Locations read: %s\n", err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -124,7 +124,7 @@ func (h LocationHandler) updateLocation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("Location [%d] update: %s\n", locationID, err.Error())
 		h.responseService.CreateResponse(err).WriteResponse(w)
@@ -160,7 +160,7 @@ func (h LocationHandler) deleteLocation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		log.Printf("Location [%d] delete: %v", locationID, err)
 		h.responseService.CreateResponse(err).WriteResponse(w)

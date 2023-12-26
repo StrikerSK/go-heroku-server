@@ -59,7 +59,7 @@ func ResolveTodoID(next http.Handler) http.Handler {
 }
 
 func (h TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
-	username, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	username, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -83,7 +83,7 @@ func (h TodoHandler) createTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) readTodo(w http.ResponseWriter, r *http.Request) {
-	userID, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	userID, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -106,7 +106,7 @@ func (h TodoHandler) readTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) readTodos(w http.ResponseWriter, r *http.Request) {
-	userID, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	userID, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -130,7 +130,7 @@ func (h TodoHandler) updateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	userID, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return
@@ -161,7 +161,7 @@ func (h TodoHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := h.userMiddleware.GetUsernameFromContext(r.Context())
+	userID, err := h.userMiddleware.GetUsername(r.Context())
 	if err != nil {
 		h.responseService.CreateResponse(err).WriteResponse(w)
 		return

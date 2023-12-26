@@ -38,7 +38,7 @@ func (s TokenService) CreateToken(user userDomains.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(s.tokenEncoding)
 	if err != nil {
-		log.Printf("Create Token: %s\n", err.Error())
+		log.Printf("cannot create token: %s\n", err.Error())
 		return "", err
 	}
 
