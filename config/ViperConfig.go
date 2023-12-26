@@ -12,9 +12,10 @@ type Application struct {
 }
 
 type Authorization struct {
-	ExcludedPaths []string `mapstructure:"ExcludedPaths"`
-	Encoding      string   `mapstructure:"Encoding"`
-	Expiration    int      `mapstructure:"Expiration"`
+	ExcludedPaths       []string `mapstructure:"ExcludedPaths"`
+	AuthorizationHeader string   `mapstructure:"AuthorizationHeader"`
+	Encoding            string   `mapstructure:"Encoding"`
+	Expiration          int      `mapstructure:"Expiration"`
 }
 
 type ApplicationConfiguration struct {
@@ -37,6 +38,9 @@ func ReadConfiguration() *ApplicationConfiguration {
 	configuration := &ApplicationConfiguration{
 		Application: Application{
 			Port: "8080",
+		},
+		Authorization: Authorization{
+			AuthorizationHeader: "Authorization",
 		},
 	}
 

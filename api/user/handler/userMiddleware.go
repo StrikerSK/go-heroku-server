@@ -18,22 +18,24 @@ const (
 )
 
 type UserAuthMiddleware struct {
-	excludedPaths   []string
-	tokenService    userPorts.ITokenService
-	responseService responses.ResponseFactory
+	excludedPaths       []string
+	authorizationHeader string
+	tokenService        userPorts.ITokenService
+	responseService     responses.ResponseFactory
 }
 
 func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService responses.ResponseFactory, configuration config.Authorization) UserAuthMiddleware {
 	return UserAuthMiddleware{
-		excludedPaths:   configuration.ExcludedPaths,
-		tokenService:    tokenService,
-		responseService: responseService,
+		excludedPaths:       configuration.ExcludedPaths,
+		authorizationHeader: configuration.AuthorizationHeader,
+		tokenService:        tokenService,
+		responseService:     responseService,
 	}
 }
 
 func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
+		token := r.Header.Get(h.authorizationHeader)
 
 		for _, path := range h.excludedPaths {
 			if strings.HasPrefix(r.URL.Path, path) {

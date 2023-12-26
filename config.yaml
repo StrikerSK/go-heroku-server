@@ -3,6 +3,7 @@ Application:
 Authorization:
     Expiration: 3600
     Encoding: Wow, much safe
+    AuthorizationHeader: Authorization
     ExcludedPaths:
         - /user/register
         - /user/login
