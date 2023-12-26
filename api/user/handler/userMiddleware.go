@@ -4,7 +4,7 @@ import (
 	"context"
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
-	customAuth "go-heroku-server/api/user/service"
+	userPorts "go-heroku-server/api/user/ports"
 	"log"
 	"net/http"
 )
@@ -16,11 +16,11 @@ const (
 )
 
 type UserAuthMiddleware struct {
-	tokenService    customAuth.TokenService
+	tokenService    userPorts.ITokenService
 	responseService responses.ResponseFactory
 }
 
-func NewUserAuthMiddleware(tokenService customAuth.TokenService, responseService responses.ResponseFactory) UserAuthMiddleware {
+func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService responses.ResponseFactory) UserAuthMiddleware {
 	return UserAuthMiddleware{
 		tokenService:    tokenService,
 		responseService: responseService,
@@ -42,7 +42,8 @@ func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), usernameContextKey, userClaim.Username)
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, usernameContextKey, userClaim.Username)
 		ctx = context.WithValue(ctx, rolesContextKey, userClaim.Role)
 		ctx = context.WithValue(ctx, identificationContextKey, userClaim.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
