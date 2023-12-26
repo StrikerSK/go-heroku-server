@@ -16,8 +16,8 @@ type TokenService struct {
 
 func NewTokenService(configuration config.Authorization) TokenService {
 	return TokenService{
-		tokenEncoding:   []byte(configuration.Encoding),
-		tokenExpiration: time.Duration(configuration.Expiration),
+		tokenEncoding:   []byte(configuration.TokenEncoding),
+		tokenExpiration: time.Duration(configuration.TokenExpiration),
 	}
 }
 

@@ -1,8 +1,8 @@
 Application:
     Port: 8080
 Authorization:
-    Expiration: 3600
-    Encoding: Wow, much safe
+    TokenExpiration: 3600
+    TokenEncoding: Wow, much safe
     AuthorizationHeader: Authorization
     ExcludedPaths:
         - /user/register
