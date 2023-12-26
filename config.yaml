@@ -3,6 +3,9 @@ Application:
 Authorization:
     Expiration: 3600
     Encoding: Wow, much safe
+    ExcludedPaths:
+        - /user/register
+        - /user/login
 Database:
     Type: sqlite
     Host: file::memory:?cache=shared

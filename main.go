@@ -38,6 +38,7 @@ func main() {
 	viperConfiguration := config.ReadConfiguration()
 	applicationPort := viperConfiguration.Application.Port
 	databaseConfiguration := viperConfiguration.Database
+	authorizationConfiguration := viperConfiguration.Authorization
 
 	responseService := responses.NewResponseFactory()
 	databaseInstance := database.CreateDB(databaseConfiguration)
@@ -45,8 +46,8 @@ func main() {
 	userRepository := userRepositories.NewUserRepository(databaseInstance)
 	userService := userServices.NewUserService(userRepository)
 
-	userTokenService := userServices.NewTokenService(viperConfiguration.Authorization)
-	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService)
+	userTokenService := userServices.NewTokenService(authorizationConfiguration)
+	userMiddleware := userHandlers.NewUserAuthMiddleware(userTokenService, responseService, authorizationConfiguration)
 	userHdl := userHandlers.NewUserHandler(userService, userMiddleware, userTokenService, responseService)
 
 	todoRepo := todoRepositories.NewTodoRepository(databaseInstance)

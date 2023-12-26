@@ -5,6 +5,7 @@ import (
 	"go-heroku-server/api/src/errors"
 	"go-heroku-server/api/src/responses"
 	userPorts "go-heroku-server/api/user/ports"
+	"go-heroku-server/config"
 	"log"
 	"net/http"
 	"strings"
@@ -17,12 +18,14 @@ const (
 )
 
 type UserAuthMiddleware struct {
+	excludedPaths   []string
 	tokenService    userPorts.ITokenService
 	responseService responses.ResponseFactory
 }
 
-func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService responses.ResponseFactory) UserAuthMiddleware {
+func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService responses.ResponseFactory, configuration config.Authorization) UserAuthMiddleware {
 	return UserAuthMiddleware{
+		excludedPaths:   configuration.ExcludedPaths,
 		tokenService:    tokenService,
 		responseService: responseService,
 	}
@@ -31,9 +34,8 @@ func NewUserAuthMiddleware(tokenService userPorts.ITokenService, responseService
 func (h UserAuthMiddleware) VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
-		excludedPaths := []string{"/user/register", "/user/login"}
 
-		for _, path := range excludedPaths {
+		for _, path := range h.excludedPaths {
 			if strings.HasPrefix(r.URL.Path, path) {
 				next.ServeHTTP(w, r)
 				return

@@ -12,8 +12,9 @@ type Application struct {
 }
 
 type Authorization struct {
-	Encoding   string `mapstructure:"Encoding"`
-	Expiration int    `mapstructure:"Expiration"`
+	ExcludedPaths []string `mapstructure:"ExcludedPaths"`
+	Encoding      string   `mapstructure:"Encoding"`
+	Expiration    int      `mapstructure:"Expiration"`
 }
 
 type ApplicationConfiguration struct {
