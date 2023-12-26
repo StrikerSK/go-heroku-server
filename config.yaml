@@ -1,12 +1,13 @@
 Application:
     Port: 8080
+    ContextPath: /api
 Authorization:
     TokenExpiration: 3600
     TokenEncoding: Wow, much safe
     AuthorizationHeader: Authorization
     ExcludedPaths:
-        - /user/register
-        - /user/login
+        - /api/user/register
+        - /api/user/login
 Database:
     Type: sqlite
     Host: file::memory:?cache=shared

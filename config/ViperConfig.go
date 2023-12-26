@@ -8,7 +8,8 @@ import (
 )
 
 type Application struct {
-	Port string `mapstructure:"port"`
+	Port        string `mapstructure:"Port"`
+	ContextPath string `mapstructure:"ContextPath"`
 }
 
 type Authorization struct {

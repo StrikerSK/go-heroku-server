@@ -23,11 +23,11 @@ func createPostgresDatabase(configuration DatabaseConfiguration) *gorm.DB {
 	sslMode := "disable"
 
 	args := fmt.Sprintf("host=%s port=%s dbname=%s user='%s' password=%s sslmode=%s", host, port, dbName, username, password, sslMode)
-	return createDatabase(postgres.Open(args))
+	dialector := postgres.Open(args)
+	return createDatabase(dialector)
 }
 
 func createDatabase(dialector gorm.Dialector) *gorm.DB {
-	log.Println("Creating Database instance")
 	db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
 		log.Printf("Database initialization: %s\n", err.Error())
@@ -43,7 +43,7 @@ func CreateDB(configuration DatabaseConfiguration) *gorm.DB {
 		if configuration.DatabaseHost == "" {
 			panic("database host not provided")
 		}
-
+		log.Println("Creating SQLite instance")
 		return createSQLiteDatabase(configuration)
 	case constants.PostgresDatabase:
 		if configuration.DatabaseHost == "" {
@@ -66,6 +66,7 @@ func CreateDB(configuration DatabaseConfiguration) *gorm.DB {
 			panic("database password not provided")
 		}
 
+		log.Println("Creating Postgres instance")
 		return createPostgresDatabase(configuration)
 	default:
 		panic("database type not recognized")

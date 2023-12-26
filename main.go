@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -21,6 +20,7 @@ import (
 	"go-heroku-server/config"
 	"go-heroku-server/config/database"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -36,7 +36,7 @@ func serveMainPage(w http.ResponseWriter, r *http.Request) {
 // Go application entrypoint
 func main() {
 	viperConfiguration := config.ReadConfiguration()
-	applicationPort := viperConfiguration.Application.Port
+	applicationConfiguration := viperConfiguration.Application
 	databaseConfiguration := viperConfiguration.Database
 	authorizationConfiguration := viperConfiguration.Authorization
 
@@ -67,13 +67,15 @@ func main() {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	router.HandleFunc("/", serveMainPage)
 
-	userHdl.EnrichRouter(router)
-	todoHdl.EnrichRouter(router)
-	fileHdl.EnrichRouter(router)
-	locationHdl.EnrichRouter(router)
+	userRoute := router.PathPrefix(applicationConfiguration.ContextPath).Subrouter()
+	userHdl.EnrichRouter(userRoute)
+	todoHdl.EnrichRouter(userRoute)
+	fileHdl.EnrichRouter(userRoute)
+	locationHdl.EnrichRouter(userRoute)
 
 	handler := cors.AllowAll().Handler(router)
 
-	fmt.Println("Listening on port ", applicationPort)
-	fmt.Println(http.ListenAndServe(":"+applicationPort, handler))
+	log.Println("Listening on port:", applicationConfiguration.Port)
+	log.Println("Using context path:", applicationConfiguration.ContextPath)
+	log.Println(http.ListenAndServe(":"+applicationConfiguration.Port, handler))
 }
