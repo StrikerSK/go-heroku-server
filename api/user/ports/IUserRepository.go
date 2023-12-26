@@ -7,7 +7,7 @@ import (
 type IUserRepository interface {
 	CreateUser(userDomains.User) error
 	ReadUsers() ([]userDomains.User, error)
-	ReadUserByID(string) (userDomains.User, error)
-	ReadUserByUsername(string) (userDomains.User, error)
+	ReadUserByID(string) (userDomains.User, bool, error)
+	ReadUserByUsername(string) (userDomains.User, bool, error)
 	UpdateUser(userDomains.User) error
 }

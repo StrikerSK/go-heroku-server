@@ -19,21 +19,21 @@ func NewUserService(repository userPorts.IUserRepository) UserService {
 }
 
 func (s UserService) CreateUser(user userDomains.User) error {
-	if _, err := s.ReadUser(user.Username); err != nil {
-		_, notFoundErr := err.(errors.NotFoundError)
-		if notFoundErr {
-			user.SetRole()
-			user.EncryptPassword()
-			if err = s.repository.CreateUser(user); err != nil {
-				log.Printf("User repository create error: %v\n", err)
-				return err
-			} else {
-				log.Printf("User created\n")
-				return nil
-			}
-		} else {
-			log.Printf("User create error: %v\n", err)
+	_, exist, err := s.repository.ReadUserByUsername(user.Username)
+
+	if err != nil {
+		return errors.NewBadRequestError(err.Error())
+	}
+
+	if !exist {
+		user.SetRole()
+		user.EncryptPassword()
+		if err = s.repository.CreateUser(user); err != nil {
+			log.Printf("User repository create error: %v\n", err)
 			return err
+		} else {
+			log.Println("User created!")
+			return nil
 		}
 	} else {
 		log.Printf("User add: user already created\n")
@@ -42,7 +42,17 @@ func (s UserService) CreateUser(user userDomains.User) error {
 }
 
 func (s UserService) ReadUser(username string) (userDomains.User, error) {
-	return s.repository.ReadUserByUsername(username)
+	user, exists, err := s.repository.ReadUserByUsername(username)
+
+	if err != nil {
+		return userDomains.User{}, errors.NewBadRequestError(err.Error())
+	}
+
+	if !exists {
+		return userDomains.User{}, errors.NewNotFoundError("user does not exist")
+	}
+
+	return user, nil
 }
 
 func (s UserService) ReadUsers() ([]userDomains.User, error) {

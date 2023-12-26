@@ -34,27 +34,28 @@ func (r UserRepository) ReadUsers() (user []userDomains.User, err error) {
 }
 
 // ReadUserByID - retrieves user and flag if exists can be registered to database
-func (r UserRepository) ReadUserByID(userID string) (user userDomains.User, err error) {
-	if err = r.db.Preload("Address").Where("user_id = ?", userID).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", userID))
-		} else {
-			err = errors.NewDatabaseError(err.Error())
-		}
-	}
-	return
+func (r UserRepository) ReadUserByID(userID string) (userDomains.User, bool, error) {
+	return r.getUser("user_id = ?", userID)
 }
 
 // ReadUserByUsername - retrieves user and flag if exists can be registered to database
-func (r UserRepository) ReadUserByUsername(username string) (user userDomains.User, err error) {
-	if err = r.db.Preload("Address").Where("username = ?", username).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = errors.NewNotFoundError(fmt.Sprintf("user [%s] not found", username))
-		} else {
-			err = errors.NewDatabaseError(err.Error())
-		}
+func (r UserRepository) ReadUserByUsername(username string) (userDomains.User, bool, error) {
+	return r.getUser("username = ?", username)
+}
+
+func (r UserRepository) getUser(query, searchValue string) (userDomains.User, bool, error) {
+	var user userDomains.User
+	result := r.db.Preload("Address").Where(query, searchValue).First(&user)
+
+	if result.Error == nil {
+		return user, true, nil
 	}
-	return
+
+	if result.Error == gorm.ErrRecordNotFound {
+		return userDomains.User{}, false, nil
+	}
+
+	return userDomains.User{}, false, result.Error
 }
 
 func (r UserRepository) UpdateUser(updatedUser userDomains.User) (err error) {
