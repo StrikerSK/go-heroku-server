@@ -34,13 +34,15 @@ func NewTodoHandler(userMiddleware userHandlers.UserAuthMiddleware, todoService 
 
 func (h TodoHandler) EnrichRouter(router *mux.Router) {
 	todoRoute := router.PathPrefix("/todo").Subrouter()
-	todoRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createTodo))).Methods(http.MethodPost)
-	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readTodo))).Methods(http.MethodGet)
-	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.updateTodo))).Methods(http.MethodPut)
-	todoRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.deleteTodo))).Methods(http.MethodDelete)
+	todoRoute.Use(h.userMiddleware.VerifyToken)
+	todoRoute.Handle("", http.HandlerFunc(h.createTodo)).Methods(http.MethodPost)
+	todoRoute.Handle("/{id}", http.HandlerFunc(h.readTodo)).Methods(http.MethodGet)
+	todoRoute.Handle("/{id}", http.HandlerFunc(h.updateTodo)).Methods(http.MethodPut)
+	todoRoute.Handle("/{id}", http.HandlerFunc(h.deleteTodo)).Methods(http.MethodDelete)
 
 	todosRoute := router.PathPrefix("/todos").Subrouter()
-	todosRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readTodos))).Methods(http.MethodGet)
+	todosRoute.Use(h.userMiddleware.VerifyToken)
+	todosRoute.Handle("", http.HandlerFunc(h.readTodos)).Methods(http.MethodGet)
 }
 
 func ResolveTodoID(next http.Handler) http.Handler {

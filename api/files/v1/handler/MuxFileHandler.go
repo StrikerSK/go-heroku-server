@@ -31,13 +31,14 @@ func NewMuxFileHandler(service filePorts.IFileService, userMiddleware userHandle
 
 func (h MuxFileHandler) EnrichRouter(router *mux.Router) {
 	fileRoute := router.PathPrefix("/file").Subrouter()
-	fileRoute.Handle("/upload", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createFile))).Methods(http.MethodPost)
-	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFile))).Methods(http.MethodGet)
-	fileRoute.Handle("/{id}", h.userMiddleware.VerifyToken(http.HandlerFunc(h.deleteFile))).Methods(http.MethodDelete)
+	fileRoute.Use(h.userMiddleware.VerifyToken)
+	fileRoute.Handle("/upload", http.HandlerFunc(h.createFile)).Methods(http.MethodPost)
+	fileRoute.Handle("/{id}", http.HandlerFunc(h.readFile)).Methods(http.MethodGet)
+	fileRoute.Handle("/{id}", http.HandlerFunc(h.deleteFile)).Methods(http.MethodDelete)
 
 	filesRoute := router.PathPrefix("/files").Subrouter()
-	filesRoute.Handle("/", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readFiles))).Methods(http.MethodGet)
-
+	fileRoute.Use(h.userMiddleware.VerifyToken)
+	filesRoute.Handle("/", http.HandlerFunc(h.readFiles)).Methods(http.MethodGet)
 }
 
 func (h MuxFileHandler) createFile(w http.ResponseWriter, r *http.Request) {

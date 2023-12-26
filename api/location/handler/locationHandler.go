@@ -29,15 +29,18 @@ func NewLocationHandler(locationService locationPorts.ILocationService, userMidd
 
 func (h LocationHandler) EnrichRouter(router *mux.Router) {
 	locationRoute := router.PathPrefix("/location").Subrouter()
-	locationRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.createLocation))).Methods(http.MethodPost)
+	locationRoute.Use(h.userMiddleware.VerifyToken)
+	locationRoute.Handle("", http.HandlerFunc(h.createLocation)).Methods(http.MethodPost)
 
 	locationSubRoute := locationRoute.PathPrefix("/{id}").Subrouter()
-	locationSubRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.updateLocation))).Methods(http.MethodPut)
-	locationSubRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readLocation))).Methods(http.MethodGet)
-	locationSubRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.deleteLocation))).Methods(http.MethodDelete)
+	locationSubRoute.Use(h.userMiddleware.VerifyToken)
+	locationSubRoute.Handle("", http.HandlerFunc(h.updateLocation)).Methods(http.MethodPut)
+	locationSubRoute.Handle("", http.HandlerFunc(h.readLocation)).Methods(http.MethodGet)
+	locationSubRoute.Handle("", http.HandlerFunc(h.deleteLocation)).Methods(http.MethodDelete)
 
 	locationsRoute := router.PathPrefix("/locations").Subrouter()
-	locationsRoute.Handle("", h.userMiddleware.VerifyToken(http.HandlerFunc(h.readLocations))).Methods(http.MethodGet)
+	locationsRoute.Use(h.userMiddleware.VerifyToken)
+	locationsRoute.Handle("", http.HandlerFunc(h.readLocations)).Methods(http.MethodGet)
 }
 
 func (h LocationHandler) createLocation(w http.ResponseWriter, r *http.Request) {
